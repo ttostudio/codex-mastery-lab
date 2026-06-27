@@ -113,32 +113,32 @@ Codex CLI:      codex-cli 0.142.3</code></pre>
 <p>今回はLighthouseやaxeを入れない。理由は、今日の目的が「重い監査ツールを回すこと」ではなく、雑プロンプトで抜けた項目をAI Task Packetへ戻すことだからだ。依存なしの静的監査でも、前工程に戻すべき欠陥は十分に見える。</p>
 <h2>5. 実際にCodexへ渡した雑プロンプト</h2>
 <p>Codexには以下をそのまま渡した。</p>
-<pre><code>In this git repo, create a tiny static FAQ search app under experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app.
-Use only HTML, CSS, and vanilla JavaScript. Make it look like a polished SaaS help center.
-Include at least 8 FAQ items and a search box that filters questions live.
-Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit.</code></pre>
+<pre><code>このgitリポジトリ内で、`experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app` に小さな静的FAQ検索アプリを作ってください。
+HTML、CSS、素のJavaScriptだけを使ってください。日本語のSaaSヘルプセンターらしく、見た目も整えてください。
+FAQは8件以上用意し、検索欄に入力すると質問・回答・タグをリアルタイムに絞り込めるようにしてください。
+シンプルにしてください。依存パッケージはインストールしないでください。`vibe-app` ディレクトリの外は変更しないでください。完了したら終了してください。</code></pre>
 <p>実行コマンド:</p>
-<pre><code>codex exec --sandbox danger-full-access &quot;In this git repo, create a tiny static FAQ search app under experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app. Use only HTML, CSS, and vanilla JavaScript. Make it look like a polished SaaS help center. Include at least 8 FAQ items and a search box that filters questions live. Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit.&quot;</code></pre>
+<pre><code>codex exec --sandbox danger-full-access &quot;このgitリポジトリ内で、experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app に小さな静的FAQ検索アプリを作ってください。HTML、CSS、素のJavaScriptだけを使ってください。日本語のSaaSヘルプセンターらしく、見た目も整えてください。FAQは8件以上用意し、検索欄に入力すると質問・回答・タグをリアルタイムに絞り込めるようにしてください。シンプルにしてください。依存パッケージはインストールしないでください。vibe-app ディレクトリの外は変更しないでください。完了したら終了してください。&quot;</code></pre>
 <p>Codexは <code>vibe-app</code> に3ファイルを作った。</p>
 <pre><code>index.html  45 lines
 styles.css  248 lines
 app.js      89 lines</code></pre>
 <p>Codexの最終報告はこうだった。</p>
-<pre><code>Created the static FAQ search app under:
+<pre><code>指定ディレクトリに静的FAQ検索アプリを作成しました:
 experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/index.html
 
-It includes HTML, CSS, and vanilla JS only, with 9 FAQ items and live filtering.
-No dependencies installed. I only created files inside the requested vibe-app directory.</code></pre>
+HTML、CSS、素のJavaScriptのみで構成し、FAQ 9件とリアルタイム検索を含めています。
+依存パッケージはインストールしていません。変更は指定された `vibe-app` ディレクトリ内だけです。</code></pre>
 <p>ここまでは良い。依存なし、指定ディレクトリ内、FAQ 9件、ライブ検索あり。雑プロンプトとしてはかなり優秀だ。</p>
 <h2>6. 生成されたコードの良かった点</h2>
 <p>まず、Codexを公平に評価すると、vibe-appには良い点も多かった。</p>
 <pre><code>&lt;form class=&quot;search-panel&quot; role=&quot;search&quot;&gt;
-  &lt;label for=&quot;faq-search&quot;&gt;Search the help center&lt;/label&gt;
+  &lt;label for=&quot;faq-search&quot;&gt;FAQを検索&lt;/label&gt;
   &lt;div class=&quot;search-box&quot;&gt;
     &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot; focusable=&quot;false&quot;&gt;
       ...
     &lt;/svg&gt;
-    &lt;input id=&quot;faq-search&quot; type=&quot;search&quot; autocomplete=&quot;off&quot; placeholder=&quot;Try billing, SSO, export, invite...&quot;&gt;
+    &lt;input id=&quot;faq-search&quot; type=&quot;search&quot; autocomplete=&quot;off&quot; placeholder=&quot;例: 請求、SSO、エクスポート、招待&quot;&gt;
   &lt;/div&gt;
 &lt;/form&gt;</code></pre>
 <ul>
@@ -154,21 +154,21 @@ No dependencies installed. I only created files inside the requested vibe-app di
 <pre><code>node --check experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/app.js</code></pre>
 <p>これは通った。次に、HTML/CSS/JSを軽く静的監査した。チェックしたのは、検索欄ラベル、結果件数live region、リストセマンティクス、<code>aria-controls</code>、<code>aria-describedby</code>、フォームsubmit抑止、<code>:focus-visible</code> などだ。</p>
 <p>結果:</p>
-<pre><code>PASS: HTML lang exists
-PASS: Search input has label for faq-search
-PASS: Result count live region exists
-FAIL: FAQ list has explicit list semantics
-FAIL: Search input declares controlled results
-FAIL: No-result state is programmatically referenced by input
-FAIL: Form submit is prevented in JS
-FAIL: Focus visible rule exists
-PASS: FAQ item count &gt;= 8
-PASS: No dependency import statements</code></pre>
+<pre><code>合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+合格: 結果件数がaria-liveで通知される
+不合格: FAQ一覧がul/liのリスト構造になっている
+不合格: 検索欄がfaq-listを制御対象として宣言している
+不合格: 検索欄が該当なし表示を参照している
+不合格: フォーム送信時のページ再読み込みを防いでいる
+不合格: キーボードフォーカス用の:focus-visible指定がある
+合格: FAQデータが8件以上ある
+合格: 依存パッケージのimport/requireを使っていない</code></pre>
 <p>HTTP serverでも配信確認だけ行った。</p>
 <pre><code>python3 -m http.server 8765 --directory experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app
 curl -s http://127.0.0.1:8765/ -o experiments/2026-06-27-accessibility-contract-vibe-faq/logs/http-index.html</code></pre>
 <p>確認結果:</p>
-<pre><code>bytes 1728
+<pre><code>bytes 1850
 has title True</code></pre>
 <p>ここで大事なのは、「画面が表示される」ことと「後工程が監査できる」ことは別だという点だ。</p>
 <h2>8. 欠陥1: FAQ一覧がdivで、コレクションとして読めない</h2>
@@ -208,61 +208,63 @@ aria-describedby=&quot;search-help result-status no-results&quot;</code></pre>
 <p><img src="assets/2026-06-27-accessibility-contract-reverse-chain.svg" alt="欠陥から逆算する Accessibility Contract" loading="lazy"></p>
 <h2>12. 逆算してAI Task Packet v0.1を作った</h2>
 <p>監査結果から、次のAI Task Packetを作った。</p>
-<pre><code># AI Task Packet v0.1: Accessible FAQ Search
+<pre><code># AI Task Packet v0.1: アクセシブルなFAQ検索
 
-## Functional requirements
+## 機能要件
 
-- At least 8 FAQ items.
-- Search filters live across question, answer, and tag.
-- Empty query shows all FAQs.
-- No-result query shows a visible no-results message.
-- Pressing Enter inside the search form must not reload the page.
+- FAQは8件以上用意する。
+- 検索欄は、質問・回答・タグを対象にリアルタイムで絞り込む。
+- 検索欄が空のときは全FAQを表示する。
+- 該当なしの場合は、見える形で「一致するFAQがない」状態を表示する。
+- 検索フォーム内でEnterキーを押しても、ページを再読み込みしない。
 
-## Accessibility Contract
+## アクセシビリティ契約
 
-- The search input must have a visible label.
-- The search input must declare `aria-controls=&quot;faq-list&quot;`.
-- The search input must declare `aria-describedby` pointing to helper text and result status/no-result status as appropriate.
-- The result count must be in an `aria-live=&quot;polite&quot;` region and include the query context when a query exists.
-- FAQ collection must expose list semantics (`ul/li` or equivalent `role=&quot;list&quot;/&quot;listitem&quot;`).
-- FAQ toggle controls must be keyboard-operable and retain visible focus.
-- CSS must include a `:focus-visible` rule for keyboard focus evidence.
-- Decorative icons must be `aria-hidden=&quot;true&quot;` and `focusable=&quot;false&quot;`.
+- 検索欄には見えるラベルを付ける。
+- 検索欄には `aria-controls=&quot;faq-list&quot;` を指定し、制御対象の結果一覧を明示する。
+- 検索欄には `aria-describedby` を指定し、補足説明・結果件数・該当なし表示を参照させる。
+- 結果件数は `aria-live=&quot;polite&quot;` の領域に置き、検索中は検索語との関係も伝わる文にする。
+- FAQ一覧は `ul/li`、または同等の `role=&quot;list&quot;/&quot;listitem&quot;` でリスト構造として表す。
+- FAQの開閉コントロールはキーボード操作でき、フォーカス位置が見えるようにする。
+- CSSにはキーボードフォーカス確認用の `:focus-visible` を入れる。
+- 装飾アイコンは `aria-hidden=&quot;true&quot;` かつ `focusable=&quot;false&quot;` にする。
 
-## Quality Gate / Verification Evidence
-</code></pre>
-<p>node --check experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app/app.js</p>
-<p>python3 experiments/2026-06-27-accessibility-contract-vibe-faq/audit_static.py experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app</p>
-<pre><code></code></pre>
+## 品質ゲート / 検証証拠
+
+実行コマンド:
+- node --check experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app/app.js
+- python3 experiments/2026-06-27-accessibility-contract-vibe-faq/audit_static.py experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app</code></pre>
 <p>これをCodexに渡して、<code>fixed-app</code> を作らせた。</p>
 <p>実行コマンド:</p>
-<pre><code>codex exec --sandbox danger-full-access &quot;Read experiments/2026-06-27-accessibility-contract-vibe-faq/AI_TASK_PACKET_v0.1.md. Implement exactly that packet. Keep all changes inside experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app except an optional audit_static.py directly under the experiment directory. Do not install dependencies. Then run the verification commands if possible and report results.&quot;</code></pre>
+<pre><code>codex exec --sandbox danger-full-access &quot;experiments/2026-06-27-accessibility-contract-vibe-faq/AI_TASK_PACKET_v0.1.md を読んで、その内容どおりに実装してください。変更は experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app 内に閉じ込めてください。ただし、必要であれば実験ディレクトリ直下に audit_static.py を置いてかまいません。依存パッケージはインストールしないでください。可能であれば検証コマンドを実行し、結果を報告してください。&quot;</code></pre>
 <h2>13. 修正後の結果</h2>
 <p>Codexは <code>fixed-app</code> と <code>audit_static.py</code> を作り、検証まで実行した。</p>
 <p>こちらでも再実行した結果:</p>
-<pre><code>## fixed node syntax check
-## fixed static audit
-PASS: HTML lang exists
-PASS: Search input has visible label
-PASS: Search input controls faq-list
-PASS: Search input references helper text
-PASS: Search input references result status
-PASS: Search input references no-result status
-PASS: Result count live region exists
-PASS: FAQ collection uses ul/list semantics
-PASS: FAQ item data count &gt;= 8
-PASS: FAQ toggles use buttons
-PASS: Form submit is prevented in JS
-PASS: CSS includes focus-visible rule
-PASS: Decorative SVG icons are hidden
-PASS: No dependency import statements</code></pre>
+<pre><code>## 修正版 node 構文チェック
+合格: app.js の構文エラーなし
+
+## 修正版 静的監査
+合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+合格: 検索欄がfaq-listを制御対象として宣言している
+合格: 検索欄が補足説明テキストを参照している
+合格: 検索欄が結果件数表示を参照している
+合格: 検索欄が該当なし表示を参照している
+合格: 結果件数がaria-liveで通知される
+合格: FAQ一覧がul/liのリスト構造になっている
+合格: FAQデータが8件以上ある
+合格: FAQ開閉にbutton要素を使っている
+合格: フォーム送信時のページ再読み込みを防いでいる
+合格: キーボードフォーカス用の:focus-visible指定がある
+合格: 装飾SVGがaria-hiddenかつfocusable=falseになっている
+合格: 依存パッケージのimport/requireを使っていない</code></pre>
 <p>差分として重要なのは、単にHTMLが変わったことではない。Codexに渡した前工程情報が変わると、成果物の構造が変わったことだ。</p>
 <p>fixed-appでは検索欄がこうなった。</p>
 <pre><code>&lt;input
   id=&quot;faq-search&quot;
   type=&quot;search&quot;
   autocomplete=&quot;off&quot;
-  placeholder=&quot;Try billing, SSO, export, invite...&quot;
+  placeholder=&quot;例: 請求、SSO、エクスポート、招待&quot;
   aria-controls=&quot;faq-list&quot;
   aria-describedby=&quot;search-help result-status no-results&quot;
 &gt;</code></pre>
@@ -274,24 +276,24 @@ PASS: No dependency import statements</code></pre>
 });</code></pre>
 <h2>14. 標準フォーマットでの監査結果</h2>
 <p>今回の代表的なfindingをAIDD-Specの標準形式で記録すると、こうなる。</p>
-<pre><code>category: Accessibility
-finding: The search input did not declare which result region it controls or which status text describes it.
+<pre><code>category: アクセシビリティ
+finding: 検索欄が、どの結果領域を制御し、どの状態テキストに説明されるのかを宣言していなかった。
 severity: high
-observed_by: static HTML audit
-ideal_state: Search input is programmatically connected to result list, helper text, result count, and no-result state.
-fix_instruction: Add aria-controls=&quot;faq-list&quot; and aria-describedby=&quot;search-help result-status no-results&quot; to the input; keep referenced elements present in the DOM.
+observed_by: 静的HTML監査
+ideal_state: 検索欄が、結果一覧、補足説明、結果件数、該当なし状態とプログラム上もつながっている。
+fix_instruction: inputに aria-controls=&quot;faq-list&quot; と aria-describedby=&quot;search-help result-status no-results&quot; を追加し、参照先要素をDOM内に常に存在させる。
 needed_upstream_info:
-  - Accessibility Contract
-  - State Design: empty/loading/error/success
-  - Copy Contract
+  - アクセシビリティ契約
+  - 状態設計: empty/loading/error/success
+  - 画面文言契約
 standard_update:
   document: AI Task Packet
   field: accessibility_contract.search_relationships
 codex_prompt_delta: |
-  The search input must declare aria-controls for the results container and aria-describedby for helper, live result status, and no-result status text.
+  検索欄には、結果一覧を指すaria-controlsと、補足説明・結果件数・該当なし表示を指すaria-describedbyを必ず指定する。
 verification:
   command: python3 experiments/2026-06-27-accessibility-contract-vibe-faq/audit_static.py experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app
-  expected: PASS</code></pre>
+  expected: 合格</code></pre>
 <p>この形式にすることで、欠陥が単なる反省で終わらず、次回の前工程成果物に戻る。</p>
 <h2>15. AIDD-Specへの反映</h2>
 <p>今日の結果を受けて、標準仕様として以下を追加した。</p>

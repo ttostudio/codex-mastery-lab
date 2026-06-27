@@ -1,23 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vibe Help Center FAQ</title>
+    <title>サポートFAQ検索</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <main class="shell">
       <section class="hero" aria-labelledby="page-title">
         <div>
-          <p class="eyebrow">Vibe Support</p>
-          <h1 id="page-title">Find the right answer fast</h1>
-          <p class="intro">Search account, billing, security, integration, and workspace questions from one focused help center.</p>
+          <p class="eyebrow">ヘルプセンター</p>
+          <h1 id="page-title">必要な回答をすばやく見つける</h1>
+          <p class="intro">アカウント、請求、セキュリティ、外部連携、ワークスペース運用に関するFAQをまとめて検索できます。</p>
         </div>
 
         <form id="search-form" class="search-panel" role="search" aria-labelledby="search-label">
-          <label id="search-label" for="faq-search">Search FAQs</label>
-          <p id="search-help" class="field-help">Filter by keyword, answer text, or tag.</p>
+          <label id="search-label" for="faq-search">FAQを検索</label>
+          <p id="search-help" class="field-help">キーワード、回答本文、タグで絞り込めます。</p>
           <div class="search-box">
             <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
               <path d="M10.5 4a6.5 6.5 0 0 1 5.17 10.44l3.44 3.45a1 1 0 0 1-1.42 1.41l-3.44-3.44A6.5 6.5 0 1 1 10.5 4Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"></path>
@@ -26,7 +26,7 @@
               id="faq-search"
               type="search"
               autocomplete="off"
-              placeholder="Try billing, SSO, export, invite..."
+              placeholder="例: 請求、SSO、エクスポート、招待"
               aria-controls="faq-list"
               aria-describedby="search-help result-status no-results"
             >
@@ -38,13 +38,13 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">FAQ</p>
-            <h2 id="faq-title">Popular questions</h2>
+            <h2 id="faq-title">よく読まれている質問</h2>
           </div>
           <p id="result-status" class="result-status" aria-live="polite"></p>
         </div>
 
         <ul id="faq-list" class="faq-list"></ul>
-        <p id="no-results" class="empty-state" hidden>No matching FAQs. Try a different keyword.</p>
+        <p id="no-results" class="empty-state" hidden>一致するFAQがありません。別のキーワードで試してください。</p>
       </section>
     </main>
 

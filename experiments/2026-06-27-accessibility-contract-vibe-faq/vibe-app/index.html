@@ -1,27 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vibe Help Center</title>
+    <title>サポートFAQ検索</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <main class="shell">
       <section class="hero" aria-labelledby="page-title">
         <div class="hero-copy">
-          <p class="eyebrow">Vibe Support</p>
-          <h1 id="page-title">How can we help?</h1>
-          <p class="intro">Search concise answers about accounts, billing, security, integrations, and team workflows.</p>
+          <p class="eyebrow">ヘルプセンター</p>
+          <h1 id="page-title">よくある質問をすばやく探す</h1>
+          <p class="intro">アカウント、請求、セキュリティ、外部連携、チーム運用に関する回答を検索できます。</p>
         </div>
 
         <form class="search-panel" role="search">
-          <label for="faq-search">Search the help center</label>
+          <label for="faq-search">FAQを検索</label>
           <div class="search-box">
             <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
               <path d="M10.5 4a6.5 6.5 0 0 1 5.17 10.44l3.44 3.45a1 1 0 0 1-1.42 1.41l-3.44-3.44A6.5 6.5 0 1 1 10.5 4Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"/>
             </svg>
-            <input id="faq-search" type="search" autocomplete="off" placeholder="Try billing, SSO, export, invite...">
+            <input id="faq-search" type="search" autocomplete="off" placeholder="例: 請求、SSO、エクスポート、招待">
           </div>
         </form>
       </section>
@@ -30,13 +30,13 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">FAQ</p>
-            <h2 id="faq-title">Popular questions</h2>
+            <h2 id="faq-title">よく読まれている質問</h2>
           </div>
           <p id="result-count" class="result-count" aria-live="polite"></p>
         </div>
 
         <div id="faq-list" class="faq-list"></div>
-        <p id="empty-state" class="empty-state" hidden>No matching articles. Try a different keyword.</p>
+        <p id="empty-state" class="empty-state" hidden>一致する記事がありません。別のキーワードで試してください。</p>
       </section>
     </main>
 

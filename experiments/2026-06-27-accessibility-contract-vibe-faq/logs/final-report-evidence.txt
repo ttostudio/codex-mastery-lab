@@ -1,52 +1,37 @@
-## final git status
- A articles/2026-06-27-accessibility-contract-vibe-faq.md
- A assets/2026-06-27-accessibility-contract-reverse-chain.svg
- A assets/2026-06-27-vibe-vs-fixed-audit.svg
- M backlog.md
- M book/outline.md
- A experiments/2026-06-27-accessibility-contract-vibe-faq/AI_TASK_PACKET_v0.1.md
- A experiments/2026-06-27-accessibility-contract-vibe-faq/PLAN.md
- A experiments/2026-06-27-accessibility-contract-vibe-faq/audit_static.py
- A experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app/app.js
- A experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app/index.html
- A experiments/2026-06-27-accessibility-contract-vibe-faq/fixed-app/styles.css
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/audit-results.md
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/codex-fixed-run.log
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/codex-vibe-run.log
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/environment.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/fixed-verification.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/git-diff-after.patch
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/git-diff-stat.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/git-status-after.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/git-status-before.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/http-check.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/http-index.html
- A experiments/2026-06-27-accessibility-contract-vibe-faq/logs/static-audit.txt
- A experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/app.js
- A experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/index.html
- A experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/styles.css
- A logs/2026-06-27-accessibility-contract-env.txt
- A standards/aidd-spec-ai-task-packet-standard-v0.1.md
-?? experiments/2026-06-27-accessibility-contract-vibe-faq/logs/final-report-evidence.txt
+## バイブ版 node 構文チェック
+合格: app.js の構文エラーなし
 
-## final verification rerun
-PASS: HTML lang exists
-PASS: Search input has visible label
-PASS: Search input controls faq-list
-PASS: Search input references helper text
-PASS: Search input references result status
-PASS: Search input references no-result status
-PASS: Result count live region exists
-PASS: FAQ collection uses ul/list semantics
-PASS: FAQ item data count >= 8
-PASS: FAQ toggles use buttons
-PASS: Form submit is prevented in JS
-PASS: CSS includes focus-visible rule
-PASS: Decorative SVG icons are hidden
-PASS: No dependency import statements
+## バイブ版 静的監査
+合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+不合格: 検索欄がfaq-listを制御対象として宣言している
+不合格: 検索欄が補足説明テキストを参照している
+不合格: 検索欄が結果件数表示を参照している
+不合格: 検索欄が該当なし表示を参照している
+合格: 結果件数がaria-liveで通知される
+不合格: FAQ一覧がul/liのリスト構造になっている
+合格: FAQデータが8件以上ある
+不合格: FAQ開閉にbutton要素を使っている
+不合格: フォーム送信時のページ再読み込みを防いでいる
+不合格: キーボードフォーカス用の:focus-visible指定がある
+合格: 装飾SVGがaria-hiddenかつfocusable=falseになっている
+合格: 依存パッケージのimport/requireを使っていない
 
-## article/asset/standard paths
-/Users/tto/codex-mastery-lab/articles/2026-06-27-accessibility-contract-vibe-faq.md
-/Users/tto/codex-mastery-lab/standards/aidd-spec-ai-task-packet-standard-v0.1.md
-/Users/tto/codex-mastery-lab/assets/2026-06-27-accessibility-contract-reverse-chain.svg
-/Users/tto/codex-mastery-lab/assets/2026-06-27-vibe-vs-fixed-audit.svg
+## 修正版 node 構文チェック
+合格: app.js の構文エラーなし
+
+## 修正版 静的監査
+合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+合格: 検索欄がfaq-listを制御対象として宣言している
+合格: 検索欄が補足説明テキストを参照している
+合格: 検索欄が結果件数表示を参照している
+合格: 検索欄が該当なし表示を参照している
+合格: 結果件数がaria-liveで通知される
+合格: FAQ一覧がul/liのリスト構造になっている
+合格: FAQデータが8件以上ある
+合格: FAQ開閉にbutton要素を使っている
+合格: フォーム送信時のページ再読み込みを防いでいる
+合格: キーボードフォーカス用の:focus-visible指定がある
+合格: 装飾SVGがaria-hiddenかつfocusable=falseになっている
+合格: 依存パッケージのimport/requireを使っていない

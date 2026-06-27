@@ -1,48 +1,48 @@
 const faqs = [
   {
-    question: "How do I invite a teammate?",
-    answer: "Open Settings, choose Members, and send an invitation to their work email. New teammates can be assigned a role before they accept.",
-    tag: "Team"
+    question: "チームメンバーを招待するには？",
+    answer: "設定画面の「メンバー」から、相手の仕事用メールアドレスに招待を送れます。招待前に管理者、編集者、閲覧者などの権限を選べます。",
+    tag: "チーム"
   },
   {
-    question: "Can I enable single sign-on?",
-    answer: "Yes. SSO is available on Business and Enterprise plans. Admins can configure SAML from Settings after verifying the company domain.",
-    tag: "Security"
+    question: "シングルサインオンは使えますか？",
+    answer: "はい。ビジネスプラン以上でSAML方式のSSOを利用できます。管理者が会社ドメインを確認した後、設定画面から有効化します。",
+    tag: "セキュリティ"
   },
   {
-    question: "Where can I update billing details?",
-    answer: "Billing owners can update payment methods, billing contacts, and invoice details from Settings under Billing.",
-    tag: "Billing"
+    question: "請求情報はどこで変更できますか？",
+    answer: "請求管理者は、設定画面の「請求」から支払い方法、請求先メール、請求書情報を変更できます。",
+    tag: "請求"
   },
   {
-    question: "How do exports work?",
-    answer: "Workspace admins can export projects as CSV files from the Reports area. Large exports are delivered by email when they are ready.",
-    tag: "Data"
+    question: "データのエクスポート方法を知りたいです",
+    answer: "ワークスペース管理者は、レポート画面からCSV形式でプロジェクト情報をエクスポートできます。大きなデータは準備完了後にメールで通知されます。",
+    tag: "データ"
   },
   {
-    question: "Does Vibe support Slack notifications?",
-    answer: "Yes. Connect Slack from Integrations, pick a channel, and choose which project events should post updates.",
-    tag: "Integrations"
+    question: "Slack通知に対応していますか？",
+    answer: "はい。外部連携画面からSlackを接続し、通知先チャンネルと通知したいイベントを選択できます。",
+    tag: "外部連携"
   },
   {
-    question: "Can I restore deleted projects?",
-    answer: "Deleted projects remain recoverable for 30 days. Go to Settings, select Trash, and restore the project from the list.",
-    tag: "Projects"
+    question: "削除したプロジェクトは復元できますか？",
+    answer: "削除後30日以内であれば復元できます。設定画面の「ゴミ箱」から対象プロジェクトを選んで復元してください。",
+    tag: "プロジェクト"
   },
   {
-    question: "How do I change notification preferences?",
-    answer: "Open your profile menu, select Notifications, and adjust email, desktop, and digest settings for each workspace.",
-    tag: "Account"
+    question: "通知設定はどこで変更できますか？",
+    answer: "プロフィールメニューの「通知」から、メール通知、デスクトップ通知、週次ダイジェストをワークスペースごとに調整できます。",
+    tag: "アカウント"
   },
   {
-    question: "What roles are available for users?",
-    answer: "Workspaces include owner, admin, editor, and viewer roles. Each role controls access to billing, member management, and project changes.",
-    tag: "Permissions"
+    question: "ユーザー権限には何がありますか？",
+    answer: "ワークスペースには、オーナー、管理者、編集者、閲覧者の権限があります。権限ごとに請求、メンバー管理、プロジェクト変更の可否が変わります。",
+    tag: "権限"
   },
   {
-    question: "Is there an audit log?",
-    answer: "Enterprise workspaces include searchable audit logs for sign-ins, role changes, exports, billing events, and integration updates.",
-    tag: "Compliance"
+    question: "監査ログは確認できますか？",
+    answer: "エンタープライズプランでは、ログイン、権限変更、エクスポート、請求、外部連携の変更履歴を検索できる監査ログを利用できます。",
+    tag: "監査"
   }
 ];
 
@@ -114,10 +114,9 @@ function getMatches(query) {
 }
 
 function updateStatus(count, query) {
-  const noun = count === 1 ? "FAQ" : "FAQs";
   resultStatus.textContent = query
-    ? `${count} ${noun} found for "${query}".`
-    : `${count} ${noun} available.`;
+    ? `「${query}」に一致するFAQは${count}件です。`
+    : `現在${count}件のFAQを表示しています。`;
 }
 
 function renderFaqs() {

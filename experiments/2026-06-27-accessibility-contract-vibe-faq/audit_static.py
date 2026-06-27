@@ -45,14 +45,14 @@ class AuditParser(HTMLParser):
 
 
 def check(name, passed, failures):
-    print(f"{'PASS' if passed else 'FAIL'}: {name}")
+    print(f"{'合格' if passed else '不合格'}: {name}")
     if not passed:
         failures.append(name)
 
 
 def main():
     if len(sys.argv) != 2:
-        print("usage: audit_static.py FIXED_APP_DIR", file=sys.stderr)
+        print("使い方: audit_static.py 対象アプリディレクトリ", file=sys.stderr)
         return 2
 
     root = Path(sys.argv[1])
@@ -66,20 +66,20 @@ def main():
     describedby = set(search.get("aria-describedby", "").split())
     failures = []
 
-    check("HTML lang exists", bool(re.search(r"<html[^>]+lang=", html)), failures)
-    check("Search input has visible label", "faq-search" in parser.labels_for, failures)
-    check("Search input controls faq-list", search.get("aria-controls") == "faq-list", failures)
-    check("Search input references helper text", "search-help" in describedby and "search-help" in parser.ids, failures)
-    check("Search input references result status", "result-status" in describedby and "result-status" in parser.ids, failures)
-    check("Search input references no-result status", "no-results" in describedby and "no-results" in parser.ids, failures)
-    check("Result count live region exists", bool(parser.live_regions), failures)
-    check("FAQ collection uses ul/list semantics", "faq-list" in parser.ul_ids, failures)
-    check("FAQ item data count >= 8", len(re.findall(r"question:\s*[\"']", js)) >= 8, failures)
-    check("FAQ toggles use buttons", bool(re.search(r"createElement\([\"']button[\"']\)", js)), failures)
-    check("Form submit is prevented in JS", "preventDefault()" in js and bool(re.search(r"[\"']submit[\"']\s*,", js)), failures)
-    check("CSS includes focus-visible rule", ":focus-visible" in css, failures)
-    check("Decorative SVG icons are hidden", all(icon.get("aria-hidden") == "true" and icon.get("focusable") == "false" for icon in parser.decorative_icons), failures)
-    check("No dependency import statements", "import " not in js and "require(" not in js, failures)
+    check("html要素にlang属性がある", bool(re.search(r"<html[^>]+lang=", html)), failures)
+    check("検索欄に見えるラベルがある", "faq-search" in parser.labels_for, failures)
+    check("検索欄がfaq-listを制御対象として宣言している", search.get("aria-controls") == "faq-list", failures)
+    check("検索欄が補足説明テキストを参照している", "search-help" in describedby and "search-help" in parser.ids, failures)
+    check("検索欄が結果件数表示を参照している", "result-status" in describedby and "result-status" in parser.ids, failures)
+    check("検索欄が該当なし表示を参照している", "no-results" in describedby and "no-results" in parser.ids, failures)
+    check("結果件数がaria-liveで通知される", bool(parser.live_regions), failures)
+    check("FAQ一覧がul/liのリスト構造になっている", "faq-list" in parser.ul_ids, failures)
+    check("FAQデータが8件以上ある", len(re.findall(r"question:\s*[\"']", js)) >= 8, failures)
+    check("FAQ開閉にbutton要素を使っている", bool(re.search(r"createElement\([\"']button[\"']\)", js)), failures)
+    check("フォーム送信時のページ再読み込みを防いでいる", "preventDefault()" in js and bool(re.search(r"[\"']submit[\"']\s*,", js)), failures)
+    check("キーボードフォーカス用の:focus-visible指定がある", ":focus-visible" in css, failures)
+    check("装飾SVGがaria-hiddenかつfocusable=falseになっている", all(icon.get("aria-hidden") == "true" and icon.get("focusable") == "false" for icon in parser.decorative_icons), failures)
+    check("依存パッケージのimport/requireを使っていない", "import " not in js and "require(" not in js, failures)
 
     return 1 if failures else 0
 

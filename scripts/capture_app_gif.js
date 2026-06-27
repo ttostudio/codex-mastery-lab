@@ -25,11 +25,11 @@ async function interact(page, frameDir) {
     await search.click();
     await sleep(400);
     await search.fill('');
-    await search.type('security', { delay: 110 });
+    await search.type('請求', { delay: 130 });
     await sleep(900);
-    await captureFrame(page, frameDir, idx++, 'search-security');
+    await captureFrame(page, frameDir, idx++, 'search-japanese-query');
     await search.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');
-    await search.type('zzzz-not-found', { delay: 90 });
+    await search.type('存在しない質問', { delay: 110 });
     await sleep(900);
     await captureFrame(page, frameDir, idx++, 'search-empty');
     await search.press(process.platform === 'darwin' ? 'Meta+A' : 'Control+A');

@@ -1,24 +1,14 @@
-## file list
-experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/app.js
-experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/index.html
-experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/styles.css
-
-## line counts
-      45 experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/index.html
-     248 experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/styles.css
-      89 experiments/2026-06-27-accessibility-contract-vibe-faq/vibe-app/app.js
-     382 total
-
-## node syntax check
-
-## static audit
-PASS: HTML lang exists
-PASS: Search input has label for faq-search
-PASS: Result count live region exists
-FAIL: FAQ list has explicit list semantics
-FAIL: Search input declares controlled results
-FAIL: No-result state is programmatically referenced by input
-FAIL: Form submit is prevented in JS
-FAIL: Focus visible rule exists
-PASS: FAQ item count >= 8
-PASS: No dependency import statements
+合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+不合格: 検索欄がfaq-listを制御対象として宣言している
+不合格: 検索欄が補足説明テキストを参照している
+不合格: 検索欄が結果件数表示を参照している
+不合格: 検索欄が該当なし表示を参照している
+合格: 結果件数がaria-liveで通知される
+不合格: FAQ一覧がul/liのリスト構造になっている
+合格: FAQデータが8件以上ある
+不合格: FAQ開閉にbutton要素を使っている
+不合格: フォーム送信時のページ再読み込みを防いでいる
+不合格: キーボードフォーカス用の:focus-visible指定がある
+合格: 装飾SVGがaria-hiddenかつfocusable=falseになっている
+合格: 依存パッケージのimport/requireを使っていない

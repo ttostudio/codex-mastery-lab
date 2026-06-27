@@ -1,17 +1,14 @@
-## fixed node syntax check
-## fixed static audit
-PASS: HTML lang exists
-PASS: Search input has visible label
-PASS: Search input controls faq-list
-PASS: Search input references helper text
-PASS: Search input references result status
-PASS: Search input references no-result status
-PASS: Result count live region exists
-PASS: FAQ collection uses ul/list semantics
-PASS: FAQ item data count >= 8
-PASS: FAQ toggles use buttons
-PASS: Form submit is prevented in JS
-PASS: CSS includes focus-visible rule
-PASS: Decorative SVG icons are hidden
-PASS: No dependency import statements
-## diff name-status
+合格: html要素にlang属性がある
+合格: 検索欄に見えるラベルがある
+合格: 検索欄がfaq-listを制御対象として宣言している
+合格: 検索欄が補足説明テキストを参照している
+合格: 検索欄が結果件数表示を参照している
+合格: 検索欄が該当なし表示を参照している
+合格: 結果件数がaria-liveで通知される
+合格: FAQ一覧がul/liのリスト構造になっている
+合格: FAQデータが8件以上ある
+合格: FAQ開閉にbutton要素を使っている
+合格: フォーム送信時のページ再読み込みを防いでいる
+合格: キーボードフォーカス用の:focus-visible指定がある
+合格: 装飾SVGがaria-hiddenかつfocusable=falseになっている
+合格: 依存パッケージのimport/requireを使っていない
