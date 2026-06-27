@@ -37,7 +37,7 @@ th { background:#f1f5f9; }
 <p>前回は問い合わせフォームUIの PII / Security Baseline を扱った。そこで見えたのは、Codexが <code>textContent</code> を使うなど実装判断としてはかなり良い一方で、後工程が読むべき <code>data-classification</code>、consent、retention、証拠ファイルが抜ける、という問題だった。</p>
 <p>今日は一段だけ本番に近づけて、フォームの送信先になる小さなAPIを作る。</p>
 <blockquote>Codexに「問い合わせフォームAPIをいい感じに作って」と雑に頼んだとき、後工程のSecurity / Operations監査が必要とする CSRF、Origin allowlist、rate limit、request id、audit log、retention、error contract は成果物に残るのか？</blockquote>
-<p>建築でいえば、受付カウンターの図面だけでは足りない。受付の裏にある書類保管庫、入退室管理、台帳、廃棄ルール、混雑時の導線まで含めて初めて運用できる。ソフトウェアのAPIも同じで、<code>POST /api/contact</code> が200系を返すだけでは運用図面とは言えない。</p>
+<p>旅行でいえば、目的地だけ決めても足りない。移動手段、持ち物、緊急時の連絡先、予算、混雑時の代替案まで含めて初めて安心して進められる。ソフトウェアのAPIも同じで、<code>POST /api/contact</code> が200系を返すだけでは運用説明書とは言えない。</p>
 <h2>2. 仮説</h2>
 <p>今回の仮説は次の通り。</p>
 <blockquote>Codexは、雑プロンプトでもJSON API、入力検証、body size limitくらいまでは自律的に入れる可能性がある。しかし、CSRF / Origin / rate limit / audit log / retention / evidence file は、後工程の要求として明示しない限り抜けやすい。これは「レビューで指摘する項目」ではなく、AI Task Packetの API Security Contract / API Operations Contract に最初から入れるべきである。</blockquote>
@@ -108,7 +108,7 @@ FAIL: error response contract is documented
 FAIL: SECURITY_OPERATIONS.md evidence file exists
 FAIL: evidence file contains verification commands/results
 SUMMARY: 9 passed / 11 failed</code></pre>
-<p>面白いのは、失敗が「APIとして動かない」ではないことだ。むしろAPIは動く。入力検証もある。問題は、後工程が読むべき運用図面がないことだった。</p>
+<p>面白いのは、失敗が「APIとして動かない」ではないことだ。むしろAPIは動く。入力検証もある。問題は、後工程が読むべき運用説明書がないことだった。</p>
 <p><img src="assets/2026-06-27-contact-api-audit-comparison.svg" alt="Contact API audit comparison"></p>
 <h2>7. 欠陥から理想状態を定義する</h2>
 <p>代表findingをAIDD-Spec標準形式で書く。</p>
@@ -216,7 +216,7 @@ Audit logs are JSON lines containing only non-PII metadata.
 Submissions are not persisted to disk, database, browser storage, queue, email, or external service.</code></pre>
 <h2>10. 今回分かったこと</h2>
 <p>第一に、Codexは雑プロンプトでもかなり賢い。今回のvibe APIは、依存を増やさず、body limitと入力検証を入れ、JSON APIとして成立していた。これは重要な観察である。AIが何も考えていないわけではない。</p>
-<p>第二に、それでも「後工程の図面」は抜ける。CSRF、Origin、rate limit、request id、audit log、retention、error contractは、実装者の善意ではなく、標準成果物として要求する必要がある。</p>
+<p>第二に、それでも「後工程の説明書」は抜ける。CSRF、Origin、rate limit、request id、audit log、retention、error contractは、実装者の善意ではなく、標準成果物として要求する必要がある。</p>
 <p>第三に、AI Task Packetへ戻すべきなのは「もっと安全にして」ではない。<code>allowed_origins</code>、<code>csrf_policy</code>、<code>rate_limit_policy</code>、<code>audit_log_policy</code>、<code>error_response_contract</code> のように、後工程がチェック可能なフィールドに分解する必要がある。</p>
 <h2>11. AIDD-Specへの反映</h2>
 <p><code>standards/aidd-spec-ai-task-packet-standard-v0.1.md</code> を更新し、次のフィールドを追加した。</p>
@@ -258,4 +258,4 @@ api_operations_contract:
 <h2>13. 次回検証</h2>
 <p>今回は静的監査と小さなsmoke testに限定した。次回は、同じAPIに対して <code>429</code> を実際に踏む小さな負荷テスト、Origin拒否、CSRF拒否のnegative testを追加したい。さらに、<code>SECURITY_OPERATIONS.md</code> を人間が書くのではなく、AIDD Control Planeがフォーム入力から自動生成するMVPへ接続する。</p>
 <p>今回の結論はシンプルである。</p>
-<blockquote>AIにAPIを作らせるなら、エンドポイント仕様だけでなく、脅威境界・濫用境界・運用証跡まで含めて渡す。そうでなければ、動くAPIはできても、後工程が読める図面にはならない。</blockquote></article></main></div></body></html>
+<blockquote>AIにAPIを作らせるなら、エンドポイント仕様だけでなく、脅威境界・濫用境界・運用証跡まで含めて渡す。そうでなければ、動くAPIはできても、後工程が読める説明書にはならない。</blockquote></article></main></div></body></html>

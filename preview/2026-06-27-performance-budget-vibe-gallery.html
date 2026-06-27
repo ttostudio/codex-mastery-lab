@@ -41,7 +41,7 @@ th { background:#f1f5f9; }
 <h2>1. 今日の問い</h2>
 <p>前回は、雑に作ったFAQ検索アプリをアクセシビリティ観点で監査し、<code>aria-controls</code> やリストセマンティクスを AI Task Packet に戻した。今日の問いは性能である。</p>
 <blockquote>Codexに「プレミアムでビジュアルなSaaSギャラリーを作って」と雑に頼むと、見た目は良くなる。しかし、後工程のPerformance / Lighthouse監査が必要とする予算・証拠・資産方針は成果物に残るのか？</blockquote>
-<p>建築図面でいえば、完成予想パースだけでは施工できない。壁材、重量、配線、設備容量、避難経路、検査項目が必要になる。Webアプリでも同じで、見た目だけでは足りない。AIが作ったUIを運用・監査できる設計図面にするには、Performance Budget を前工程の仕様として渡す必要があるのではないか、という仮説を検証した。</p>
+<p>料理でいえば、完成写真だけでは同じ味を再現できない。材料、分量、火加減、手順、失敗しやすいポイントが必要になる。Webアプリでも同じで、見た目だけでは足りない。AIが作ったUIを運用・監査できる共通説明書にするには、Performance Budget を前工程の仕様として渡す必要があるのではないか、という仮説を検証した。</p>
 <h2>2. 仮説</h2>
 <p>今回の仮説は次の通り。</p>
 <blockquote>「premium」「visual」という曖昧な指示は、CSSの肥大化、重い装飾、外部画像/CDN、motion配慮漏れを誘発しやすい。たとえ今回Codexが外部依存を避けても、Performance BudgetとAsset Policyを事前に渡さなければ、後工程で何を合格とするかが曖昧になる。</blockquote>
@@ -111,7 +111,7 @@ FAIL: Performance budget is documented in deliverable
 FAIL: Potentially costly visual CSS is bounded — found 20 tokens
 FAIL: Motion/transition has prefers-reduced-motion fallback
 PASS: No console logging left in JS</code></pre>
-<p>ここで重要なのは、ファイルサイズ自体は合格していることだ。総量18KBなので、単純に「重い」とは言えない。しかしCSSが605行まで伸び、Performance Budgetの証拠がなく、motion fallbackもない。つまり、性能欠陥は「現在のページが遅い」ではなく、「後工程で継続監査できる設計図面になっていない」ことにある。</p>
+<p>ここで重要なのは、ファイルサイズ自体は合格していることだ。総量18KBなので、単純に「重い」とは言えない。しかしCSSが605行まで伸び、Performance Budgetの証拠がなく、motion fallbackもない。つまり、性能欠陥は「現在のページが遅い」ではなく、「後工程で継続監査できる共通説明書になっていない」ことにある。</p>
 <p><img src="assets/2026-06-27-performance-budget-comparison.svg" alt="Performance Budget comparison"></p>
 <h2>7. 欠陥から理想状態を定義する</h2>
 <p>今回の代表findingをAIDD-Spec標準形式で書く。</p>
@@ -207,7 +207,7 @@ asset_policy:
 <h2>11. CTO視点の考察</h2>
 <p>今回の学びは、AIが悪いコードを書いたという話ではない。むしろCodexは雑プロンプトでもかなり良い判断をした。外部依存なし、Vanilla JS、静的HTML、見た目もそれなりに成立していた。</p>
 <p>危険なのは、良い判断が「偶然」に依存していることだ。ある日別のAI、別のモデル、別のプロンプトで同じ「premium visual」を渡したら、Unsplash画像、Google Fonts、重いアニメーション、外部analyticsが入り込むかもしれない。標準仕様は、AIの善意に頼らないためにある。</p>
-<p>建築図面なら、デザイナーが美しい外観を描いても、構造計算や設備容量が別途必要になる。AI駆動開発でも、見た目のUI指示とは別に、Performance BudgetとAsset Policyを図面として渡す必要がある。</p>
+<p>料理なら、盛り付け写真が美しくても、材料の分量や火加減が別途必要になる。AI駆動開発でも、見た目のUI指示とは別に、Performance BudgetとAsset Policyを説明書として渡す必要がある。</p>
 <h2>12. 明日から使えるチェックリスト</h2>
 <ul>
 <li>AIに「premium」「visual」「rich」と言うなら、同時に予算を書く</li>

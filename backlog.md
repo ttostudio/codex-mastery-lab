@@ -5,8 +5,8 @@
 - [x] Reverse Engineering Methodology: 雑バイブコーディング成果物を監査し、後工程から前工程成果物を逆算する（2026-06-27 FAQ検索アクセシビリティ契約で実施）
 - [x] Vibe-coded sample appを1つ作り、監査カテゴリを通して欠陥を洗い出す（2026-06-27 vibe-app）
 - [x] 監査結果からAI Task Packet v0.1を逆算する（2026-06-27 Accessibility Contract / Verification Evidence）
-- [ ] AIDD-Spec v0.1: 建築図面に相当する標準成果物体系を定義する（API Security / Operations Contractを2026-06-27にAI Task Packet v0.4へ追記）
-- [ ] 書籍企画: 「AI駆動開発時代の設計図面」章立てを毎週更新する
+- [ ] AIDD-Spec v0.1: 専門業務説明書に相当する標準成果物体系を定義する（API Security / Operations Contractを2026-06-27にAI Task Packet v0.4へ追記）
+- [ ] 書籍企画: 「AI駆動開発時代の共通説明書」章立てを毎週更新する
 - [ ] Product Brief テンプレートとCodex検証
 - [ ] AI-Ready Requirement Spec テンプレートとCodex検証
 - [ ] Design Contract: 画面/状態/アクセシビリティ設計テンプレート

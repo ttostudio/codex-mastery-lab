@@ -14,7 +14,7 @@
 
 > Codexに「問い合わせフォームAPIをいい感じに作って」と雑に頼んだとき、後工程のSecurity / Operations監査が必要とする CSRF、Origin allowlist、rate limit、request id、audit log、retention、error contract は成果物に残るのか？
 
-建築でいえば、受付カウンターの図面だけでは足りない。受付の裏にある書類保管庫、入退室管理、台帳、廃棄ルール、混雑時の導線まで含めて初めて運用できる。ソフトウェアのAPIも同じで、`POST /api/contact` が200系を返すだけでは運用図面とは言えない。
+旅行でいえば、目的地だけ決めても足りない。移動手段、持ち物、緊急時の連絡先、予算、混雑時の代替案まで含めて初めて安心して進められる。ソフトウェアのAPIも同じで、`POST /api/contact` が200系を返すだけでは運用説明書とは言えない。
 
 ## 2. 仮説
 
@@ -127,7 +127,7 @@ FAIL: evidence file contains verification commands/results
 SUMMARY: 9 passed / 11 failed
 ```
 
-面白いのは、失敗が「APIとして動かない」ではないことだ。むしろAPIは動く。入力検証もある。問題は、後工程が読むべき運用図面がないことだった。
+面白いのは、失敗が「APIとして動かない」ではないことだ。むしろAPIは動く。入力検証もある。問題は、後工程が読むべき運用説明書がないことだった。
 
 ![Contact API audit comparison](../assets/2026-06-27-contact-api-audit-comparison.svg)
 
@@ -274,7 +274,7 @@ Submissions are not persisted to disk, database, browser storage, queue, email, 
 
 第一に、Codexは雑プロンプトでもかなり賢い。今回のvibe APIは、依存を増やさず、body limitと入力検証を入れ、JSON APIとして成立していた。これは重要な観察である。AIが何も考えていないわけではない。
 
-第二に、それでも「後工程の図面」は抜ける。CSRF、Origin、rate limit、request id、audit log、retention、error contractは、実装者の善意ではなく、標準成果物として要求する必要がある。
+第二に、それでも「後工程の説明書」は抜ける。CSRF、Origin、rate limit、request id、audit log、retention、error contractは、実装者の善意ではなく、標準成果物として要求する必要がある。
 
 第三に、AI Task Packetへ戻すべきなのは「もっと安全にして」ではない。`allowed_origins`、`csrf_policy`、`rate_limit_policy`、`audit_log_policy`、`error_response_contract` のように、後工程がチェック可能なフィールドに分解する必要がある。
 
@@ -327,4 +327,4 @@ api_operations_contract:
 
 今回の結論はシンプルである。
 
-> AIにAPIを作らせるなら、エンドポイント仕様だけでなく、脅威境界・濫用境界・運用証跡まで含めて渡す。そうでなければ、動くAPIはできても、後工程が読める図面にはならない。
+> AIにAPIを作らせるなら、エンドポイント仕様だけでなく、脅威境界・濫用境界・運用証跡まで含めて渡す。そうでなければ、動くAPIはできても、後工程が読める説明書にはならない。
