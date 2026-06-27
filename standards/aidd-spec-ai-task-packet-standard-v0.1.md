@@ -33,6 +33,17 @@ accessibility_contract:
 security_contract:
   data_classification: string
   input_validation: []
+performance_budget_contract:
+  total_static_bytes: string
+  css_budget: string
+  js_budget: string
+  lighthouse_targets: []
+  motion_policy: string
+asset_policy:
+  external_network_assets: string
+  image_dimensions_required: boolean
+  lazy_loading_policy: string
+  font_policy: string
 quality_gate:
   required_commands: []
   expected_results: []
@@ -106,7 +117,57 @@ quality_gate:
     - Static accessibility contract audit exits 0
 ```
 
-## 4. AI Task Packetテンプレート Lite
+## 4. Performance Budget実験から追加した項目
+
+### 4.1 `performance_budget_contract`
+
+見た目の品質をAIに任せると、静的ページでもCSSが必要以上に膨らみ、レビュー可能性・将来のLighthouse改善・モバイル性能の前提が曖昧になる。Performance Budgetは「あとで測るもの」ではなく、AI Task Packetに最初から渡す実装制約である。
+
+例:
+
+```yaml
+performance_budget_contract:
+  total_static_bytes: "index.html + styles.css + app.js <= 32KB"
+  css_budget: "styles.css <= 12KB and <= 360 lines"
+  js_budget: "app.js <= 5KB"
+  lighthouse_targets:
+    - performance >= 90 on target mobile profile
+    - CLS <= 0.1
+    - LCP target element is identified before implementation
+  motion_policy: "Any transition must have prefers-reduced-motion fallback"
+```
+
+### 4.2 `asset_policy`
+
+AIは「premium」「visual」という曖昧な指示に対し、リモート画像、CDNフォント、重い装飾CSS、外部スクリプトを選ぶ可能性がある。今回の実験ではCodexが外部依存を避けたが、それは幸運であって標準仕様ではない。後工程が必要とするのは、資産の取得元・サイズ・CLS対策・遅延読み込み方針の明文化である。
+
+例:
+
+```yaml
+asset_policy:
+  external_network_assets: "forbidden unless explicitly approved"
+  image_dimensions_required: true
+  lazy_loading_policy: "below-fold raster images must use loading=lazy"
+  font_policy: "system fonts by default; no third-party font CDN in Lite experiments"
+```
+
+### 4.3 `verification_evidence.performance_budget_file`
+
+Codexのチャット上の「確認しました」は証拠ではない。後工程で再監査できるよう、実測値・コマンド・トレードオフをファイルとして残す。
+
+例:
+
+```yaml
+verification_evidence:
+  files_to_attach:
+    - PERFORMANCE_BUDGET.md
+    - logs/fixed-verification.txt
+  logs_to_save:
+    - Codex run log
+    - static performance audit output
+```
+
+## 5. AI Task Packetテンプレート Lite
 
 ```markdown
 # AI Task Packet: <task name>
@@ -138,6 +199,21 @@ quality_gate:
 - Keyboard interactions:
 - Focus evidence:
 - Live regions:
+
+## Performance Budget Contract
+
+- Total static bytes:
+- CSS budget:
+- JS budget:
+- Lighthouse / Core Web Vitals target:
+- Motion policy:
+
+## Asset Policy
+
+- External network assets:
+- Image dimensions:
+- Lazy loading:
+- Font policy:
 
 ## Quality Gate
 

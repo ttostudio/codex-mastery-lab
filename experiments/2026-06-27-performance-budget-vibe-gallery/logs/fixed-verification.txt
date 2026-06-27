@@ -1,0 +1,30 @@
+## fixed node syntax check
+## fixed performance static audit
+APP: experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
+SIZES: html=4930 css=6742 js=796 total=12468 css_lines=349
+PASS: index.html exists
+PASS: styles.css exists
+PASS: app.js exists
+PASS: HTML bytes within budget — 4930 <= 16000
+PASS: CSS bytes within budget — 6742 <= 12000
+PASS: JS bytes within budget — 796 <= 5000
+PASS: Total static bytes within budget — 12468 <= 32000
+PASS: CSS line count stays reviewable — 349 <= 360
+PASS: No external network asset references — found 0
+PASS: Images have width/height to reduce CLS — img tags: 0
+PASS: Below-fold images are lazy loaded — img tags: 0
+PASS: Performance budget is documented in deliverable
+PASS: Potentially costly visual CSS is bounded — found 5 tokens
+PASS: Motion/transition has prefers-reduced-motion fallback
+PASS: No console logging left in JS
+## file sizes
+    4930 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+    6742 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+     796 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+   12468 total
+## file lines
+     115 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+     349 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+      29 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+      32 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+     525 total

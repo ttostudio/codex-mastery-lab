@@ -1,0 +1,4633 @@
+Reading additional input from stdin...
+OpenAI Codex v0.142.3
+--------
+workdir: /Users/tto/codex-mastery-lab
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: none
+reasoning summaries: none
+session id: 019f0728-fa68-7681-81f9-44a0b1ee6952
+--------
+user
+Read experiments/2026-06-27-performance-budget-vibe-gallery/AI_TASK_PACKET_v0.2.md. Implement exactly that packet. Keep all changes inside experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app. Do not install dependencies. Then run the verification commands if possible and report results. Then exit.
+codex
+I’ll read the task packet and inspect only the target app area before editing. After that I’ll implement within `fixed-app` and run the packet’s verification commands where the existing environment allows.
+exec
+/bin/zsh -lc "sed -n '1,260p' experiments/2026-06-27-performance-budget-vibe-gallery/AI_TASK_PACKET_v0.2.md" in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+# AI Task Packet v0.2: Performance-Budgeted Static SaaS Gallery
+
+## Scope
+Implement the same tiny static SaaS product gallery landing page as the vibe app, but under:
+
+```text
+experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/
+```
+
+Use only HTML, CSS, and vanilla JavaScript. Do not install dependencies. Do not modify files outside `fixed-app/` except you may read `audit_static_performance.py`.
+
+## Functional Requirements
+- Hero section with clear product story.
+- 6 feature/product cards.
+- A testimonial/proof section.
+- Small category filter interaction using vanilla JS.
+- Works as static files served by `python3 -m http.server`.
+
+## Performance Budget Contract
+- Total static bytes for `index.html + styles.css + app.js` must be <= 32KB.
+- `styles.css` must be <= 12KB and <= 360 lines.
+- `app.js` must be <= 5KB.
+- Avoid external network assets: no `http://`, `https://`, CSS `@import`, or `url(...)` references.
+- Use CSS/simple inline SVG/semantic HTML instead of remote raster images.
+- If images are used, every `<img>` must have explicit `width` and `height`; below-fold images must use `loading="lazy"`.
+- Bound expensive paint effects: avoid excessive `box-shadow`, `backdrop-filter`, `filter`, `transition`, and `transform` declarations.
+- If transitions are used, include a `@media (prefers-reduced-motion: reduce)` fallback.
+
+## Asset Policy
+- No third-party fonts.
+- No CDN.
+- No tracking pixels or analytics.
+- Decorative visuals must be local and lightweight.
+
+## Verification Evidence
+Create a short `PERFORMANCE_BUDGET.md` inside `fixed-app/` containing:
+- Budget values.
+- Actual measured sizes.
+- Commands run.
+- Any known trade-offs.
+
+Run if possible:
+
+```bash
+node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
+```
+
+The static audit should pass.
+
+exec
+/bin/zsh -lc 'find experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app -maxdepth 3 -type f | sort' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+find: experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app: No such file or directory
+
+codex
+The packet is straightforward: create a tiny static landing page, stay under the size/paint budgets, and document measured sizes. The `fixed-app` directory does not exist yet, so I’m going to create it and also read the audit script to match its exact checks.
+exec
+/bin/zsh -lc "sed -n '1,260p' experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py" in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+#!/usr/bin/env python3
+"""Tiny static performance/asset audit for the performance budget experiment.
+No third-party dependencies. Intentionally conservative: this is a Lighthouse proxy,
+not a Lighthouse replacement.
+"""
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+CSS_BUDGET_BYTES = 12_000
+JS_BUDGET_BYTES = 5_000
+HTML_BUDGET_BYTES = 16_000
+TOTAL_BUDGET_BYTES = 32_000
+MAX_CSS_LINES = 360
+
+
+def result(ok: bool, label: str, detail: str = "") -> tuple[bool, str]:
+    status = "PASS" if ok else "FAIL"
+    suffix = f" — {detail}" if detail else ""
+    return ok, f"{status}: {label}{suffix}"
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        print("Usage: audit_static_performance.py <app_dir>")
+        return 2
+
+    app_dir = Path(sys.argv[1])
+    html_path = app_dir / "index.html"
+    css_path = app_dir / "styles.css"
+    js_path = app_dir / "app.js"
+
+    html = html_path.read_text(encoding="utf-8") if html_path.exists() else ""
+    css = css_path.read_text(encoding="utf-8") if css_path.exists() else ""
+    js = js_path.read_text(encoding="utf-8") if js_path.exists() else ""
+    perf_doc_path = app_dir / "PERFORMANCE_BUDGET.md"
+    perf_doc = perf_doc_path.read_text(encoding="utf-8") if perf_doc_path.exists() else ""
+
+    sizes = {
+        "html": len(html.encode("utf-8")),
+        "css": len(css.encode("utf-8")),
+        "js": len(js.encode("utf-8")),
+    }
+    total = sum(sizes.values())
+    css_lines = len(css.splitlines())
+
+    checks: list[tuple[bool, str]] = []
+    checks.append(result(html_path.exists(), "index.html exists"))
+    checks.append(result(css_path.exists(), "styles.css exists"))
+    checks.append(result(js_path.exists(), "app.js exists"))
+    checks.append(result(sizes["html"] <= HTML_BUDGET_BYTES, "HTML bytes within budget", f"{sizes['html']} <= {HTML_BUDGET_BYTES}"))
+    checks.append(result(sizes["css"] <= CSS_BUDGET_BYTES, "CSS bytes within budget", f"{sizes['css']} <= {CSS_BUDGET_BYTES}"))
+    checks.append(result(sizes["js"] <= JS_BUDGET_BYTES, "JS bytes within budget", f"{sizes['js']} <= {JS_BUDGET_BYTES}"))
+    checks.append(result(total <= TOTAL_BUDGET_BYTES, "Total static bytes within budget", f"{total} <= {TOTAL_BUDGET_BYTES}"))
+    checks.append(result(css_lines <= MAX_CSS_LINES, "CSS line count stays reviewable", f"{css_lines} <= {MAX_CSS_LINES}"))
+
+    external_refs = re.findall(r"https?://|@import|url\(", html + "\n" + css + "\n" + js)
+    checks.append(result(not external_refs, "No external network asset references", f"found {len(external_refs)}"))
+
+    img_tags = re.findall(r"<img\b[^>]*>", html, flags=re.I)
+    imgs_have_dimensions = all(re.search(r"\bwidth=", tag, re.I) and re.search(r"\bheight=", tag, re.I) for tag in img_tags)
+    imgs_have_lazy = all(re.search(r"\bloading=[\"']lazy[\"']", tag, re.I) for tag in img_tags[1:])
+    checks.append(result(imgs_have_dimensions, "Images have width/height to reduce CLS", f"img tags: {len(img_tags)}"))
+    checks.append(result(imgs_have_lazy, "Below-fold images are lazy loaded", f"img tags: {len(img_tags)}"))
+
+    has_perf_doc = re.search(r"performance budget|asset policy|lighthouse|lcp|cls|inp", perf_doc, re.I)
+    checks.append(result(bool(has_perf_doc), "Performance budget is documented in deliverable"))
+
+    costly_css = re.findall(r"backdrop-filter|filter:|box-shadow|transition:|transform:", css)
+    checks.append(result(len(costly_css) <= 18, "Potentially costly visual CSS is bounded", f"found {len(costly_css)} tokens"))
+
+    has_reduced_motion = "prefers-reduced-motion" in css
+    checks.append(result(has_reduced_motion, "Motion/transition has prefers-reduced-motion fallback"))
+
+    no_console = not re.search(r"\bconsole\.(log|warn|error|debug)\b", js)
+    checks.append(result(no_console, "No console logging left in JS"))
+
+    print(f"APP: {app_dir}")
+    print(f"SIZES: html={sizes['html']} css={sizes['css']} js={sizes['js']} total={total} css_lines={css_lines}")
+    for _, line in checks:
+        print(line)
+
+    return 1 if any(not ok for ok, _ in checks) else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+exec
+/bin/zsh -lc 'find experiments/2026-06-27-performance-budget-vibe-gallery -maxdepth 3 -type f | sort' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+experiments/2026-06-27-performance-budget-vibe-gallery/AI_TASK_PACKET_v0.2.md
+experiments/2026-06-27-performance-budget-vibe-gallery/PLAN.md
+experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py
+experiments/2026-06-27-performance-budget-vibe-gallery/logs/codex-fixed-run.log
+experiments/2026-06-27-performance-budget-vibe-gallery/logs/codex-vibe-run.log
+experiments/2026-06-27-performance-budget-vibe-gallery/logs/environment.txt
+experiments/2026-06-27-performance-budget-vibe-gallery/logs/git-status-before.txt
+experiments/2026-06-27-performance-budget-vibe-gallery/logs/vibe-verification.txt
+experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js
+experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html
+experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css
+
+codex
+I’ve got the audit constraints now. I’m checking the existing `vibe-app` only as a reference for content shape, then I’ll build a budgeted version from scratch under `fixed-app`.
+exec
+/bin/zsh -lc "sed -n '1,260p' experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css" in /Users/tto/codex-mastery-lab
+exec
+/bin/zsh -lc "sed -n '1,240p' experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html" in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vibe Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Vibe Gallery home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Vibe Gallery</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#gallery">Gallery</a>
+        <a href="#proof">Proof</a>
+        <a href="#demo">Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">SaaS product gallery</p>
+          <h1 id="page-title">A sharper way to package your product story.</h1>
+          <p class="intro">
+            Curate launches, workflows, integrations, and customer proof in one polished gallery built for product-led teams.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#gallery">Browse gallery</a>
+            <a class="button secondary" href="#demo">View demo</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="screen">
+            <div class="screen-top">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="screen-grid">
+              <div class="chart-card tall">
+                <div class="pulse"></div>
+                <div class="bar-row">
+                  <span style="height: 42%"></span>
+                  <span style="height: 70%"></span>
+                  <span style="height: 56%"></span>
+                  <span style="height: 88%"></span>
+                </div>
+              </div>
+              <div class="chart-card">
+                <div class="line one"></div>
+                <div class="line two"></div>
+                <div class="line three"></div>
+              </div>
+              <div class="chart-card accent">
+                <div class="orbital"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Gallery</p>
+            <h2 id="gallery-title">Six polished product moments</h2>
+          </div>
+          <p id="result-count" class="result-count" aria-live="polite"></p>
+        </div>
+
+        <div class="filters" aria-label="Filter gallery cards">
+          <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-button" type="button" data-filter="launch" aria-pressed="false">Launch</button>
+          <button class="filter-button" type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
+          <button class="filter-button" type="button" data-filter="insight" aria-pressed="false">Insight</button>
+        </div>
+
+        <div class="product-grid">
+          <article class="product-card" data-category="launch">
+            <div class="card-art art-launch" aria-hidden="true">
+              <span class="flag"></span>
+              <span class="rocket"></span>
+              <span class="trail"></span>
+            </div>
+            <p class="card-label">Launch</p>
+            <h3>Release Room</h3>
+            <p>Turn feature releases into crisp narratives with assets, metrics, and stakeholder notes.</p>
+          </article>
+
+          <article class="product-card" data-category="workflow">
+            <div class="card-art art-workflow" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <i></i>
+            </div>
+            <p class="card-label">Workflow</p>
+            <h3>Pipeline Canvas</h3>
+            <p>Map handoffs from idea to adoption without burying teams in status meetings.</p>
+          </article>
+
+          <article class="product-card" data-category="insight">
+            <div class="card-art art-insight" aria-hidden="true">
+              <span style="height: 38%"></span>
+              <span style="height: 68%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 84%"></span>
+              <span style="height: 61%"></span>
+            </div>
+            <p class="card-label">Insight</p>
+            <h3>Signal Board</h3>
+            <p>Show traction, risk, and customer pull in a visual dashboard that executives can scan.</p>
+          </article>
+
+          <article class="product-card" data-category="workflow">
+            <div class="card-art art-integrations" aria-hidden="true">
+              <span class="node a"></span>
+              <span class="node b"></span>
+              <span class="node c"></span>
+              <span class="connector"></span>
+            </div>
+            <p class="card-label">Workflow</p>
+            <h3>Integration Shelf</h3>
+            <p>Package your ecosystem with clean cards for connected apps, use cases, and setup paths.</p>
+          </article>
+
+          <article class="product-card" data-category="launch">
+            <div class="card-art art-brand" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p class="card-label">Launch</p>
+            <h3>Brand Kit</h3>
+            <p>Keep screenshots, messaging, quotes, and proof points ready for every go-to-market push.</p>
+          </article>
+
+          <article class="product-card" data-category="insight">
+            <div class="card-art art-proof" aria-hidden="true">
+              <span class="quote"></span>
+              <span class="avatar"></span>
+              <span class="score"></span>
+            </div>
+            <p class="card-label">Insight</p>
+            <h3>Proof Wall</h3>
+            <p>Collect testimonials and adoption wins in a format sales and success teams can reuse.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="proof" class="testimonial-strip" aria-label="Customer testimonial">
+        <p>
+          "Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."
+        </p>
+        <div>
+          <strong>Mara Chen</strong>
+          <span>VP Product, Northstar Labs</span>
+        </div>
+      </section>
+
+      <section id="demo" class="demo-panel" aria-labelledby="demo-title">
+        <div>
+          <p class="eyebrow">Demo</p>
+          <h2 id="demo-title">Ready in one afternoon.</h2>
+        </div>
+        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
+ succeeded in 0ms:
+:root {
+  color-scheme: light;
+  --bg: #f4f7f9;
+  --ink: #111827;
+  --muted: #5f6b7a;
+  --panel: #ffffff;
+  --line: #d9e2ea;
+  --teal: #0f766e;
+  --teal-dark: #134e4a;
+  --coral: #e1664c;
+  --gold: #d69b2d;
+  --blue: #315f99;
+  --shadow: 0 20px 60px rgba(17, 24, 39, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 28rem),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 45%, #edf2f4 100%);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-header,
+main {
+  width: min(1160px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 0;
+}
+
+.brand,
+nav,
+.hero-actions,
+.filters,
+.demo-panel {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 10px;
+  font-weight: 850;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, var(--teal) 0 48%, transparent 48%),
+    linear-gradient(315deg, var(--coral) 0 48%, var(--gold) 48%);
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.22);
+}
+
+nav {
+  gap: 20px;
+  color: #3a4655;
+  font-size: 0.94rem;
+  font-weight: 720;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+  gap: 32px;
+  align-items: center;
+  min-height: 620px;
+  padding: 64px 0 54px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--teal-dark);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 760px;
+  margin-bottom: 20px;
+  font-size: clamp(3rem, 7vw, 6.6rem);
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+}
+
+.intro {
+  max-width: 650px;
+  margin-bottom: 28px;
+  color: var(--muted);
+  font-size: 1.12rem;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.button.primary {
+  color: #fff;
+  background: var(--teal);
+  box-shadow: 0 12px 28px rgba(15, 118, 110, 0.22);
+}
+
+.button.secondary {
+  border-color: #c6d2dc;
+  color: #263241;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.hero-visual {
+  position: relative;
+}
+
+.screen {
+  min-height: 430px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #12302e, #1d3f49 58%, #76522b);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.screen-top {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.screen-top span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.screen-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.chart-card {
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.chart-card.tall {
+  grid-row: span 2;
+  min-height: 330px;
+}
+
+.pulse {
+  width: 86px;
+  height: 86px;
+  margin: 14px auto 34px;
+  border: 18px solid rgba(255, 255, 255, 0.22);
+  border-top-color: #7dd3c7;
+  border-radius: 50%;
+}
+
+.bar-row {
+  display: flex;
+  align-items: end;
+  gap: 11px;
+  height: 130px;
+}
+
+.bar-row span,
+.art-insight span {
+  flex: 1;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, #f7c46c, #e1664c);
+}
+
+.line {
+  height: 12px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.line.one {
+  width: 88%;
+}
+
+.line.two {
+  width: 62%;
+}
+
+.line.three {
+  width: 74%;
+  background: #7dd3c7;
+}
+
+.orbital {
+  width: 104px;
+  height: 104px;
+  margin: 6px auto;
+  border: 2px solid rgba(255, 255, 255, 0.58);
+
+exec
+/bin/zsh -lc "sed -n '1,220p' experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js" in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+const filterButtons = document.querySelectorAll(".filter-button");
+const cards = document.querySelectorAll(".product-card");
+const resultCount = document.querySelector("#result-count");
+
+function updateGallery(filter) {
+  let visibleCount = 0;
+
+  cards.forEach((card) => {
+    const isVisible = filter === "all" || card.dataset.category === filter;
+    card.classList.toggle("is-hidden", !isVisible);
+    if (isVisible) {
+      visibleCount += 1;
+    }
+  });
+
+  resultCount.textContent = `${visibleCount} ${visibleCount === 1 ? "card" : "cards"} shown`;
+}
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    filterButtons.forEach((item) => {
+      const isActive = item === button;
+      item.classList.toggle("active", isActive);
+      item.setAttribute("aria-pressed", String(isActive));
+    });
+
+    updateGallery(button.dataset.filter);
+  });
+});
+
+updateGallery("all");
+
+codex
+I’m going to keep the product story and six-card structure, but reduce the visual system to CSS shapes with bounded effects so the audit passes. Files to add: `index.html`, `styles.css`, `app.js`, and `PERFORMANCE_BUDGET.md` inside `fixed-app`.
+exec
+/bin/zsh -lc 'mkdir -p experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+apply patch
+patch: completed
+/Users/tto/codex-mastery-lab/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+/Users/tto/codex-mastery-lab/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+/Users/tto/codex-mastery-lab/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+/Users/tto/codex-mastery-lab/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..61e37551574f8ed9eb71899de970a7f77df3ad90
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,31 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `styles.css`: pending
++- `app.js`: pending
++- Total: pending
++- CSS lines: pending
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..61e37551574f8ed9eb71899de970a7f77df3ad90
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,31 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `styles.css`: pending
++- `app.js`: pending
++- Total: pending
++- CSS lines: pending
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+codex
+The first implementation is in place. I’m measuring it with the audit now, then I’ll update the budget document with the actual numbers and rerun the verification commands.
+exec
+/bin/zsh -lc 'wc -c experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js && wc -l experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+    4930 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+    6742 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+     796 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+   12468 total
+     349 experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+
+exec
+/bin/zsh -lc 'python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+APP: experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
+SIZES: html=4930 css=6742 js=796 total=12468 css_lines=349
+PASS: index.html exists
+PASS: styles.css exists
+PASS: app.js exists
+PASS: HTML bytes within budget — 4930 <= 16000
+PASS: CSS bytes within budget — 6742 <= 12000
+PASS: JS bytes within budget — 796 <= 5000
+PASS: Total static bytes within budget — 12468 <= 32000
+PASS: CSS line count stays reviewable — 349 <= 360
+PASS: No external network asset references — found 0
+PASS: Images have width/height to reduce CLS — img tags: 0
+PASS: Below-fold images are lazy loaded — img tags: 0
+PASS: Performance budget is documented in deliverable
+PASS: Potentially costly visual CSS is bounded — found 5 tokens
+PASS: Motion/transition has prefers-reduced-motion fallback
+PASS: No console logging left in JS
+
+exec
+/bin/zsh -lc 'node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..61e37551574f8ed9eb71899de970a7f77df3ad90
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,31 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `styles.css`: pending
++- `app.js`: pending
++- Total: pending
++- CSS lines: pending
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+codex
+The audit passes with a total of 12,468 bytes and CSS at 349 lines, so it fits the contract. I’m replacing the pending values in `PERFORMANCE_BUDGET.md` with the measured numbers and then doing one final verification pass.
+apply patch
+patch: completed
+/Users/tto/codex-mastery-lab/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd07edb08a8deab25daa9a1798b7a8461067410c
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,32 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `index.html`: 4,930 bytes
++- `styles.css`: 6,742 bytes
++- `app.js`: 796 bytes
++- Total: 12,468 bytes
++- CSS lines: 349
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd07edb08a8deab25daa9a1798b7a8461067410c
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,32 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `index.html`: 4,930 bytes
++- `styles.css`: 6,742 bytes
++- `app.js`: 796 bytes
++- Total: 12,468 bytes
++- CSS lines: 349
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+exec
+/bin/zsh -lc 'git status --short experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+?? experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/
+
+exec
+/bin/zsh -lc 'python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+APP: experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
+SIZES: html=4930 css=6742 js=796 total=12468 css_lines=349
+PASS: index.html exists
+PASS: styles.css exists
+PASS: app.js exists
+PASS: HTML bytes within budget — 4930 <= 16000
+PASS: CSS bytes within budget — 6742 <= 12000
+PASS: JS bytes within budget — 796 <= 5000
+PASS: Total static bytes within budget — 12468 <= 32000
+PASS: CSS line count stays reviewable — 349 <= 360
+PASS: No external network asset references — found 0
+PASS: Images have width/height to reduce CLS — img tags: 0
+PASS: Below-fold images are lazy loaded — img tags: 0
+PASS: Performance budget is documented in deliverable
+PASS: Potentially costly visual CSS is bounded — found 5 tokens
+PASS: Motion/transition has prefers-reduced-motion fallback
+PASS: No console logging left in JS
+
+exec
+/bin/zsh -lc 'node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js' in /Users/tto/codex-mastery-lab
+ succeeded in 0ms:
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd07edb08a8deab25daa9a1798b7a8461067410c
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,32 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `index.html`: 4,930 bytes
++- `styles.css`: 6,742 bytes
++- `app.js`: 796 bytes
++- Total: 12,468 bytes
++- CSS lines: 349
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+codex
+Implemented the packet entirely inside `experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app`.
+
+Created:
+- `index.html`
+- `styles.css`
+- `app.js`
+- `PERFORMANCE_BUDGET.md`
+
+Verification results:
+- `node --check .../fixed-app/app.js`: passed, no syntax output.
+- `python3 .../audit_static_performance.py .../fixed-app`: passed all checks.
+
+Measured sizes:
+- HTML: 4,930 bytes
+- CSS: 6,742 bytes, 349 lines
+- JS: 796 bytes
+- Total: 12,468 bytes / 32,000 byte budget
+
+No dependencies installed.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd07edb08a8deab25daa9a1798b7a8461067410c
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/PERFORMANCE_BUDGET.md
+@@ -0,0 +1,32 @@
++# Performance Budget
++
++## Budget values
++
++- `index.html + styles.css + app.js`: <= 32,000 bytes
++- `styles.css`: <= 12,000 bytes and <= 360 lines
++- `app.js`: <= 5,000 bytes
++- No external network assets, third-party fonts, CDN, analytics, `@import`, or `url(...)`
++- Costly paint effects are bounded and transitions include a reduced-motion fallback
++
++## Actual measured sizes
++
++Measured after implementation:
++
++- `index.html`: pending
++- `index.html`: 4,930 bytes
++- `styles.css`: 6,742 bytes
++- `app.js`: 796 bytes
++- Total: 12,468 bytes
++- CSS lines: 349
++
++## Commands run
++
++```bash
++node --check experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
++python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_performance.py experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
++```
++
++## Known trade-offs
++
++- Visuals use semantic HTML and CSS gradients instead of raster screenshots to avoid network and image layout costs.
++- The filter interaction hides cards with vanilla JavaScript and avoids animation beyond a small opacity transition.
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82ad065ba3913bc53c8acb4fb01c888f8f528ce
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/app.js
+@@ -0,0 +1,29 @@
++const buttons = document.querySelectorAll("[data-filter]");
++const cards = document.querySelectorAll("[data-category]");
++const count = document.querySelector("#result-count");
++
++function render(filter) {
++  let shown = 0;
++
++  cards.forEach((card) => {
++    const match = filter === "all" || card.dataset.category === filter;
++    card.classList.toggle("is-hidden", !match);
++    if (match) shown += 1;
++  });
++
++  count.textContent = `${shown} ${shown === 1 ? "card" : "cards"} shown`;
++}
++
++buttons.forEach((button) => {
++  button.addEventListener("click", () => {
++    buttons.forEach((item) => {
++      const active = item === button;
++      item.classList.toggle("active", active);
++      item.setAttribute("aria-pressed", String(active));
++    });
++
++    render(button.dataset.filter);
++  });
++});
++
++render("all");
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..638f81b2462541bbcbbfc847c2ca90ee73127cba
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/index.html
+@@ -0,0 +1,115 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1">
++    <title>Vibe Gallery</title>
++    <link rel="stylesheet" href="styles.css">
++  </head>
++  <body>
++    <header class="topbar">
++      <a class="brand" href="#" aria-label="Vibe Gallery home">
++        <span class="mark" aria-hidden="true"></span>
++        <span>Vibe Gallery</span>
++      </a>
++      <nav aria-label="Primary">
++        <a href="#gallery">Gallery</a>
++        <a href="#proof">Proof</a>
++        <a href="#demo">Demo</a>
++      </nav>
++    </header>
++
++    <main>
++      <section class="hero" aria-labelledby="title">
++        <div>
++          <p class="eyebrow">SaaS product gallery</p>
++          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
++          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
++          <p class="actions">
++            <a class="button primary" href="#gallery">Browse gallery</a>
++            <a class="button" href="#demo">Request preview</a>
++          </p>
++        </div>
++        <div class="panel" aria-hidden="true">
++          <div class="panel-top"><span></span><span></span><span></span></div>
++          <div class="panel-grid">
++            <span class="tile tall"></span>
++            <span class="tile lines"></span>
++            <span class="tile chart"></span>
++          </div>
++        </div>
++      </section>
++
++      <section id="gallery" class="section" aria-labelledby="gallery-title">
++        <div class="section-head">
++          <div>
++            <p class="eyebrow">Gallery</p>
++            <h2 id="gallery-title">Six product moments</h2>
++          </div>
++          <p id="result-count" class="count" aria-live="polite"></p>
++        </div>
++
++        <div class="filters" aria-label="Filter gallery cards">
++          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
++          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
++          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
++          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
++        </div>
++
++        <div class="grid">
++          <article class="card" data-category="launch">
++            <span class="art launch" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Release Room</h3>
++            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art workflow" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Pipeline Canvas</h3>
++            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art insight" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Signal Board</h3>
++            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
++          </article>
++          <article class="card" data-category="workflow">
++            <span class="art connect" aria-hidden="true"></span>
++            <p class="label">Workflow</p>
++            <h3>Integration Shelf</h3>
++            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
++          </article>
++          <article class="card" data-category="launch">
++            <span class="art kit" aria-hidden="true"></span>
++            <p class="label">Launch</p>
++            <h3>Brand Kit</h3>
++            <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
++          </article>
++          <article class="card" data-category="insight">
++            <span class="art proof" aria-hidden="true"></span>
++            <p class="label">Insight</p>
++            <h3>Proof Wall</h3>
++            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
++          </article>
++        </div>
++      </section>
++
++      <section id="proof" class="proof" aria-label="Customer proof">
++        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
++        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
++      </section>
++
++      <section id="demo" class="demo" aria-labelledby="demo-title">
++        <div>
++          <p class="eyebrow">Demo</p>
++          <h2 id="demo-title">Ready in one afternoon.</h2>
++        </div>
++        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
++      </section>
++    </main>
++
++    <script src="app.js"></script>
++  </body>
++</html>
+diff --git a/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+new file mode 100644
+index 0000000000000000000000000000000000000000..144fe9fe77187c9425492d65161a7afb157fab50
+--- /dev/null
++++ b/experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app/styles.css
+@@ -0,0 +1,349 @@
++:root {
++  color-scheme: light;
++  --bg: #f5f7f8;
++  --ink: #17202a;
++  --muted: #5d6874;
++  --panel: #fff;
++  --line: #d9e0e7;
++  --teal: #0f766e;
++  --navy: #213b5a;
++  --coral: #d85f45;
++  --gold: #c8922e;
++}
++
++* { box-sizing: border-box; }
++
++html { scroll-behavior: smooth; }
++
++body {
++  margin: 0;
++  color: var(--ink);
++  background: linear-gradient(140deg, #eef8f5 0 34%, var(--bg) 34% 100%);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++a { color: inherit; text-decoration: none; }
++
++.topbar,
++main {
++  width: min(1120px, calc(100% - 36px));
++  margin: 0 auto;
++}
++
++.topbar,
++.brand,
++nav,
++.actions,
++.filters,
++.section-head,
++.demo {
++  display: flex;
++  align-items: center;
++}
++
++.topbar {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 20px 0;
++}
++
++.brand {
++  gap: 10px;
++  font-weight: 800;
++}
++
++.mark {
++  width: 32px;
++  height: 32px;
++  border-radius: 8px;
++  background: linear-gradient(135deg, var(--teal) 0 50%, var(--gold) 50%);
++  border: 4px solid #fff;
++}
++
++nav {
++  gap: 18px;
++  color: #334155;
++  font-weight: 700;
++  font-size: .95rem;
++}
++
++.hero {
++  min-height: 610px;
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) minmax(310px, .72fr);
++  gap: 34px;
++  align-items: center;
++  padding: 54px 0 62px;
++}
++
++.eyebrow {
++  margin: 0 0 10px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  letter-spacing: 0;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p { margin-top: 0; }
++
++h1 {
++  max-width: 790px;
++  margin-bottom: 18px;
++  font-size: clamp(3rem, 7vw, 6rem);
++  line-height: .95;
++  letter-spacing: 0;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: clamp(1.8rem, 4vw, 3rem);
++  line-height: 1;
++  letter-spacing: 0;
++}
++
++h3 {
++  margin-bottom: 8px;
++  font-size: 1.15rem;
++}
++
++.intro {
++  max-width: 650px;
++  color: var(--muted);
++  font-size: 1.1rem;
++  line-height: 1.65;
++}
++
++.actions {
++  flex-wrap: wrap;
++  gap: 12px;
++  margin-bottom: 0;
++}
++
++.button,
++button {
++  min-height: 44px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: #fff;
++  color: #243142;
++  font: inherit;
++  font-weight: 800;
++}
++
++.button {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: 0 18px;
++}
++
++.primary {
++  border-color: var(--teal);
++  color: #fff;
++  background: var(--teal);
++}
++
++.panel {
++  min-height: 390px;
++  padding: 18px;
++  border-radius: 8px;
++  background: linear-gradient(145deg, #143c3a, #213b5a 64%, #7b5130);
++  box-shadow: 0 18px 40px rgba(23, 32, 42, .16);
++}
++
++.panel-top {
++  display: flex;
++  gap: 7px;
++  margin-bottom: 18px;
++}
++
++.panel-top span {
++  width: 10px;
++  height: 10px;
++  border-radius: 99px;
++  background: rgba(255, 255, 255, .6);
++}
++
++.panel-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 14px;
++}
++
++.tile {
++  min-height: 145px;
++  border: 1px solid rgba(255, 255, 255, .2);
++  border-radius: 8px;
++  background: rgba(255, 255, 255, .13);
++}
++
++.tile.tall {
++  grid-row: span 2;
++  min-height: 310px;
++  background:
++    radial-gradient(circle at 50% 28%, transparent 0 36px, #81d8ca 37px 44px, transparent 45px),
++    linear-gradient(90deg, transparent 0 15%, #efc36b 15% 28%, transparent 28% 36%, #d85f45 36% 52%, transparent 52% 100%),
++    rgba(255, 255, 255, .13);
++}
++
++.lines {
++  background:
++    linear-gradient(#fff 0 0) 20px 30px / 74% 12px no-repeat,
++    linear-gradient(#81d8ca 0 0) 20px 64px / 55% 12px no-repeat,
++    linear-gradient(#fff 0 0) 20px 98px / 64% 12px no-repeat,
++    rgba(255, 255, 255, .13);
++}
++
++.chart {
++  background:
++    linear-gradient(135deg, transparent 0 42%, #efc36b 43% 48%, transparent 49%),
++    radial-gradient(circle at 70% 35%, #81d8ca 0 14px, transparent 15px),
++    rgba(255, 255, 255, .13);
++}
++
++.section { padding: 44px 0 26px; }
++
++.section-head {
++  justify-content: space-between;
++  gap: 18px;
++  margin-bottom: 18px;
++}
++
++.count {
++  margin: 0;
++  color: var(--muted);
++  font-weight: 700;
++}
++
++.filters {
++  flex-wrap: wrap;
++  gap: 10px;
++  margin-bottom: 20px;
++}
++
++button {
++  cursor: pointer;
++  padding: 0 14px;
++}
++
++button.active {
++  border-color: var(--navy);
++  color: #fff;
++  background: var(--navy);
++}
++
++.grid {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 16px;
++}
++
++.card {
++  min-height: 300px;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++  background: var(--panel);
++  transition: opacity .18s ease;
++}
++
++.card.is-hidden {
++  display: none;
++}
++
++.art {
++  display: block;
++  height: 112px;
++  margin-bottom: 16px;
++  border-radius: 8px;
++  background-color: #eef3f6;
++}
++
++.launch { background: linear-gradient(135deg, transparent 0 45%, var(--coral) 46% 54%, transparent 55%), radial-gradient(circle at 65% 32%, var(--gold) 0 18px, transparent 19px), #eef3f6; }
++.workflow { background: linear-gradient(90deg, var(--teal) 0 20%, transparent 20% 40%, var(--navy) 40% 60%, transparent 60% 80%, var(--coral) 80%), #eef3f6; }
++.insight { background: linear-gradient(90deg, transparent 0 10%, var(--gold) 10% 22%, transparent 22% 30%, var(--coral) 30% 44%, transparent 44% 52%, var(--teal) 52% 70%, transparent 70%), #eef3f6; }
++.connect { background: radial-gradient(circle at 25% 35%, var(--teal) 0 16px, transparent 17px), radial-gradient(circle at 72% 35%, var(--gold) 0 16px, transparent 17px), linear-gradient(90deg, transparent 0 28%, var(--navy) 28% 72%, transparent 72%), #eef3f6; }
++.kit { background: linear-gradient(90deg, var(--navy) 0 31%, transparent 31% 38%, var(--teal) 38% 69%, transparent 69% 76%, var(--gold) 76%), #eef3f6; }
++.proof { background: radial-gradient(circle at 24% 58%, var(--coral) 0 22px, transparent 23px), linear-gradient(#cfd8df 0 0) 58% 34% / 34% 12px no-repeat, linear-gradient(#9eabb8 0 0) 58% 56% / 26% 12px no-repeat, #eef3f6; }
++
++.label {
++  margin-bottom: 8px;
++  color: var(--teal);
++  font-size: .78rem;
++  font-weight: 850;
++  text-transform: uppercase;
++}
++
++.card p:last-child {
++  margin-bottom: 0;
++  color: var(--muted);
++  line-height: 1.55;
++}
++
++.proof,
++.demo {
++  margin: 34px 0;
++  border-radius: 8px;
++  border: 1px solid var(--line);
++  background: #fff;
++}
++
++.proof {
++  padding: 26px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  gap: 24px;
++  align-items: center;
++}
++
++.proof p {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  line-height: 1.45;
++}
++
++.proof span {
++  display: block;
++  margin-top: 4px;
++  color: var(--muted);
++}
++
++.demo {
++  justify-content: space-between;
++  gap: 20px;
++  padding: 24px;
++}
++
++@media (max-width: 820px) {
++  .topbar,
++  .hero,
++  .section-head,
++  .proof,
++  .demo {
++    display: block;
++  }
++
++  nav { margin-top: 16px; }
++
++  .hero {
++    min-height: 0;
++    padding-top: 34px;
++  }
++
++  .panel { margin-top: 28px; }
++
++  .grid { grid-template-columns: 1fr; }
++
++  .count { margin-top: 8px; }
++
++  .demo .button { margin-top: 16px; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++  html { scroll-behavior: auto; }
++  .card { transition: none; }
++}
+
+tokens used
+33,640
+Implemented the packet entirely inside `experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app`.
+
+Created:
+- `index.html`
+- `styles.css`
+- `app.js`
+- `PERFORMANCE_BUDGET.md`
+
+Verification results:
+- `node --check .../fixed-app/app.js`: passed, no syntax output.
+- `python3 .../audit_static_performance.py .../fixed-app`: passed all checks.
+
+Measured sizes:
+- HTML: 4,930 bytes
+- CSS: 6,742 bytes, 349 lines
+- JS: 796 bytes
+- Total: 12,468 bytes / 32,000 byte budget
+
+No dependencies installed.

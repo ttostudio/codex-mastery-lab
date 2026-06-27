@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Vibe app and fixed app audit comparison</title>
+  <desc id="desc">vibe-app と fixed-app の性能監査結果を比較する棒グラフ</desc>
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <text x="60" y="70" font-family="sans-serif" font-size="34" font-weight="800" fill="#17202a">雑プロンプト vs Performance Budget Task Packet</text>
+  <text x="60" y="108" font-family="sans-serif" font-size="18" fill="#5d6874">同じ題材でも、前工程に予算を渡すとレビュー可能性と証拠が変わる</text>
+  <g font-family="sans-serif" font-size="16" fill="#17202a">
+    <text x="140" y="170" font-size="22" font-weight="800">CSS行数</text>
+    <rect x="140" y="200" width="605" height="50" rx="8" fill="#d85f45"/>
+    <text x="760" y="232" fill="#17202a">vibe: 605 lines / FAIL</text>
+    <rect x="140" y="270" width="349" height="50" rx="8" fill="#0f766e"/>
+    <text x="505" y="302" fill="#17202a">fixed: 349 lines / PASS</text>
+
+    <text x="140" y="380" font-size="22" font-weight="800">Total static bytes</text>
+    <rect x="140" y="410" width="563" height="50" rx="8" fill="#d85f45"/>
+    <text x="720" y="442">vibe: 18,018 bytes</text>
+    <rect x="140" y="480" width="389" height="50" rx="8" fill="#0f766e"/>
+    <text x="545" y="512">fixed: 12,468 bytes</text>
+  </g>
+  <g font-family="sans-serif">
+    <rect x="900" y="180" width="220" height="130" rx="18" fill="#f6f8fb" stroke="#d9e0e7"/>
+    <text x="925" y="220" font-size="18" font-weight="800" fill="#d85f45">vibe-app</text>
+    <text x="925" y="255" font-size="16" fill="#17202a">4 FAIL</text>
+    <text x="925" y="282" font-size="16" fill="#17202a">証拠なし</text>
+    <rect x="900" y="360" width="220" height="130" rx="18" fill="#f6f8fb" stroke="#d9e0e7"/>
+    <text x="925" y="400" font-size="18" font-weight="800" fill="#0f766e">fixed-app</text>
+    <text x="925" y="435" font-size="16" fill="#17202a">ALL PASS</text>
+    <text x="925" y="462" font-size="16" fill="#17202a">Budget証拠あり</text>
+  </g>
+</svg>

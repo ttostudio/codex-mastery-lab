@@ -1,0 +1,137 @@
+diff --git a/backlog.md b/backlog.md
+index 87c9837..3a9cb98 100644
+--- a/backlog.md
++++ b/backlog.md
+@@ -11,6 +11,7 @@
+ - [ ] AI-Ready Requirement Spec テンプレートとCodex検証
+ - [ ] Design Contract: 画面/状態/アクセシビリティ設計テンプレート
+ - [ ] System Contract: API/DB/権限/外部連携テンプレート
++- [x] Non-Functional Contract: Performance Budget / Asset Policy をAI Task Packetへ反映する（2026-06-27 performance-budget-vibe-gallery）
+ - [ ] Non-Functional Contract: 性能/可用性/セキュリティ/コスト/運用テンプレート
+ - [ ] AI Task Packet: Codexに渡す最小単位の標準化
+ - [ ] Verification Evidence: 「できた」の証拠標準
+@@ -46,7 +47,8 @@
+ ## Phase 3: 複数エージェント/継続改善
+ 
+ - [ ] 次回候補: FAQ検索アプリに axe / Lighthouse / Playwright の軽量監査を追加し、静的監査では拾えない問題を比較する
+-- [ ] 次回候補: 同じFAQ題材で「Performance Budget」を事前に渡すとCLS/LCP系の欠陥が減るか検証する
++- [x] 次回候補: 同じFAQ題材で「Performance Budget」を事前に渡すとCLS/LCP系の欠陥が減るか検証する（2026-06-27: 静的SaaSギャラリーでPerformance Budget Contractを検証。次は実Lighthouse接続）
++- [ ] 次回候補: 追加依存を最小化して Lighthouse / axe / Playwright のうち1つを実行し、静的監査とのズレを比較する
+ 
+ - [ ] 2つのCodexに実装案を競わせる
+ - [ ] Codex実装をHermesがレビューする二段構え
+diff --git a/book/outline.md b/book/outline.md
+index 67ca321..22298f4 100644
+--- a/book/outline.md
++++ b/book/outline.md
+@@ -106,6 +106,7 @@ AIに「いい感じに作って」と頼む時代は終わる。これから必
+ ### 蓄積済み素材
+ 
+ - 2026-06-27: 「雑なFAQ検索アプリのアクセシビリティ監査からAI Task Packetを逆算する」 — 第6章 Design Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet に接続。
++- 2026-06-27: 「プレミアムにしてで膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる」 — 第8章 Non-Functional Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第17章 16GB Mac miniで回す現実的なAI開発環境に接続。
+ 
+ 各記事は以下のどれかに分類する。
+ 
+diff --git a/standards/aidd-spec-ai-task-packet-standard-v0.1.md b/standards/aidd-spec-ai-task-packet-standard-v0.1.md
+index 12aacf0..1f51817 100644
+--- a/standards/aidd-spec-ai-task-packet-standard-v0.1.md
++++ b/standards/aidd-spec-ai-task-packet-standard-v0.1.md
+@@ -33,6 +33,17 @@ accessibility_contract:
+ security_contract:
+   data_classification: string
+   input_validation: []
++performance_budget_contract:
++  total_static_bytes: string
++  css_budget: string
++  js_budget: string
++  lighthouse_targets: []
++  motion_policy: string
++asset_policy:
++  external_network_assets: string
++  image_dimensions_required: boolean
++  lazy_loading_policy: string
++  font_policy: string
+ quality_gate:
+   required_commands: []
+   expected_results: []
+@@ -106,7 +117,57 @@ quality_gate:
+     - Static accessibility contract audit exits 0
+ ```
+ 
+-## 4. AI Task Packetテンプレート Lite
++## 4. Performance Budget実験から追加した項目
++
++### 4.1 `performance_budget_contract`
++
++見た目の品質をAIに任せると、静的ページでもCSSが必要以上に膨らみ、レビュー可能性・将来のLighthouse改善・モバイル性能の前提が曖昧になる。Performance Budgetは「あとで測るもの」ではなく、AI Task Packetに最初から渡す実装制約である。
++
++例:
++
++```yaml
++performance_budget_contract:
++  total_static_bytes: "index.html + styles.css + app.js <= 32KB"
++  css_budget: "styles.css <= 12KB and <= 360 lines"
++  js_budget: "app.js <= 5KB"
++  lighthouse_targets:
++    - performance >= 90 on target mobile profile
++    - CLS <= 0.1
++    - LCP target element is identified before implementation
++  motion_policy: "Any transition must have prefers-reduced-motion fallback"
++```
++
++### 4.2 `asset_policy`
++
++AIは「premium」「visual」という曖昧な指示に対し、リモート画像、CDNフォント、重い装飾CSS、外部スクリプトを選ぶ可能性がある。今回の実験ではCodexが外部依存を避けたが、それは幸運であって標準仕様ではない。後工程が必要とするのは、資産の取得元・サイズ・CLS対策・遅延読み込み方針の明文化である。
++
++例:
++
++```yaml
++asset_policy:
++  external_network_assets: "forbidden unless explicitly approved"
++  image_dimensions_required: true
++  lazy_loading_policy: "below-fold raster images must use loading=lazy"
++  font_policy: "system fonts by default; no third-party font CDN in Lite experiments"
++```
++
++### 4.3 `verification_evidence.performance_budget_file`
++
++Codexのチャット上の「確認しました」は証拠ではない。後工程で再監査できるよう、実測値・コマンド・トレードオフをファイルとして残す。
++
++例:
++
++```yaml
++verification_evidence:
++  files_to_attach:
++    - PERFORMANCE_BUDGET.md
++    - logs/fixed-verification.txt
++  logs_to_save:
++    - Codex run log
++    - static performance audit output
++```
++
++## 5. AI Task Packetテンプレート Lite
+ 
+ ```markdown
+ # AI Task Packet: <task name>
+@@ -139,6 +200,21 @@ quality_gate:
+ - Focus evidence:
+ - Live regions:
+ 
++## Performance Budget Contract
++
++- Total static bytes:
++- CSS budget:
++- JS budget:
++- Lighthouse / Core Web Vitals target:
++- Motion policy:
++
++## Asset Policy
++
++- External network assets:
++- Image dimensions:
++- Lazy loading:
++- Font policy:
++
+ ## Quality Gate
+ 
+ Run these commands and include results:

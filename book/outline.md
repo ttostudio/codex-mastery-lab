@@ -106,6 +106,7 @@ AIに「いい感じに作って」と頼む時代は終わる。これから必
 ### 蓄積済み素材
 
 - 2026-06-27: 「雑なFAQ検索アプリのアクセシビリティ監査からAI Task Packetを逆算する」 — 第6章 Design Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet に接続。
+- 2026-06-27: 「プレミアムにしてで膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる」 — 第8章 Non-Functional Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第17章 16GB Mac miniで回す現実的なAI開発環境に接続。
 
 各記事は以下のどれかに分類する。
 

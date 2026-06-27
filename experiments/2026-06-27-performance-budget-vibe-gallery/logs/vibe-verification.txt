@@ -1,0 +1,29 @@
+## vibe node syntax check
+## vibe performance static audit
+APP: experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app
+SIZES: html=6958 css=10154 js=906 total=18018 css_lines=605
+PASS: index.html exists
+PASS: styles.css exists
+PASS: app.js exists
+PASS: HTML bytes within budget — 6958 <= 16000
+PASS: CSS bytes within budget — 10154 <= 12000
+PASS: JS bytes within budget — 906 <= 5000
+PASS: Total static bytes within budget — 18018 <= 32000
+FAIL: CSS line count stays reviewable — 605 <= 360
+PASS: No external network asset references — found 0
+PASS: Images have width/height to reduce CLS — img tags: 0
+PASS: Below-fold images are lazy loaded — img tags: 0
+FAIL: Performance budget is documented in deliverable
+FAIL: Potentially costly visual CSS is bounded — found 20 tokens
+FAIL: Motion/transition has prefers-reduced-motion fallback
+PASS: No console logging left in JS
+## file sizes
+     906 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js
+    6958 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html
+   10154 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css
+   18018 total
+## file lines
+      31 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js
+     176 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html
+     605 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css
+     812 total

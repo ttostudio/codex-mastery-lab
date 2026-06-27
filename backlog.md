@@ -11,6 +11,7 @@
 - [ ] AI-Ready Requirement Spec テンプレートとCodex検証
 - [ ] Design Contract: 画面/状態/アクセシビリティ設計テンプレート
 - [ ] System Contract: API/DB/権限/外部連携テンプレート
+- [x] Non-Functional Contract: Performance Budget / Asset Policy をAI Task Packetへ反映する（2026-06-27 performance-budget-vibe-gallery）
 - [ ] Non-Functional Contract: 性能/可用性/セキュリティ/コスト/運用テンプレート
 - [ ] AI Task Packet: Codexに渡す最小単位の標準化
 - [ ] Verification Evidence: 「できた」の証拠標準
@@ -46,7 +47,8 @@
 ## Phase 3: 複数エージェント/継続改善
 
 - [ ] 次回候補: FAQ検索アプリに axe / Lighthouse / Playwright の軽量監査を追加し、静的監査では拾えない問題を比較する
-- [ ] 次回候補: 同じFAQ題材で「Performance Budget」を事前に渡すとCLS/LCP系の欠陥が減るか検証する
+- [x] 次回候補: 同じFAQ題材で「Performance Budget」を事前に渡すとCLS/LCP系の欠陥が減るか検証する（2026-06-27: 静的SaaSギャラリーでPerformance Budget Contractを検証。次は実Lighthouse接続）
+- [ ] 次回候補: 追加依存を最小化して Lighthouse / axe / Playwright のうち1つを実行し、静的監査とのズレを比較する
 
 - [ ] 2つのCodexに実装案を競わせる
 - [ ] Codex実装をHermesがレビューする二段構え

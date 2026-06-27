@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Performance Budget reverse chain</title>
+  <desc id="desc">欠陥からPerformance Budget Contract、Asset Policy、Verification Evidenceへ逆算する図</desc>
+  <rect width="1200" height="680" fill="#f6f8fb"/>
+  <text x="60" y="70" font-family="sans-serif" font-size="34" font-weight="800" fill="#17202a">Performance Budget を後工程から逆算する</text>
+  <text x="60" y="108" font-family="sans-serif" font-size="18" fill="#5d6874">雑な見た目実装 → 静的性能監査 → 理想状態 → 前工程のAI Task Packetへ戻す</text>
+  <g font-family="sans-serif">
+    <rect x="60" y="160" width="230" height="140" rx="18" fill="#fff" stroke="#d9e0e7"/>
+    <text x="85" y="200" font-size="19" font-weight="800" fill="#d85f45">監査で見つかった欠陥</text>
+    <text x="85" y="235" font-size="16" fill="#17202a">CSS 605行</text>
+    <text x="85" y="260" font-size="16" fill="#17202a">予算証拠なし</text>
+    <text x="85" y="285" font-size="16" fill="#17202a">motion fallbackなし</text>
+
+    <path d="M305 230 H390" stroke="#0f766e" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="405" y="160" width="230" height="140" rx="18" fill="#fff" stroke="#d9e0e7"/>
+    <text x="430" y="200" font-size="19" font-weight="800" fill="#0f766e">理想状態</text>
+    <text x="430" y="235" font-size="16" fill="#17202a">CSS &lt;= 360行</text>
+    <text x="430" y="260" font-size="16" fill="#17202a">総量 &lt;= 32KB</text>
+    <text x="430" y="285" font-size="16" fill="#17202a">証拠ファイルあり</text>
+
+    <path d="M650 230 H735" stroke="#0f766e" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="750" y="160" width="330" height="140" rx="18" fill="#fff" stroke="#d9e0e7"/>
+    <text x="775" y="200" font-size="19" font-weight="800" fill="#213b5a">前工程へ戻す項目</text>
+    <text x="775" y="235" font-size="16" fill="#17202a">Performance Budget Contract</text>
+    <text x="775" y="260" font-size="16" fill="#17202a">Asset Policy</text>
+    <text x="775" y="285" font-size="16" fill="#17202a">Verification Evidence</text>
+
+    <rect x="95" y="390" width="430" height="160" rx="18" fill="#143c3a"/>
+    <text x="125" y="430" font-size="20" font-weight="800" fill="#fff">vibe-app</text>
+    <text x="125" y="468" font-size="18" fill="#e8fffa">total: 18,018 bytes</text>
+    <text x="125" y="498" font-size="18" fill="#e8fffa">CSS: 10,154 bytes / 605 lines</text>
+    <text x="125" y="528" font-size="18" fill="#ffd9d0">4 FAIL</text>
+
+    <rect x="675" y="390" width="430" height="160" rx="18" fill="#213b5a"/>
+    <text x="705" y="430" font-size="20" font-weight="800" fill="#fff">fixed-app</text>
+    <text x="705" y="468" font-size="18" fill="#eef8ff">total: 12,468 bytes</text>
+    <text x="705" y="498" font-size="18" fill="#eef8ff">CSS: 6,742 bytes / 349 lines</text>
+    <text x="705" y="528" font-size="18" fill="#b8ffe8">ALL PASS</text>
+    <path d="M545 470 H655" stroke="#c8922e" stroke-width="5" marker-end="url(#arrow)"/>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+</svg>

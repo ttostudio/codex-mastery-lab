@@ -1,0 +1,2 @@
+?? experiments/2026-06-27-performance-budget-vibe-gallery/
+?? logs/2026-06-27-performance-budget-env.txt

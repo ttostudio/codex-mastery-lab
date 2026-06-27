@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vibe Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Vibe Gallery home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Vibe Gallery</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#gallery">Gallery</a>
+        <a href="#proof">Proof</a>
+        <a href="#demo">Demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">SaaS product gallery</p>
+          <h1 id="page-title">A sharper way to package your product story.</h1>
+          <p class="intro">
+            Curate launches, workflows, integrations, and customer proof in one polished gallery built for product-led teams.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#gallery">Browse gallery</a>
+            <a class="button secondary" href="#demo">View demo</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="screen">
+            <div class="screen-top">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="screen-grid">
+              <div class="chart-card tall">
+                <div class="pulse"></div>
+                <div class="bar-row">
+                  <span style="height: 42%"></span>
+                  <span style="height: 70%"></span>
+                  <span style="height: 56%"></span>
+                  <span style="height: 88%"></span>
+                </div>
+              </div>
+              <div class="chart-card">
+                <div class="line one"></div>
+                <div class="line two"></div>
+                <div class="line three"></div>
+              </div>
+              <div class="chart-card accent">
+                <div class="orbital"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Gallery</p>
+            <h2 id="gallery-title">Six polished product moments</h2>
+          </div>
+          <p id="result-count" class="result-count" aria-live="polite"></p>
+        </div>
+
+        <div class="filters" aria-label="Filter gallery cards">
+          <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-button" type="button" data-filter="launch" aria-pressed="false">Launch</button>
+          <button class="filter-button" type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
+          <button class="filter-button" type="button" data-filter="insight" aria-pressed="false">Insight</button>
+        </div>
+
+        <div class="product-grid">
+          <article class="product-card" data-category="launch">
+            <div class="card-art art-launch" aria-hidden="true">
+              <span class="flag"></span>
+              <span class="rocket"></span>
+              <span class="trail"></span>
+            </div>
+            <p class="card-label">Launch</p>
+            <h3>Release Room</h3>
+            <p>Turn feature releases into crisp narratives with assets, metrics, and stakeholder notes.</p>
+          </article>
+
+          <article class="product-card" data-category="workflow">
+            <div class="card-art art-workflow" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <i></i>
+            </div>
+            <p class="card-label">Workflow</p>
+            <h3>Pipeline Canvas</h3>
+            <p>Map handoffs from idea to adoption without burying teams in status meetings.</p>
+          </article>
+
+          <article class="product-card" data-category="insight">
+            <div class="card-art art-insight" aria-hidden="true">
+              <span style="height: 38%"></span>
+              <span style="height: 68%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 84%"></span>
+              <span style="height: 61%"></span>
+            </div>
+            <p class="card-label">Insight</p>
+            <h3>Signal Board</h3>
+            <p>Show traction, risk, and customer pull in a visual dashboard that executives can scan.</p>
+          </article>
+
+          <article class="product-card" data-category="workflow">
+            <div class="card-art art-integrations" aria-hidden="true">
+              <span class="node a"></span>
+              <span class="node b"></span>
+              <span class="node c"></span>
+              <span class="connector"></span>
+            </div>
+            <p class="card-label">Workflow</p>
+            <h3>Integration Shelf</h3>
+            <p>Package your ecosystem with clean cards for connected apps, use cases, and setup paths.</p>
+          </article>
+
+          <article class="product-card" data-category="launch">
+            <div class="card-art art-brand" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <p class="card-label">Launch</p>
+            <h3>Brand Kit</h3>
+            <p>Keep screenshots, messaging, quotes, and proof points ready for every go-to-market push.</p>
+          </article>
+
+          <article class="product-card" data-category="insight">
+            <div class="card-art art-proof" aria-hidden="true">
+              <span class="quote"></span>
+              <span class="avatar"></span>
+              <span class="score"></span>
+            </div>
+            <p class="card-label">Insight</p>
+            <h3>Proof Wall</h3>
+            <p>Collect testimonials and adoption wins in a format sales and success teams can reuse.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="proof" class="testimonial-strip" aria-label="Customer testimonial">
+        <p>
+          "Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."
+        </p>
+        <div>
+          <strong>Mara Chen</strong>
+          <span>VP Product, Northstar Labs</span>
+        </div>
+      </section>
+
+      <section id="demo" class="demo-panel" aria-labelledby="demo-title">
+        <div>
+          <p class="eyebrow">Demo</p>
+          <h2 id="demo-title">Ready in one afternoon.</h2>
+        </div>
+        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

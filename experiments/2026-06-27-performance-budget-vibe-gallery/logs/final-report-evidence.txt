@@ -1,0 +1,15 @@
+## git status
+ M backlog.md
+ M book/outline.md
+ M standards/aidd-spec-ai-task-packet-standard-v0.1.md
+?? articles/2026-06-27-performance-budget-vibe-gallery.md
+?? assets/2026-06-27-performance-budget-comparison.svg
+?? assets/2026-06-27-performance-budget-reverse-chain.svg
+?? experiments/2026-06-27-performance-budget-vibe-gallery/
+?? logs/2026-06-27-performance-budget-env.txt
+
+## git diff --stat
+ backlog.md                                         |  4 +-
+ book/outline.md                                    |  1 +
+ .../aidd-spec-ai-task-packet-standard-v0.1.md      | 78 +++++++++++++++++++++-
+ 3 files changed, 81 insertions(+), 2 deletions(-)
