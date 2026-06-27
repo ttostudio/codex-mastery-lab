@@ -6,6 +6,16 @@
 
 ![Performance Budget reverse chain](../assets/2026-06-27-performance-budget-reverse-chain.svg)
 
+## 操作キャプチャ
+
+バイブコーディング版を実際にブラウザで操作したGIF。
+
+![バイブコーディング版ギャラリーの操作GIF](../assets/2026-06-27-performance-vibe-demo.gif)
+
+指示を見直した版を実際にブラウザで操作したGIF。
+
+![指示見直し版ギャラリーの操作GIF](../assets/2026-06-27-performance-fixed-demo.gif)
+
 ## 1. 今日の問い
 
 前回は、雑に作ったFAQ検索アプリをアクセシビリティ観点で監査し、`aria-controls` やリストセマンティクスを AI Task Packet に戻した。今日の問いは性能である。

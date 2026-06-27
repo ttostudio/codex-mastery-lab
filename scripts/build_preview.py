@@ -135,8 +135,8 @@ def page(title: str, body: str, links: list[tuple[str,str]], cls='') -> str:
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     OUT_ASSETS.mkdir(parents=True, exist_ok=True)
-    for svg in ASSETS.glob('2026-06-27*.svg'):
-        shutil.copy2(svg, OUT_ASSETS / svg.name)
+    for asset in list(ASSETS.glob('2026-06-27*.svg')) + list(ASSETS.glob('2026-06-27*.gif')) + list(ASSETS.glob('2026-06-27*.console.txt')):
+        shutil.copy2(asset, OUT_ASSETS / asset.name)
     articles = sorted(ARTICLES.glob('2026-06-27*.md'), key=lambda p: p.name)
     links = []
     rendered = []

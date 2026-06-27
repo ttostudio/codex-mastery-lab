@@ -13,9 +13,15 @@
 - 今日の問い:
 - 仮説:
 - なぜ今これを検証するか:
-- 建築図面との対応:
-- CTO視点で重要な論点:
+- 読者が普段の開発で困りそうな場面:
 - AIDD-Spec上の対象成果物:
+
+## 前提情報: なぜこの検証をするのか
+
+- バイブコーディングだと何が起きがちか:
+- 駆け出しエンジニアが見落としやすい点:
+- 現場で後から困る点:
+- 今回の検証で明らかにしたいこと:
 
 ## 先に結論
 
@@ -69,10 +75,10 @@
 
 ## Step 1: Codexに雑に作らせる
 
-### 実際に渡したプロンプト
+### 実際に渡した日本語プロンプト
 
 ```text
-{{RAW_VIBE_PROMPT}}
+{{RAW_VIBE_PROMPT_JA}}
 ```
 
 ### 実行コマンド
@@ -99,23 +105,23 @@
 - 怪しい点:
 - まだ確認できていない点:
 
-### キャプチャ / 図解
+## Step 2: バイブコーディング版をブラウザで操作する
 
-{{SCREENSHOT_OR_DIAGRAM_1}}
-
-## Step 2: まずビルド/起動/基本動作を確認する
-
-### 実行したコマンド
+### 起動コマンド
 
 ```bash
-{{BUILD_AND_RUN_COMMANDS}}
+{{VIBE_SERVER_COMMAND}}
 ```
 
-### 実際の結果
+### 操作内容
 
-```text
-{{BUILD_AND_RUN_OUTPUT}}
-```
+1.
+2.
+3.
+
+### 操作GIF
+
+{{VIBE_APP_GIF}}
 
 ### ブラウザ/コンソール確認
 
@@ -125,14 +131,10 @@
 - Network errors:
 
 ```text
-{{BROWSER_CONSOLE_OUTPUT}}
+{{VIBE_BROWSER_CONSOLE_OUTPUT}}
 ```
 
-### キャプチャ
-
-{{SCREENSHOT_2}}
-
-### ここから分かったこと
+### ブラウザで見て分かったこと
 
 - 
 
@@ -236,10 +238,6 @@
 - 状態設計:
 - モバイル対応:
 
-### キャプチャ
-
-{{SCREENSHOT_6}}
-
 ### ここから分かったこと
 
 - 
@@ -267,10 +265,10 @@ findings:
 
 ## Step 8: 理想状態へ近づけるためにCodexへ再指示する
 
-### 再指示プロンプト
+### 再指示の日本語プロンプト
 
 ```text
-{{FIX_PROMPT}}
+{{FIX_PROMPT_JA}}
 ```
 
 ### 実行コマンド
@@ -291,7 +289,36 @@ findings:
 {{DIFF_AFTER_FIX}}
 ```
 
-## Step 9: 再検証する
+## Step 9: 修正版をブラウザで操作する
+
+### 起動コマンド
+
+```bash
+{{FIXED_SERVER_COMMAND}}
+```
+
+### 操作内容
+
+1.
+2.
+3.
+
+### 操作GIF
+
+{{FIXED_APP_GIF}}
+
+### ブラウザ/コンソール確認
+
+- URL:
+- Console errors:
+- Console warnings:
+- Network errors:
+
+```text
+{{FIXED_BROWSER_CONSOLE_OUTPUT}}
+```
+
+## Step 10: 再検証する
 
 ### 再実行したコマンド
 
@@ -310,7 +337,7 @@ findings:
 - 改善:
 - 残課題:
 
-## Step 10: 逆算する
+## Step 11: 逆算する
 
 ### 今回の欠陥を防ぐために、前段で必要だった情報
 
@@ -321,7 +348,7 @@ findings:
 ### つまり、最初からCodexに渡すべきだったもの
 
 ```text
-{{IMPROVED_INITIAL_PROMPT_OR_TASK_PACKET}}
+{{IMPROVED_INITIAL_PROMPT_OR_TASK_PACKET_JA}}
 ```
 
 ## AIDD-Specへの反映
@@ -330,7 +357,7 @@ findings:
 - 追加したテンプレート項目:
 - 次回検証すべき仮説:
 
-## CTO向け考察
+## 実務で使うならどうするか
 
 - どこまでAIに任せてよいか:
 - どこで人間レビューを挟むべきか:

@@ -6,6 +6,16 @@
 
 ![Security Baseline reverse chain](../assets/2026-06-27-security-baseline-reverse-chain.svg)
 
+## 操作キャプチャ
+
+バイブコーディング版を実際にブラウザで操作したGIF。
+
+![バイブコーディング版フォームの操作GIF](../assets/2026-06-27-security-vibe-demo.gif)
+
+指示を見直した版を実際にブラウザで操作したGIF。
+
+![指示見直し版フォームの操作GIF](../assets/2026-06-27-security-fixed-demo.gif)
+
 ## 1. 今日の問い
 
 前回までに、FAQ検索UIではアクセシビリティ契約、SaaSギャラリーではPerformance BudgetをAI Task Packetへ戻した。今日の問いは、フォームである。

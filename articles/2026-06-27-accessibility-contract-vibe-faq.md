@@ -6,6 +6,16 @@
 
 ![雑プロンプト vs AI Task Packet](../assets/2026-06-27-vibe-vs-fixed-audit.svg)
 
+## 操作キャプチャ
+
+バイブコーディング版を実際にブラウザで操作したGIF。
+
+![バイブコーディング版FAQの操作GIF](../assets/2026-06-27-accessibility-vibe-demo.gif)
+
+指示を見直した版を実際にブラウザで操作したGIF。
+
+![指示見直し版FAQの操作GIF](../assets/2026-06-27-accessibility-fixed-demo.gif)
+
 ## 1. 今日の問い
 
 AI駆動開発では、Codexに「FAQ検索アプリをいい感じに作って」と頼むだけでも、それっぽいUIはかなり速く出てくる。では、その成果物は本当に後工程で読める設計図面になっているのか。
