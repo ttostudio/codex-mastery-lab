@@ -17,6 +17,9 @@ SERIES_ORDER = [
     '2026-06-27-watchflow-trial-001.md',
     '2026-06-27-watchflow-trial-002.md',
     '2026-06-27-watchflow-trial-003.md',
+]
+
+PAST_ARTICLES_ORDER = [
     '2026-06-27-accessibility-contract-vibe-faq.md',
     '2026-06-27-performance-budget-vibe-gallery.md',
     '2026-06-27-security-baseline-contact-form.md',
@@ -40,6 +43,9 @@ aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; backg
 .chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
 .chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
 .chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
 main { max-width: 980px; padding: 42px 34px 80px; }
 article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
 h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
@@ -179,15 +185,21 @@ def md_to_html(md: str) -> str:
 def chapter_label(i: int, title: str) -> str:
     return f'第{i:02d}回｜{title}'
 
-def nav_html(items, current_href=None):
-    return '\n'.join(
+def nav_html(series_items, past_items, current_href=None):
+    series = '\n'.join(
         f'<a class="chapter-link {"current" if href == current_href else ""}" href="{href}"><span class="chapter-num">第{i:02d}回</span>{html.escape(title)}</a>'
-        for i, (_, title, href) in enumerate(items, start=1)
+        for i, (_, title, href) in enumerate(series_items, start=1)
     )
+    past = '\n'.join(
+        f'<a class="chapter-link past {"current" if href == current_href else ""}" href="{href}"><span class="chapter-num">過去記事 {i:02d}</span>{html.escape(title)}</a>'
+        for i, (_, title, href) in enumerate(past_items, start=1)
+    )
+    return f'<div class="nav-section-title">WatchFlow 100点チャレンジ</div>{series}<div class="nav-section-title">過去記事</div>{past}'
 
-def mobile_nav(items):
-    links = '\n'.join(f'<a href="{href}">第{i:02d}回｜{html.escape(title)}</a>' for i, (_, title, href) in enumerate(items, start=1))
-    return f'<div class="mobile-index"><details><summary>連載目次を開く</summary>{links}</details></div>'
+def mobile_nav(series_items, past_items):
+    series = '\n'.join(f'<a href="{href}">第{i:02d}回｜{html.escape(title)}</a>' for i, (_, title, href) in enumerate(series_items, start=1))
+    past = '\n'.join(f'<a href="{href}">過去記事{i:02d}｜{html.escape(title)}</a>' for i, (_, title, href) in enumerate(past_items, start=1))
+    return f'<div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div>{series}<div class="nav-section-title">過去記事</div>{past}</details></div>'
 
 def prev_next(items, index):
     parts = ['<nav class="chapter-nav" aria-label="前後の記事">']
@@ -204,10 +216,10 @@ def prev_next(items, index):
     parts.append('</nav>')
     return ''.join(parts)
 
-def page(title: str, body: str, items, current_href=None, cls='') -> str:
-    nav = nav_html(items, current_href)
-    mob = mobile_nav(items)
-    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)}</title><style>{CSS}</style></head><body>{mob}<div class="layout {cls}"><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">スマホ対応プレビュー / 順番に読める連載版</p>{nav}</aside><main>{body}</main></div></body></html>'''
+def page(title: str, body: str, series_items, past_items, current_href=None, cls='') -> str:
+    nav = nav_html(series_items, past_items, current_href)
+    mob = mobile_nav(series_items, past_items)
+    return f'''<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)}</title><style>{CSS}</style></head><body>{mob}<div class="layout {cls}"><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編と過去記事を分けて読めるプレビュー</p>{nav}</aside><main>{body}</main></div></body></html>'''
 
 def article_title(path: Path) -> str:
     for line in path.read_text(encoding='utf-8').splitlines():
@@ -215,18 +227,22 @@ def article_title(path: Path) -> str:
             return line[2:].strip()
     return path.stem
 
-def ordered_articles():
+def ordered_group(names):
     result = []
-    seen = set()
-    for name in SERIES_ORDER:
+    for name in names:
         p = ARTICLES / name
         if p.exists():
-            result.append(p); seen.add(p.name)
-    # Keep old intro out of the main route if 001 exists; it is superseded.
-    for p in sorted(ARTICLES.glob('*.md')):
-        if p.name not in seen and not p.name.startswith('2026-06-27-codex-mastery-lab-start'):
             result.append(p)
     return result
+
+def ordered_articles():
+    series = ordered_group(SERIES_ORDER)
+    past = ordered_group(PAST_ARTICLES_ORDER)
+    seen = {p.name for p in series + past}
+    for p in sorted(ARTICLES.glob('*.md')):
+        if p.name not in seen and not p.name.startswith('2026-06-27-codex-mastery-lab-start'):
+            past.append(p)
+    return series, past
 
 def main():
     if OUT.exists():
@@ -236,16 +252,23 @@ def main():
     asset_patterns = ['2026-06-27*.svg', '2026-06-27*.gif', '2026-06-27*.png', '2026-06-27*.console.txt']
     for asset in [p for pattern in asset_patterns for p in ASSETS.glob(pattern)]:
         shutil.copy2(asset, OUT_ASSETS / asset.name)
-    articles = ordered_articles()
-    items = [(p, article_title(p), slug(p)) for p in articles]
-    home_list = ''.join(f'<li><a href="{href}"><strong>第{i:02d}回</strong><br>{html.escape(title)}</a></li>' for i, (_,title,href) in enumerate(items, start=1))
-    home = '<article class="hero"><h1>Codex Mastery Lab Preview</h1><p class="meta">AI駆動開発時代の共通説明書を作る連載。第1回から順番に読めます。</p><ul class="home-grid">'+home_list+'</ul></article>'
-    (OUT/'index.html').write_text(page('Codex Mastery Lab Preview', home, items, None, 'home'), encoding='utf-8')
-    for idx, (p,title,href) in enumerate(items):
+    series_articles, past_articles = ordered_articles()
+    series_items = [(p, article_title(p), slug(p)) for p in series_articles]
+    past_items = [(p, article_title(p), slug(p)) for p in past_articles]
+    all_items = series_items + past_items
+    series_list = ''.join(f'<li><a href="{href}"><strong>第{i:02d}回</strong><br>{html.escape(title)}</a></li>' for i, (_,title,href) in enumerate(series_items, start=1))
+    past_list = ''.join(f'<li><a href="{href}"><strong>過去記事 {i:02d}</strong><br>{html.escape(title)}</a></li>' for i, (_,title,href) in enumerate(past_items, start=1))
+    home = '<article class="hero"><h1>Codex Mastery Lab Preview</h1><p class="meta">WatchFlow 100点チャレンジを本編として読み、以前の記事は過去記事として参照できます。</p><h2>WatchFlow 100点チャレンジ</h2><ul class="home-grid">'+series_list+'</ul><h2>過去記事</h2><ul class="home-grid">'+past_list+'</ul></article>'
+    (OUT/'index.html').write_text(page('Codex Mastery Lab Preview', home, series_items, past_items, None, 'home'), encoding='utf-8')
+    for idx, (p,title,href) in enumerate(series_items):
         md = p.read_text(encoding='utf-8')
-        body = f'{prev_next(items, idx)}<article>{md_to_html(md)}</article>{prev_next(items, idx)}'
-        (OUT/href).write_text(page(title, body, items, href), encoding='utf-8')
-    print(f'Wrote {len(items)} articles to {OUT}')
+        body = f'{prev_next(series_items, idx)}<article>{md_to_html(md)}</article>{prev_next(series_items, idx)}'
+        (OUT/href).write_text(page(title, body, series_items, past_items, href), encoding='utf-8')
+    for idx, (p,title,href) in enumerate(past_items):
+        md = p.read_text(encoding='utf-8')
+        body = f'{prev_next(past_items, idx)}<article>{md_to_html(md)}</article>{prev_next(past_items, idx)}'
+        (OUT/href).write_text(page(title, body, series_items, past_items, href), encoding='utf-8')
+    print(f'Wrote {len(all_items)} articles to {OUT}')
 
 if __name__ == '__main__':
     main()
