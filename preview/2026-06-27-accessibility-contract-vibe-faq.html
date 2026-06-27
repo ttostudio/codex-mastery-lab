@@ -175,6 +175,9 @@ has title True</code></pre>
 <p>vibe-appのHTMLはこうだった。</p>
 <pre><code>&lt;div id=&quot;faq-list&quot; class=&quot;faq-list&quot;&gt;&lt;/div&gt;</code></pre>
 <p>JS側で <code>details</code> を追加しているが、FAQ全体は <code>ul/li</code> ではない。人間の目にはカード一覧に見える。しかし、支援技術や静的監査にとっては「FAQ項目のコレクション」であることが曖昧になる。</p>
+<p>ここは駆け出しエンジニアほど見落としやすい。<code>div</code> は意味を持たない汎用の箱なので、見た目をカード状に並べることはできても、「これは同じ種類の項目が並んだ一覧です」という意味までは伝えない。一方で <code>ul</code> は unordered list、つまり順序に意味がない一覧を表すHTML要素で、<code>li</code> はその一覧の1項目を表す。FAQは「質問と回答が複数並ぶ一覧」なので、まず <code>ul/li</code> が自然な表現になる。</p>
+<p>これはアクセシビリティだけの話ではない。レビューする人間にとっても、テストを書く人にとっても、将来CSSやJSを直す人にとっても、<code>ul#faq-list &gt; li</code> の構造になっている方が「ここはFAQ一覧だ」とすぐ読める。HTMLの意味づけが正しいと、後工程の監査・E2Eテスト・スクリーンリーダー確認・保守が全部やりやすくなる。逆に <code>div</code> だけで作ると、見た目は同じでも、コードを読んだ人が毎回「これは本当に一覧なのか？」を推測する必要が出る。</p>
+<p>もちろん、必ず <code>ul/li</code> しか使ってはいけないわけではない。複雑な仮想リストや独自コンポーネントでは <code>role=&quot;list&quot;</code> / <code>role=&quot;listitem&quot;</code> を使う選択もある。ただし、今回のような普通のFAQ一覧なら、まずは標準HTMLの <code>ul/li</code> を使うのが一番説明しやすく、壊れにくい。</p>
 <p>理想状態:</p>
 <pre><code>&lt;ul id=&quot;faq-list&quot; class=&quot;faq-list&quot;&gt;&lt;/ul&gt;</code></pre>
 <p>各項目は <code>li</code> として追加する。カスタム要素を使うなら、少なくとも <code>role=&quot;list&quot;</code> / <code>role=&quot;listitem&quot;</code> が必要になる。</p>

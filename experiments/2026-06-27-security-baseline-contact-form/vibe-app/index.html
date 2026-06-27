@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NorthstarOps Demo Request</title>
+    <title>NorthstarOps デモ依頼</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -33,23 +33,23 @@
 
         <form class="contact-form" id="lead-form">
           <div class="form-heading">
-            <p class="eyebrow">Demo request</p>
+            <p class="eyebrow">デモ依頼</p>
             <h2>Tell us what you need</h2>
           </div>
 
           <label>
-            <span>Name</span>
+            <span>氏名</span>
             <input id="name" name="name" type="text" autocomplete="name" required placeholder="Jordan Lee">
           </label>
 
           <label>
-            <span>Email</span>
+            <span>メールアドレス</span>
             <input id="email" name="email" type="email" autocomplete="email" required placeholder="jordan@company.com">
           </label>
 
           <div class="split-fields">
             <label>
-              <span>Company size</span>
+              <span>会社規模</span>
               <select id="company-size" name="companySize" required>
                 <option value="">Select size</option>
                 <option>1-25</option>
@@ -61,19 +61,19 @@
             </label>
 
             <label>
-              <span>Budget</span>
+              <span>予算</span>
               <select id="budget" name="budget" required>
                 <option value="">Select range</option>
                 <option>Under $10k</option>
                 <option>$10k-$25k</option>
-                <option>$25k-$75k</option>
+                <option>月25万〜75万円</option>
                 <option>$75k+</option>
               </select>
             </label>
           </div>
 
           <label>
-            <span>Message</span>
+            <span>相談内容</span>
             <textarea id="message" name="message" rows="5" required placeholder="What workflow or customer handoff problem should we cover?"></textarea>
           </label>
 
@@ -84,11 +84,11 @@
 
       <section class="submissions" aria-labelledby="submissions-title">
         <div>
-          <p class="eyebrow">Recent submissions</p>
-          <h2 id="submissions-title">Lead preview</h2>
+          <p class="eyebrow">最近の入力プレビュー</p>
+          <h2 id="submissions-title">問い合わせプレビュー</h2>
         </div>
         <div id="empty-state" class="empty-state">
-          Submitted demo requests will appear here.
+          送信前プレビューがここに表示されます。
         </div>
         <div id="submission-list" class="submission-list" aria-live="polite"></div>
       </section>

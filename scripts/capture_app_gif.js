@@ -44,7 +44,7 @@ async function interact(page, frameDir) {
     await captureFrame(page, frameDir, idx++, 'details-open');
   }
 
-  const buttons = page.locator('button').filter({ hasText: /All|Security|Analytics|Growth|すべて|送信|Submit|Demo|Request|Filter/i });
+  const buttons = page.locator('button').filter({ hasText: /All|Security|Analytics|Growth|すべて|リリース|業務フロー|分析|送信|内容をプレビュー|Submit|Demo|Request|Filter/i });
   const buttonCount = Math.min(await safeCount(buttons), 3);
   for (let i = 0; i < buttonCount; i++) {
     try {

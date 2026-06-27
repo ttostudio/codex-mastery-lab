@@ -1,23 +1,21 @@
-## fixed node syntax check
-## fixed static security audit
-APP: experiments/2026-06-27-security-baseline-contact-form/fixed-app
-SIZES: total_static_bytes=13061 html=5197 css=5291 js=2573
-PASS: Required app files exist: index.html, styles.css, app.js
-PASS: Lead form exists with stable id
-PASS: Email field uses type=email
-PASS: Required fields are declared
-PASS: Text inputs/textarea have explicit maxlength constraints
-PASS: Company size is constrained by select options
-PASS: Budget is constrained by select options
-PASS: Privacy consent checkbox is required before preview
-PASS: PII fields carry data-classification markers
-PASS: Form fields reference privacy/retention help text
-PASS: Form explicitly declares static-demo/no-network behavior
-PASS: User-controlled values are not rendered with HTML injection APIs
-PASS: User-controlled preview is rendered with textContent or equivalent safe text API
-PASS: No network submission APIs are used in the static demo
-PASS: PII is not persisted to browser storage
-PASS: No console logging of form/PII data
-PASS: SECURITY_PRIVACY.md evidence file exists
-PASS: Security/privacy evidence covers classification, PII, retention, no-network, verification
-SUMMARY: 18 passed / 0 failed
+対象アプリ: experiments/2026-06-27-security-baseline-contact-form/fixed-app
+サイズ: total_static_bytes=13140 html=5276 css=5291 js=2573
+合格: 必要ファイル index.html / styles.css / app.js が存在する
+合格: 問い合わせフォームに安定したidがある
+合格: メール欄が type=email になっている
+合格: 必須項目がrequiredで宣言されている
+合格: テキスト入力/textareaにmaxlength制約がある
+合格: 会社規模がselectで制約されている
+合格: 予算がselectで制約されている
+合格: プライバシー同意チェックが必須になっている
+合格: PII/業務情報フィールドにdata-classificationがある
+合格: フォーム項目がプライバシー/保持期間の説明を参照している
+合格: 静的デモ/no-network方針がフォームに明示されている
+合格: ユーザー入力値をHTML注入APIで描画していない
+合格: ユーザー入力プレビューをtextContent等の安全なAPIで描画している
+合格: 静的デモ内でネットワーク送信APIを使っていない
+合格: PIIをブラウザストレージに保存していない
+合格: フォーム/PIIデータをconsoleに出していない
+合格: SECURITY_PRIVACY.md 証跡ファイルが存在する
+合格: 証跡ファイルが分類、PII、保持、no-network、検証を含む
+まとめ: 18件合格 / 0件不合格

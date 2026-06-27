@@ -80,15 +80,15 @@ Codex CLI:      codex-cli 0.142.3
 実際に渡したプロンプトはこれである。
 
 ```text
-In this git repo, create a tiny static SaaS product gallery landing page under experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app.
-Use only HTML, CSS, and vanilla JavaScript. Make it look premium and visual, with a hero section, 6 feature/product cards, images or illustrations for each card, a testimonial strip, and a small interactive filter.
+このgitリポジトリ内で、`experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app` に小さな静的SaaSプロダクトギャラリーを作ってください。
+HTML、CSS、素のJavaScriptだけを使ってください。日本語のプロダクト紹介ページとして、ヒーロー、6つの機能カード、簡単な図解、導入効果の声、小さな絞り込みUIを入れてください。
 Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit.
 ```
 
 実行コマンド:
 
 ```bash
-codex exec --sandbox danger-full-access "In this git repo, create a tiny static SaaS product gallery landing page under experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app. Use only HTML, CSS, and vanilla JavaScript. Make it look premium and visual, with a hero section, 6 feature/product cards, images or illustrations for each card, a testimonial strip, and a small interactive filter. Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit."
+codex exec --sandbox danger-full-access "このgitリポジトリ内で、experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app に小さな静的SaaSプロダクトギャラリーを作ってください。HTML、CSS、素のJavaScriptだけを使ってください。日本語のプロダクト紹介ページとして、ヒーロー、6つの機能カード、簡単な図解、導入効果の声、小さな絞り込みUIを入れてください。シンプルにしてください。依存パッケージはインストールしないでください。vibe-app ディレクトリの外は変更しないでください。完了したら終了してください。"
 ```
 
 Codexは `vibe-app` に3ファイルを作った。
@@ -104,7 +104,7 @@ Codexの最終報告はこうだった。
 ```text
 Built the static SaaS gallery landing page under vibe-app.
 It includes the hero, six visual product cards, testimonial strip, and vanilla JS category filter.
-No dependencies installed, no external assets referenced, and no files were modified outside vibe-app.
+依存パッケージはインストールせず、外部アセットも参照せず、変更は `vibe-app` 内に限定しました。
 Verification: checked the created file set and confirmed there are no http, @import, or url(...) external references.
 ```
 
@@ -136,16 +136,16 @@ python3 experiments/2026-06-27-performance-budget-vibe-gallery/audit_static_perf
 ```text
 APP: experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app
 SIZES: html=6958 css=10154 js=906 total=18018 css_lines=605
-PASS: HTML bytes within budget — 6958 <= 16000
-PASS: CSS bytes within budget — 10154 <= 12000
-PASS: JS bytes within budget — 906 <= 5000
-PASS: Total static bytes within budget — 18018 <= 32000
-FAIL: CSS line count stays reviewable — 605 <= 360
-PASS: No external network asset references — found 0
-FAIL: Performance budget is documented in deliverable
-FAIL: Potentially costly visual CSS is bounded — found 20 tokens
-FAIL: Motion/transition has prefers-reduced-motion fallback
-PASS: No console logging left in JS
+合格: HTMLサイズが予算内 — 7512 <= 16000
+合格: CSSサイズが予算内 — 10154 <= 12000
+合格: JSサイズが予算内 — 906 <= 5000
+合格: 静的ファイル合計サイズが予算内 — 18572 <= 32000
+不合格: CSS行数がレビューしやすい範囲内 — 605 <= 360
+合格: 外部ネットワーク資産を参照していない — found 0
+不合格: Performance Budgetが成果物に文書化されている
+不合格: 重くなりやすい視覚表現CSSが上限内 — found 20 tokens
+不合格: 動き/transitionにprefers-reduced-motionの代替がある
+合格: consoleログがJSに残っていない
 ```
 
 ここで重要なのは、ファイルサイズ自体は合格していることだ。総量18KBなので、単純に「重い」とは言えない。しかしCSSが605行まで伸び、Performance Budgetの証拠がなく、motion fallbackもない。つまり、性能欠陥は「現在のページが遅い」ではなく、「後工程で継続監査できる共通説明書になっていない」ことにある。
@@ -197,7 +197,7 @@ verification:
 # AI Task Packet v0.2: Performance-Budgeted Static SaaS Gallery
 
 ## Performance Budget Contract
-- Total static bytes for `index.html + styles.css + app.js` must be <= 32KB.
+- `index.html + styles.css + app.js` の静的ファイル合計は32KB以下にする。
 - `styles.css` must be <= 12KB and <= 360 lines.
 - `app.js` must be <= 5KB.
 - Avoid external network assets: no `http://`, `https://`, CSS `@import`, or `url(...)` references.
@@ -231,16 +231,16 @@ PERFORMANCE_BUDGET.md
 ```text
 APP: experiments/2026-06-27-performance-budget-vibe-gallery/fixed-app
 SIZES: html=4930 css=6742 js=796 total=12468 css_lines=349
-PASS: HTML bytes within budget — 4930 <= 16000
-PASS: CSS bytes within budget — 6742 <= 12000
-PASS: JS bytes within budget — 796 <= 5000
-PASS: Total static bytes within budget — 12468 <= 32000
-PASS: CSS line count stays reviewable — 349 <= 360
-PASS: No external network asset references — found 0
-PASS: Performance budget is documented in deliverable
-PASS: Potentially costly visual CSS is bounded — found 5 tokens
-PASS: Motion/transition has prefers-reduced-motion fallback
-PASS: No console logging left in JS
+合格: HTMLサイズが予算内 — 5514 <= 16000
+合格: CSSサイズが予算内 — 6742 <= 12000
+合格: JSサイズが予算内 — 796 <= 5000
+合格: 静的ファイル合計サイズが予算内 — 13052 <= 32000
+合格: CSS行数がレビューしやすい範囲内 — 349 <= 360
+合格: 外部ネットワーク資産を参照していない — found 0
+合格: Performance Budgetが成果物に文書化されている
+合格: 重くなりやすい視覚表現CSSが上限内 — found 5 tokens
+合格: 動き/transitionにprefers-reduced-motionの代替がある
+合格: consoleログがJSに残っていない
 ```
 
 HTTP配信も確認した。

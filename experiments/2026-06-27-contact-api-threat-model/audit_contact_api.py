@@ -24,37 +24,37 @@ def main() -> int:
     combined = (code + "\n" + evidence_text).lower()
     results = []
 
-    check(results, server.exists(), "server.js exists")
-    check(results, 'require("http")' in code or "require('http')" in code, "uses built-in http module")
-    check(results, "express" not in code and "require(\"express\")" not in code, "no Express or external web framework dependency")
-    check(results, "GET" in code and "/health" in code, "GET /health is implemented")
-    check(results, "POST" in code and "/api/contact" in code, "POST /api/contact is implemented")
-    check(results, "application/json" in code.lower(), "requires or returns application/json")
-    check(results, "MAX_BODY_BYTES" in code and re.search(r"1024\s*\*\s*(16|32|64)", code), "request body size limit is explicit and small")
-    check(results, re.search(r"name\.length\s*>\s*\d+", code) and re.search(r"message\.length\s*>\s*\d+", code), "field length validation exists")
-    check(results, "email" in code and re.search(r"/\^.*@.*\$/", code, re.S), "email validation exists")
+    check(results, server.exists(), "server.js が存在する")
+    check(results, 'require("http")' in code or "require('http')" in code, "Node.js標準のhttpモジュールを使っている")
+    check(results, "express" not in code and "require(\"express\")" not in code, "Express等の外部Webフレームワークに依存していない")
+    check(results, "GET" in code and "/health" in code, "GET /health が実装されている")
+    check(results, "POST" in code and "/api/contact" in code, "POST /api/contact が実装されている")
+    check(results, "application/json" in code.lower(), "application/json を要求または返却している")
+    check(results, "MAX_BODY_BYTES" in code and re.search(r"1024\s*\*\s*(16|32|64)", code), "リクエストbodyサイズ上限が小さく明示されている")
+    check(results, re.search(r"name\.length\s*>\s*\d+", code) and re.search(r"message\.length\s*>\s*\d+", code), "フィールド長の検証がある")
+    check(results, "email" in code and re.search(r"/\^.*@.*\$/", code, re.S), "メールアドレス検証がある")
 
     # API security/abuse controls expected from the improved packet.
-    check(results, "x-csrf-token" in combined or "csrf" in combined, "CSRF or browser-origin protection is documented/implemented")
-    check(results, "origin" in combined and ("allowlist" in combined or "allowed_origins" in combined or "allowed origin" in combined), "Origin allowlist policy exists")
-    check(results, "rate" in combined and "limit" in combined and ("429" in code or "too many" in combined), "rate limit with 429 behavior exists")
-    check(results, "requestid" in code.lower() or "request-id" in combined or "crypto.randomuuid" in code.lower(), "request id is generated or propagated")
-    check(results, "audit" in combined and "log" in combined, "audit logging policy exists")
-    check(results, "console.log" not in code or re.search(r"console\.log\([^)]*(requestId|method|url|status|audit)", code, re.I | re.S), "console logging avoids direct PII payload dumping")
-    check(results, "retention" in combined and ("no persistence" in combined or "not persist" in combined or "memory" in combined), "retention/no-persistence policy exists")
-    check(results, "data classification" in combined and "pii" in combined, "data classification covers PII")
-    check(results, "error contract" in combined or "error response" in combined, "error response contract is documented")
-    check(results, evidence.exists(), "SECURITY_OPERATIONS.md evidence file exists")
-    check(results, "verification" in evidence_text.lower() and "node --check" in evidence_text.lower(), "evidence file contains verification commands/results")
+    check(results, "x-csrf-token" in combined or "csrf" in combined, "CSRFまたはブラウザOrigin保護が文書化/実装されている")
+    check(results, "origin" in combined and ("allowlist" in combined or "allowed_origins" in combined or "allowed origin" in combined), "Origin許可リスト方針がある")
+    check(results, "rate" in combined and "limit" in combined and ("429" in code or "too many" in combined), "rate limitと429挙動がある")
+    check(results, "requestid" in code.lower() or "request-id" in combined or "crypto.randomuuid" in code.lower(), "request idを生成または伝播している")
+    check(results, "audit" in combined and "log" in combined, "監査ログ方針がある")
+    check(results, "console.log" not in code or re.search(r"console\.log\([^)]*(requestId|method|url|status|audit)", code, re.I | re.S), "consoleログでPII payloadを直接出していない")
+    check(results, "retention" in combined and ("no persistence" in combined or "not persist" in combined or "memory" in combined), "保持/no-persistence方針がある")
+    check(results, "data classification" in combined and "pii" in combined, "データ分類がPIIを含んでいる")
+    check(results, "error contract" in combined or "error response" in combined, "エラーレスポンス契約が文書化されている")
+    check(results, evidence.exists(), "SECURITY_OPERATIONS.md 証跡ファイルが存在する")
+    check(results, "verification" in evidence_text.lower() and "node --check" in evidence_text.lower(), "証跡ファイルが検証コマンド/結果を含む")
 
     passed = sum(1 for ok, _ in results if ok)
     failed = len(results) - passed
-    print(f"APP: {app}")
+    print(f"対象API: {app}")
     if server.exists():
-        print(f"SIZES: server_js_bytes={server.stat().st_size}")
+        print(f"サイズ: server_js_bytes={server.stat().st_size}")
     for ok, message in results:
-        print(("PASS" if ok else "FAIL") + f": {message}")
-    print(f"SUMMARY: {passed} passed / {failed} failed")
+        print(("合格" if ok else "不合格") + f": {message}")
+    print(f"まとめ: {passed}件合格 / {failed}件不合格")
     return 0 if failed == 0 else 1
 
 

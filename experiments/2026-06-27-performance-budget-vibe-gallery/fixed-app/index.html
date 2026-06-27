@@ -1,33 +1,33 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vibe Gallery</title>
+    <title>プロダクトギャラリー</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#" aria-label="Vibe Gallery home">
+      <a class="brand" href="#" aria-label="プロダクトギャラリー ホーム">
         <span class="mark" aria-hidden="true"></span>
-        <span>Vibe Gallery</span>
+        <span>プロダクトギャラリー</span>
       </a>
-      <nav aria-label="Primary">
-        <a href="#gallery">Gallery</a>
-        <a href="#proof">Proof</a>
-        <a href="#demo">Demo</a>
+      <nav aria-label="メインナビゲーション">
+        <a href="#gallery">ギャラリー</a>
+        <a href="#proof">導入効果</a>
+        <a href="#demo">デモ</a>
       </nav>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="title">
         <div>
-          <p class="eyebrow">SaaS product gallery</p>
-          <h1 id="title">Package every product story in one fast, polished gallery.</h1>
-          <p class="intro">Vibe Gallery helps product-led teams curate launches, workflows, integrations, and customer proof without a heavy CMS or slow marketing stack.</p>
+          <p class="eyebrow">SaaSプロダクトギャラリー</p>
+          <h1 id="title">プロダクトの魅力を、軽くて見やすいギャラリーにまとめる。</h1>
+          <p class="intro">重いCMSや複雑なマーケティング基盤を使わず、リリース情報、業務フロー、外部連携、導入実績を1ページに整理できます。</p>
           <p class="actions">
-            <a class="button primary" href="#gallery">Browse gallery</a>
-            <a class="button" href="#demo">Request preview</a>
+            <a class="button primary" href="#gallery">ギャラリーを見る</a>
+            <a class="button" href="#demo">プレビューを依頼</a>
           </p>
         </div>
         <div class="panel" aria-hidden="true">
@@ -43,70 +43,70 @@
       <section id="gallery" class="section" aria-labelledby="gallery-title">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Gallery</p>
-            <h2 id="gallery-title">Six product moments</h2>
+            <p class="eyebrow">ギャラリー</p>
+            <h2 id="gallery-title">6つの活用シーン</h2>
           </div>
           <p id="result-count" class="count" aria-live="polite"></p>
         </div>
 
-        <div class="filters" aria-label="Filter gallery cards">
-          <button class="active" type="button" data-filter="all" aria-pressed="true">All</button>
-          <button type="button" data-filter="launch" aria-pressed="false">Launch</button>
-          <button type="button" data-filter="workflow" aria-pressed="false">Workflow</button>
-          <button type="button" data-filter="insight" aria-pressed="false">Insight</button>
+        <div class="filters" aria-label="ギャラリーカードを絞り込む">
+          <button class="active" type="button" data-filter="all" aria-pressed="true">すべて</button>
+          <button type="button" data-filter="launch" aria-pressed="false">リリース</button>
+          <button type="button" data-filter="workflow" aria-pressed="false">業務フロー</button>
+          <button type="button" data-filter="insight" aria-pressed="false">分析</button>
         </div>
 
         <div class="grid">
           <article class="card" data-category="launch">
             <span class="art launch" aria-hidden="true"></span>
-            <p class="label">Launch</p>
-            <h3>Release Room</h3>
-            <p>Turn feature launches into crisp stories with assets, metrics, and stakeholder notes.</p>
+            <p class="label">リリース</p>
+            <h3>リリースルーム</h3>
+            <p>新機能リリースを、素材・指標・関係者メモと一緒に分かりやすいストーリーへ整理します。</p>
           </article>
           <article class="card" data-category="workflow">
             <span class="art workflow" aria-hidden="true"></span>
-            <p class="label">Workflow</p>
-            <h3>Pipeline Canvas</h3>
-            <p>Map handoffs from idea to adoption without adding another status meeting.</p>
+            <p class="label">業務フロー</p>
+            <h3>パイプラインキャンバス</h3>
+            <p>アイデアから定着までの受け渡しを、余計な定例会議を増やさず整理します。</p>
           </article>
           <article class="card" data-category="insight">
             <span class="art insight" aria-hidden="true"></span>
-            <p class="label">Insight</p>
-            <h3>Signal Board</h3>
-            <p>Show traction, risk, and customer pull in a dashboard executives can scan.</p>
+            <p class="label">分析</p>
+            <h3>シグナルボード</h3>
+            <p>成長指標、リスク、顧客の反応を、経営層が短時間で読めるダッシュボードにします。</p>
           </article>
           <article class="card" data-category="workflow">
             <span class="art connect" aria-hidden="true"></span>
-            <p class="label">Workflow</p>
-            <h3>Integration Shelf</h3>
-            <p>Package connected apps, use cases, and setup paths in reusable cards.</p>
+            <p class="label">業務フロー</p>
+            <h3>連携カタログ</h3>
+            <p>連携アプリ、利用シーン、設定手順を、再利用しやすいカードにまとめます。</p>
           </article>
           <article class="card" data-category="launch">
             <span class="art kit" aria-hidden="true"></span>
-            <p class="label">Launch</p>
-            <h3>Brand Kit</h3>
+            <p class="label">リリース</p>
+            <h3>ブランドキット</h3>
             <p>Keep screenshots, messaging, quotes, and proof ready for every go-to-market push.</p>
           </article>
           <article class="card" data-category="insight">
             <span class="art proof" aria-hidden="true"></span>
-            <p class="label">Insight</p>
-            <h3>Proof Wall</h3>
-            <p>Collect testimonials and adoption wins sales and success teams can reuse.</p>
+            <p class="label">分析</p>
+            <h3>導入実績ウォール</h3>
+            <p>お客様の声や導入成果を、営業・CSチームが再利用できる形で蓄積します。</p>
           </article>
         </div>
       </section>
 
-      <section id="proof" class="proof" aria-label="Customer proof">
-        <p>"Vibe Gallery gave our launch assets a premium home. Product, sales, and leadership finally reference the same story."</p>
-        <div><strong>Mara Chen</strong><span>VP Product, Northstar Labs</span></div>
+      <section id="proof" class="proof" aria-label="導入効果">
+        <p>「プロダクトギャラリーのおかげで、リリース素材、営業資料、経営向け説明が同じストーリーで揃いました。」</p>
+        <div><strong>佐藤 真理</strong><span>Northstar Labs プロダクト責任者</span></div>
       </section>
 
       <section id="demo" class="demo" aria-labelledby="demo-title">
         <div>
-          <p class="eyebrow">Demo</p>
-          <h2 id="demo-title">Ready in one afternoon.</h2>
+          <p class="eyebrow">デモ</p>
+          <h2 id="demo-title">半日で共有できる状態へ。</h2>
         </div>
-        <a class="button primary" href="mailto:hello@example.com">Request preview</a>
+        <a class="button primary" href="mailto:hello@example.com">プレビューを依頼</a>
       </section>
     </main>
 

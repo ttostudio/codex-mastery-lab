@@ -1,14 +1,14 @@
-# Security and Privacy Evidence
+# セキュリティ・プライバシー証跡
 
-## Data Classification
+## データ分類
 
 | Field | Control | Data classification |
 | --- | --- | --- |
-| Name | `name` | `pii.name` |
-| Email | `email` | `pii.email` |
-| Company size | `companySize` | `business.company_size` |
-| Budget | `budget` | `business.budget` |
-| Message | `message` | `pii_or_confidential.free_text` |
+| 氏名 | `name` | `pii.name` |
+| メールアドレス | `email` | `pii.email` |
+| 会社規模 | `companySize` | `business.company_size` |
+| 予算 | `budget` | `business.budget` |
+| 相談内容 | `message` | `pii_or_confidential.free_text` |
 
 ## PII Handling and Retention
 

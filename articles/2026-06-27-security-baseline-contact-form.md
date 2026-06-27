@@ -80,13 +80,13 @@ Disk:           228Gi total / 140Gi available
 実際にCodexへ渡したプロンプトはこれである。
 
 ```text
-In this git repo, create a tiny static SaaS lead capture/contact form under experiments/2026-06-27-security-baseline-contact-form/vibe-app. Use only HTML, CSS, and vanilla JavaScript. Make it look like a polished B2B SaaS demo request page. Include fields for name, email, company size, budget, and message. Add a client-side submission preview or recent submissions panel so the user can see what was submitted. Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit.
+このgitリポジトリ内で、`experiments/2026-06-27-security-baseline-contact-form/vibe-app` に小さな静的SaaS問い合わせフォームを作ってください。HTML、CSS、素のJavaScriptだけを使ってください。日本語のB2B SaaSデモ依頼ページとして見た目を整えてください。氏名、メールアドレス、会社規模、予算、相談内容の項目を入れてください。入力内容を送信前に確認できるプレビュー欄も作ってください。シンプルにしてください。依存パッケージはインストールしないでください。`vibe-app` ディレクトリの外は変更しないでください。 Then exit.
 ```
 
 実行コマンド:
 
 ```bash
-codex exec --sandbox danger-full-access "In this git repo, create a tiny static SaaS lead capture/contact form under experiments/2026-06-27-security-baseline-contact-form/vibe-app. Use only HTML, CSS, and vanilla JavaScript. Make it look like a polished B2B SaaS demo request page. Include fields for name, email, company size, budget, and message. Add a client-side submission preview or recent submissions panel so the user can see what was submitted. Keep it simple. Do not install dependencies. Do not modify files outside that vibe-app directory. Then exit."
+codex exec --sandbox danger-full-access "このgitリポジトリ内で、`experiments/2026-06-27-security-baseline-contact-form/vibe-app` に小さな静的SaaS問い合わせフォームを作ってください。HTML、CSS、素のJavaScriptだけを使ってください。日本語のB2B SaaSデモ依頼ページとして見た目を整えてください。氏名、メールアドレス、会社規模、予算、相談内容の項目を入れてください。入力内容を送信前に確認できるプレビュー欄も作ってください。シンプルにしてください。依存パッケージはインストールしないでください。`vibe-app` ディレクトリの外は変更しないでください。 Then exit."
 ```
 
 Codexは `vibe-app` に3ファイルを作った。
@@ -100,7 +100,7 @@ app.js
 Codexの最終報告はこうだった。
 
 ```text
-It includes name, email, company size, budget, message, and a recent submissions preview panel. No dependencies installed, and no files outside `vibe-app` were modified by me.
+氏名、メールアドレス、会社規模、予算、相談内容、入力プレビュー欄を含めました。依存パッケージはインストールしておらず、`vibe-app` の外は変更していません。
 Verification run: `node --check experiments/2026-06-27-security-baseline-contact-form/vibe-app/app.js` passed.
 ```
 
@@ -146,24 +146,24 @@ python3 experiments/2026-06-27-security-baseline-contact-form/audit_static_secur
 ```text
 APP: experiments/2026-06-27-security-baseline-contact-form/vibe-app
 SIZES: total_static_bytes=10538 html=3471 css=4889 js=2178
-PASS: Required app files exist: index.html, styles.css, app.js
-PASS: Lead form exists with stable id
-PASS: Email field uses type=email
-PASS: Required fields are declared
-FAIL: Text inputs/textarea have explicit maxlength constraints
-PASS: Company size is constrained by select options
-PASS: Budget is constrained by select options
-FAIL: Privacy consent checkbox is required before preview
-FAIL: PII fields carry data-classification markers
-FAIL: Form fields reference privacy/retention help text
-FAIL: Form explicitly declares static-demo/no-network behavior
-PASS: User-controlled values are not rendered with HTML injection APIs
-PASS: User-controlled preview is rendered with textContent or equivalent safe text API
-PASS: No network submission APIs are used in the static demo
-PASS: PII is not persisted to browser storage
-PASS: No console logging of form/PII data
-FAIL: SECURITY_PRIVACY.md evidence file exists
-FAIL: Security/privacy evidence covers classification, PII, retention, no-network, verification
+合格: 必要ファイル index.html / styles.css / app.js が存在する
+合格: 問い合わせフォームに安定したidがある
+合格: メール欄が type=email になっている
+合格: 必須項目がrequiredで宣言されている
+不合格: テキスト入力/textareaにmaxlength制約がある
+合格: 会社規模がselectで制約されている
+合格: 予算がselectで制約されている
+不合格: プライバシー同意チェックが必須になっている
+不合格: PII/業務情報フィールドにdata-classificationがある
+不合格: フォーム項目がプライバシー/保持期間の説明を参照している
+不合格: 静的デモ/no-network方針がフォームに明示されている
+合格: ユーザー入力値をHTML注入APIで描画していない
+合格: ユーザー入力プレビューをtextContent等の安全なAPIで描画している
+合格: 静的デモ内でネットワーク送信APIを使っていない
+合格: PIIをブラウザストレージに保存していない
+合格: フォーム/PIIデータをconsoleに出していない
+不合格: SECURITY_PRIVACY.md 証跡ファイルが存在する
+不合格: 証跡ファイルが分類、PII、保持、no-network、検証を含む
 SUMMARY: 11 passed / 7 failed
 ```
 
@@ -193,11 +193,11 @@ SUMMARY: 11 passed / 7 failed
 代表findingをAIDD-Spec標準形式で書く。
 
 ```yaml
-category: Privacy / Data Classification
-finding: The vibe app collected name, email, budget, company size, and free-text message without a machine-readable data classification or consent/retention contract.
+category: プライバシー / データ分類
+finding: バイブ版アプリは、氏名・メール・予算・会社規模・自由記述の相談内容を集めていたが、機械的に読めるデータ分類や同意/保持期間の契約がなかった。
 severity: high
 observed_by: audit_static_security.py
-ideal_state: PII and business-sensitive fields are classified in the DOM and in evidence, and the user sees retention/no-network behavior before preview.
+ideal_state: PIIと業務上重要な情報がDOMと証跡ファイルの両方で分類され、ユーザーが保持期間/no-network挙動をプレビュー前に理解できる。
 fix_instruction: Add data-classification attributes, privacy/retention helper text, and a required privacy consent checkbox.
 needed_upstream_info:
   - Privacy/Data Classification
@@ -207,7 +207,7 @@ standard_update:
   document: AI Task Packet Standard
   field: privacy_contract.data_classification + privacy_contract.retention + privacy_contract.consent
 codex_prompt_delta: |
-  Add data-classification markers to PII/business-sensitive fields. Explain that this static demo keeps data in memory only until refresh and requires privacy consent before preview.
+  PII/業務情報フィールドにdata-classificationを付ける。この静的デモではデータを画面更新までメモリ上にだけ保持し、プレビュー前にプライバシー同意を必須にすることを説明する。
 verification:
   command: python3 experiments/2026-06-27-security-baseline-contact-form/audit_static_security.py experiments/2026-06-27-security-baseline-contact-form/fixed-app
   expected: PASS
@@ -271,24 +271,24 @@ SECURITY_PRIVACY.md
 ```text
 APP: experiments/2026-06-27-security-baseline-contact-form/fixed-app
 SIZES: total_static_bytes=13061 html=5197 css=5291 js=2573
-PASS: Required app files exist: index.html, styles.css, app.js
-PASS: Lead form exists with stable id
-PASS: Email field uses type=email
-PASS: Required fields are declared
-PASS: Text inputs/textarea have explicit maxlength constraints
-PASS: Company size is constrained by select options
-PASS: Budget is constrained by select options
-PASS: Privacy consent checkbox is required before preview
-PASS: PII fields carry data-classification markers
-PASS: Form fields reference privacy/retention help text
-PASS: Form explicitly declares static-demo/no-network behavior
-PASS: User-controlled values are not rendered with HTML injection APIs
-PASS: User-controlled preview is rendered with textContent or equivalent safe text API
-PASS: No network submission APIs are used in the static demo
-PASS: PII is not persisted to browser storage
-PASS: No console logging of form/PII data
-PASS: SECURITY_PRIVACY.md evidence file exists
-PASS: Security/privacy evidence covers classification, PII, retention, no-network, verification
+合格: 必要ファイル index.html / styles.css / app.js が存在する
+合格: 問い合わせフォームに安定したidがある
+合格: メール欄が type=email になっている
+合格: 必須項目がrequiredで宣言されている
+合格: テキスト入力/textareaにmaxlength制約がある
+合格: 会社規模がselectで制約されている
+合格: 予算がselectで制約されている
+合格: プライバシー同意チェックが必須になっている
+合格: PII/業務情報フィールドにdata-classificationがある
+合格: フォーム項目がプライバシー/保持期間の説明を参照している
+合格: 静的デモ/no-network方針がフォームに明示されている
+合格: ユーザー入力値をHTML注入APIで描画していない
+合格: ユーザー入力プレビューをtextContent等の安全なAPIで描画している
+合格: 静的デモ内でネットワーク送信APIを使っていない
+合格: PIIをブラウザストレージに保存していない
+合格: フォーム/PIIデータをconsoleに出していない
+合格: SECURITY_PRIVACY.md 証跡ファイルが存在する
+合格: 証跡ファイルが分類、PII、保持、no-network、検証を含む
 SUMMARY: 18 passed / 0 failed
 ```
 

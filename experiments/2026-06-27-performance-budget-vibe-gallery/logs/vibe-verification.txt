@@ -1,29 +1,17 @@
-## vibe node syntax check
-## vibe performance static audit
-APP: experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app
-SIZES: html=6958 css=10154 js=906 total=18018 css_lines=605
-PASS: index.html exists
-PASS: styles.css exists
-PASS: app.js exists
-PASS: HTML bytes within budget — 6958 <= 16000
-PASS: CSS bytes within budget — 10154 <= 12000
-PASS: JS bytes within budget — 906 <= 5000
-PASS: Total static bytes within budget — 18018 <= 32000
-FAIL: CSS line count stays reviewable — 605 <= 360
-PASS: No external network asset references — found 0
-PASS: Images have width/height to reduce CLS — img tags: 0
-PASS: Below-fold images are lazy loaded — img tags: 0
-FAIL: Performance budget is documented in deliverable
-FAIL: Potentially costly visual CSS is bounded — found 20 tokens
-FAIL: Motion/transition has prefers-reduced-motion fallback
-PASS: No console logging left in JS
-## file sizes
-     906 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js
-    6958 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html
-   10154 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css
-   18018 total
-## file lines
-      31 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/app.js
-     176 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/index.html
-     605 experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app/styles.css
-     812 total
+対象アプリ: experiments/2026-06-27-performance-budget-vibe-gallery/vibe-app
+サイズ: html=7512 css=10154 js=906 total=18572 css_lines=605
+合格: index.html が存在する
+合格: styles.css が存在する
+合格: app.js が存在する
+合格: HTMLサイズが予算内 — 7512 <= 16000
+合格: CSSサイズが予算内 — 10154 <= 12000
+合格: JSサイズが予算内 — 906 <= 5000
+合格: 静的ファイル合計サイズが予算内 — 18572 <= 32000
+不合格: CSS行数がレビューしやすい範囲内 — 605 <= 360
+合格: 外部ネットワーク資産を参照していない — found 0
+合格: CLS対策として画像にwidth/heightがある — img tags: 0
+合格: 折り返し以降の画像がlazy loadingになっている — img tags: 0
+不合格: Performance Budgetが成果物に文書化されている
+不合格: 重くなりやすい視覚表現CSSが上限内 — found 20 tokens
+不合格: 動き/transitionにprefers-reduced-motionの代替がある
+合格: consoleログがJSに残っていない

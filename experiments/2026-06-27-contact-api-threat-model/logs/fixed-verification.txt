@@ -1,36 +1,34 @@
-## node --check fixed
 ## smoke fixed
-GET /health => 200 {"ok":true,"status":"healthy","requestId":"81448d10-8b87-4184-b475-442f149b527f"}
-POST /api/contact valid => 202 {"ok":true,"data":{"accepted":true,"requestId":"e220c3ac-d8b8-4894-993e-f369ededaabf"}}
-response_headers_subset {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Request-Id': 'e220c3ac-d8b8-4894-993e-f369ededaabf'}
-POST /api/contact invalid => 422 {"ok":false,"error":{"code":"validation_failed","message":"Contact submission is invalid.","requestId":"2d5b69f4-fc43-4ad1-bb0d-c86b056353af"}}
-SERVER_LOG:
-{"audit":true,"event":"server_started","host":"127.0.0.1","port":53490,"allowedOrigins":["http://127.0.0.1"]}
-{"audit":true,"requestId":"81448d10-8b87-4184-b475-442f149b527f","method":"GET","path":"/health","status":200,"decision":"health_ok"}
-{"audit":true,"requestId":"e220c3ac-d8b8-4894-993e-f369ededaabf","method":"POST","path":"/api/contact","status":202,"decision":"accepted_no_persistence"}
-{"audit":true,"requestId":"2d5b69f4-fc43-4ad1-bb0d-c86b056353af","method":"POST","path":"/api/contact","status":422,"decision":"validation_fields_rejected"}
+GET /health => 200 {"ok":true,"status":"healthy","requestId":"0eb10d7b-e784-441d-b36d-e45bb19397b2"}
+POST /api/contact valid => 202 {"ok":true,"data":{"accepted":true,"requestId":"3ac6505e-c40d-46d7-813e-15fd7745d2a6"}}
+response_headers_subset {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Request-Id': '3ac6505e-c40d-46d7-813e-15fd7745d2a6'}
+POST /api/contact invalid => 422 {"ok":false,"error":{"code":"validation_failed","message":"Contact submission is invalid.","requestId":"234efc3c-1540-4ef5-ab7f-d4fa2a72a98f"}}
+サーバーログ:
+{"audit":true,"event":"server_started","host":"127.0.0.1","port":55938,"allowedOrigins":["http://127.0.0.1"]}
+{"audit":true,"requestId":"0eb10d7b-e784-441d-b36d-e45bb19397b2","method":"GET","path":"/health","status":200,"decision":"health_ok"}
+{"audit":true,"requestId":"3ac6505e-c40d-46d7-813e-15fd7745d2a6","method":"POST","path":"/api/contact","status":202,"decision":"accepted_no_persistence"}
+{"audit":true,"requestId":"234efc3c-1540-4ef5-ab7f-d4fa2a72a98f","method":"POST","path":"/api/contact","status":422,"decision":"validation_fields_rejected"}
 ## static audit fixed
-APP: experiments/2026-06-27-contact-api-threat-model/fixed-api
-SIZES: server_js_bytes=7691
-PASS: server.js exists
-PASS: uses built-in http module
-PASS: no Express or external web framework dependency
-PASS: GET /health is implemented
-PASS: POST /api/contact is implemented
-PASS: requires or returns application/json
-PASS: request body size limit is explicit and small
-PASS: field length validation exists
-PASS: email validation exists
-PASS: CSRF or browser-origin protection is documented/implemented
-PASS: Origin allowlist policy exists
-PASS: rate limit with 429 behavior exists
-PASS: request id is generated or propagated
-PASS: audit logging policy exists
-PASS: console logging avoids direct PII payload dumping
-PASS: retention/no-persistence policy exists
-PASS: data classification covers PII
-PASS: error response contract is documented
-PASS: SECURITY_OPERATIONS.md evidence file exists
-PASS: evidence file contains verification commands/results
-SUMMARY: 20 passed / 0 failed
-## git diff stat
+対象API: experiments/2026-06-27-contact-api-threat-model/fixed-api
+サイズ: server_js_bytes=7691
+合格: server.js が存在する
+合格: Node.js標準のhttpモジュールを使っている
+合格: Express等の外部Webフレームワークに依存していない
+合格: GET /health が実装されている
+合格: POST /api/contact が実装されている
+合格: application/json を要求または返却している
+合格: リクエストbodyサイズ上限が小さく明示されている
+合格: フィールド長の検証がある
+合格: メールアドレス検証がある
+合格: CSRFまたはブラウザOrigin保護が文書化/実装されている
+合格: Origin許可リスト方針がある
+合格: rate limitと429挙動がある
+合格: request idを生成または伝播している
+合格: 監査ログ方針がある
+合格: consoleログでPII payloadを直接出していない
+合格: 保持/no-persistence方針がある
+合格: データ分類がPIIを含んでいる
+合格: エラーレスポンス契約が文書化されている
+合格: SECURITY_OPERATIONS.md 証跡ファイルが存在する
+合格: 証跡ファイルが検証コマンド/結果を含む
+まとめ: 20件合格 / 0件不合格

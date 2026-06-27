@@ -1,0 +1,23 @@
+対象API: experiments/2026-06-27-contact-api-threat-model/vibe-api
+サイズ: server_js_bytes=3840
+合格: server.js が存在する
+合格: Node.js標準のhttpモジュールを使っている
+合格: Express等の外部Webフレームワークに依存していない
+合格: GET /health が実装されている
+合格: POST /api/contact が実装されている
+合格: application/json を要求または返却している
+合格: リクエストbodyサイズ上限が小さく明示されている
+合格: フィールド長の検証がある
+合格: メールアドレス検証がある
+不合格: CSRFまたはブラウザOrigin保護が文書化/実装されている
+不合格: Origin許可リスト方針がある
+不合格: rate limitと429挙動がある
+不合格: request idを生成または伝播している
+不合格: 監査ログ方針がある
+不合格: consoleログでPII payloadを直接出していない
+不合格: 保持/no-persistence方針がある
+不合格: データ分類がPIIを含んでいる
+不合格: エラーレスポンス契約が文書化されている
+不合格: SECURITY_OPERATIONS.md 証跡ファイルが存在する
+不合格: 証跡ファイルが検証コマンド/結果を含む
+まとめ: 9件合格 / 11件不合格

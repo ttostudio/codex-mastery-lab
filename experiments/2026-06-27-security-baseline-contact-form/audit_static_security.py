@@ -16,7 +16,7 @@ def check(results: list[tuple[bool, str]], condition: bool, message: str) -> Non
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print("usage: audit_static_security.py <app_dir>")
+        print("使い方: audit_static_security.py <app_dir>")
         return 2
 
     app = Path(sys.argv[1])
@@ -24,38 +24,37 @@ def main() -> int:
     js = read(app / "app.js")
     css = read(app / "styles.css")
     evidence = read(app / "SECURITY_PRIVACY.md")
-    combined = "\n".join([html, js, css, evidence])
     results: list[tuple[bool, str]] = []
 
-    check(results, bool(html and js and css), "Required app files exist: index.html, styles.css, app.js")
-    check(results, '<form' in html and 'id="lead-form"' in html, "Lead form exists with stable id")
-    check(results, 'type="email"' in html, "Email field uses type=email")
-    check(results, 'required' in html, "Required fields are declared")
-    check(results, 'maxlength=' in html, "Text inputs/textarea have explicit maxlength constraints")
-    check(results, 'name="companySize"' in html and '<select' in html, "Company size is constrained by select options")
-    check(results, 'name="budget"' in html and '<select' in html, "Budget is constrained by select options")
-    check(results, 'name="privacyConsent"' in html and 'type="checkbox"' in html and 'required' in html, "Privacy consent checkbox is required before preview")
-    check(results, 'data-classification' in html, "PII fields carry data-classification markers")
-    check(results, 'aria-describedby' in html and ('privacy' in html.lower() or 'retention' in html.lower()), "Form fields reference privacy/retention help text")
-    check(results, 'method=' in html or 'data-static-demo' in html, "Form explicitly declares static-demo/no-network behavior")
-    check(results, 'innerHTML' not in js and 'insertAdjacentHTML' not in js and 'outerHTML' not in js, "User-controlled values are not rendered with HTML injection APIs")
-    check(results, 'textContent' in js, "User-controlled preview is rendered with textContent or equivalent safe text API")
-    check(results, not re.search(r'\b(fetch|XMLHttpRequest|sendBeacon)\b', js), "No network submission APIs are used in the static demo")
-    check(results, not re.search(r'\b(localStorage|sessionStorage|indexedDB)\b', js), "PII is not persisted to browser storage")
-    check(results, 'console.' not in js, "No console logging of form/PII data")
-    check(results, bool(evidence), "SECURITY_PRIVACY.md evidence file exists")
-    check(results, all(term in evidence.lower() for term in ['data classification', 'pii', 'retention', 'no network', 'verification']), "Security/privacy evidence covers classification, PII, retention, no-network, verification")
+    check(results, bool(html and js and css), "必要ファイル index.html / styles.css / app.js が存在する")
+    check(results, '<form' in html and 'id="lead-form"' in html, "問い合わせフォームに安定したidがある")
+    check(results, 'type="email"' in html, "メール欄が type=email になっている")
+    check(results, 'required' in html, "必須項目がrequiredで宣言されている")
+    check(results, 'maxlength=' in html, "テキスト入力/textareaにmaxlength制約がある")
+    check(results, 'name="companySize"' in html and '<select' in html, "会社規模がselectで制約されている")
+    check(results, 'name="budget"' in html and '<select' in html, "予算がselectで制約されている")
+    check(results, 'name="privacyConsent"' in html and 'type="checkbox"' in html and 'required' in html, "プライバシー同意チェックが必須になっている")
+    check(results, 'data-classification' in html, "PII/業務情報フィールドにdata-classificationがある")
+    check(results, 'aria-describedby' in html and ('privacy' in html.lower() or 'retention' in html.lower() or 'プライバシー' in html), "フォーム項目がプライバシー/保持期間の説明を参照している")
+    check(results, 'method=' in html or 'data-static-demo' in html, "静的デモ/no-network方針がフォームに明示されている")
+    check(results, 'innerHTML' not in js and 'insertAdjacentHTML' not in js and 'outerHTML' not in js, "ユーザー入力値をHTML注入APIで描画していない")
+    check(results, 'textContent' in js, "ユーザー入力プレビューをtextContent等の安全なAPIで描画している")
+    check(results, not re.search(r'\b(fetch|XMLHttpRequest|sendBeacon)\b', js), "静的デモ内でネットワーク送信APIを使っていない")
+    check(results, not re.search(r'\b(localStorage|sessionStorage|indexedDB)\b', js), "PIIをブラウザストレージに保存していない")
+    check(results, 'console.' not in js, "フォーム/PIIデータをconsoleに出していない")
+    check(results, bool(evidence), "SECURITY_PRIVACY.md 証跡ファイルが存在する")
+    evidence_l = evidence.lower()
+    check(results, all(term in evidence_l for term in ['data classification', 'pii', 'retention', 'no network', 'verification']) or all(term in evidence for term in ['データ分類','PII','保持','ネットワーク','検証']), "証跡ファイルが分類、PII、保持、no-network、検証を含む")
 
     total_bytes = sum((app / name).stat().st_size for name in ["index.html", "styles.css", "app.js"] if (app / name).exists())
-    print(f"APP: {app}")
-    print(f"SIZES: total_static_bytes={total_bytes} html={len(html.encode())} css={len(css.encode())} js={len(js.encode())}")
+    print(f"対象アプリ: {app}")
+    print(f"サイズ: total_static_bytes={total_bytes} html={len(html.encode())} css={len(css.encode())} js={len(js.encode())}")
     failed = 0
     for ok, message in results:
-        print(("PASS" if ok else "FAIL") + f": {message}")
+        print(("合格" if ok else "不合格") + f": {message}")
         failed += 0 if ok else 1
-    print(f"SUMMARY: {len(results) - failed} passed / {failed} failed")
+    print(f"まとめ: {len(results) - failed}件合格 / {failed}件不合格")
     return 1 if failed else 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

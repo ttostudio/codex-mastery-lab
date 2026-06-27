@@ -60,7 +60,7 @@ def main() -> int:
             except Exception:
                 time.sleep(0.1)
         else:
-            print("FAIL: server did not become ready")
+            print("不合格: サーバーが起動しませんでした")
             return 1
 
         print(f"GET /health => {status} {body}")
@@ -70,10 +70,10 @@ def main() -> int:
             "X-CSRF-Token": "lab-static-token",
         }
         payload = {
-            "name": "Taro Test",
+            "name": "山田 太郎",
             "email": "taro@example.com",
             "company": "AIDD Lab",
-            "message": "Please contact me.",
+            "message": "AI開発プロセスについて相談したいです。",
         }
         status, body, response_headers = request("POST", base + "/api/contact", payload, headers)
         print(f"POST /api/contact valid => {status} {body}")
@@ -90,7 +90,7 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             proc.kill()
             out, _ = proc.communicate(timeout=2)
-        print("SERVER_LOG:")
+        print("サーバーログ:")
         print(out.strip())
 
 

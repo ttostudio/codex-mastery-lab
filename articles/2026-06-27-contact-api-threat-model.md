@@ -72,13 +72,13 @@ Disk:           228Gi total / 140Gi available
 実際にCodexへ渡したプロンプトはこれである。
 
 ```text
-In this git repo, create a tiny dependency-free Node.js HTTP contact form API under experiments/2026-06-27-contact-api-threat-model/vibe-api. Use only built-in Node modules. Include a small server.js with POST /api/contact that accepts JSON fields name, email, company, message and returns a JSON success response. Add GET /health. Keep it simple and polished enough for a demo. Do not install dependencies. Do not modify files outside that vibe-api directory. Then run node --check on the server if possible and exit.
+このgitリポジトリ内で、experiments/2026-06-27-contact-api-threat-model/vibe-api に依存なしの小さなNode.js HTTP問い合わせAPIを作ってください。Node.js標準モジュールだけを使ってください。server.js を作り、POST /api/contact で name、email、company、message のJSONを受け取り、成功時はJSONで返してください。GET /health も追加してください。デモとして分かりやすく、ただしシンプルにしてください。依存パッケージはインストールしないでください。vibe-api ディレクトリの外は変更しないでください。可能であれば node --check も実行して終了してください。
 ```
 
 実行コマンド:
 
 ```bash
-codex exec --sandbox danger-full-access "In this git repo, create a tiny dependency-free Node.js HTTP contact form API under experiments/2026-06-27-contact-api-threat-model/vibe-api. Use only built-in Node modules. Include a small server.js with POST /api/contact that accepts JSON fields name, email, company, message and returns a JSON success response. Add GET /health. Keep it simple and polished enough for a demo. Do not install dependencies. Do not modify files outside that vibe-api directory. Then run node --check on the server if possible and exit."
+codex exec --sandbox danger-full-access "このgitリポジトリ内で、experiments/2026-06-27-contact-api-threat-model/vibe-api に依存なしの小さなNode.js HTTP問い合わせAPIを作ってください。Node.js標準モジュールだけを使ってください。server.js を作り、POST /api/contact で name、email、company、message のJSONを受け取り、成功時はJSONで返してください。GET /health も追加してください。デモとして分かりやすく、ただしシンプルにしてください。依存パッケージはインストールしないでください。vibe-api ディレクトリの外は変更しないでください。可能であれば node --check も実行して終了してください。"
 ```
 
 Codexは `vibe-api/server.js` を作った。良かった点は多い。
@@ -114,26 +114,26 @@ POST /api/contact invalid => 422 {"ok":false,"errors":["name is required","email
 ここまでは「動く」。しかし、静的監査はこうなった。
 
 ```text
-PASS: server.js exists
-PASS: uses built-in http module
-PASS: no Express or external web framework dependency
-PASS: GET /health is implemented
-PASS: POST /api/contact is implemented
-PASS: requires or returns application/json
-PASS: request body size limit is explicit and small
-PASS: field length validation exists
-PASS: email validation exists
-FAIL: CSRF or browser-origin protection is documented/implemented
-FAIL: Origin allowlist policy exists
-FAIL: rate limit with 429 behavior exists
-FAIL: request id is generated or propagated
-FAIL: audit logging policy exists
-FAIL: console logging avoids direct PII payload dumping
-FAIL: retention/no-persistence policy exists
-FAIL: data classification covers PII
-FAIL: error response contract is documented
-FAIL: SECURITY_OPERATIONS.md evidence file exists
-FAIL: evidence file contains verification commands/results
+合格: server.js が存在する
+合格: Node.js標準のhttpモジュールを使っている
+合格: Express等の外部Webフレームワークに依存していない
+合格: GET /health が実装されている
+合格: POST /api/contact が実装されている
+合格: application/json を要求または返却している
+合格: リクエストbodyサイズ上限が小さく明示されている
+合格: フィールド長の検証がある
+合格: メールアドレス検証がある
+不合格: CSRFまたはブラウザOrigin保護が文書化/実装されている
+不合格: Origin許可リスト方針がある
+不合格: rate limitと429挙動がある
+不合格: request idを生成または伝播している
+不合格: 監査ログ方針がある
+不合格: consoleログでPII payloadを直接出していない
+不合格: 保持/no-persistence方針がある
+不合格: データ分類がPIIを含んでいる
+不合格: エラーレスポンス契約が文書化されている
+不合格: SECURITY_OPERATIONS.md 証跡ファイルが存在する
+不合格: 証跡ファイルが検証コマンド/結果を含む
 SUMMARY: 9 passed / 11 failed
 ```
 
@@ -146,32 +146,32 @@ SUMMARY: 9 passed / 11 failed
 代表findingをAIDD-Spec標準形式で書く。
 
 ```yaml
-category: Security / Vulnerability
-finding: The vibe contact API accepted browser-origin JSON POSTs without any documented CSRF token or Origin allowlist policy.
+category: セキュリティ / 脆弱性
+finding: バイブ版の問い合わせAPIは、CSRFトークンやOrigin許可リスト方針の文書化なしに、ブラウザ由来のJSON POSTを受け付けていた。
 severity: high
 observed_by: audit_contact_api.py
-ideal_state: Browser-origin POST endpoints have an explicit Origin allowlist and CSRF/session-bound protection appropriate to the app context, with local demo defaults documented.
-fix_instruction: Add ALLOWED_ORIGINS-based Origin validation and require X-CSRF-Token for browser-origin POST requests. Document demo limitations.
+ideal_state: ブラウザ由来のPOST endpointには、アプリの文脈に合ったOrigin許可リストとCSRF方針が明示され、ローカルデモ時の既定値も文書化されている。
+fix_instruction: ALLOWED_ORIGINS に基づくOrigin検証を追加し、ブラウザ由来のPOSTでは X-CSRF-Token を必須にする。デモとしての限界も文書化する。
 needed_upstream_info:
-  - Security Baseline
-  - API Contract
-  - Trusted Origin List
-  - CSRF Policy
+  - セキュリティベースライン
+  - API契約
+  - 信頼するOrigin一覧
+  - CSRF方針
 standard_update:
   document: AI Task Packet Standard
   field: api_security_contract.csrf_policy + api_security_contract.allowed_origins
 codex_prompt_delta: |
-  For browser-origin JSON POST endpoints, implement and document an Origin allowlist and CSRF token policy. Include verification evidence.
+  ブラウザ由来のJSON POST endpointでは、Origin許可リストとCSRFトークン方針を実装・文書化し、検証証拠も残す。
 verification:
   command: python3 experiments/2026-06-27-contact-api-threat-model/audit_contact_api.py experiments/2026-06-27-contact-api-threat-model/fixed-api
-  expected: PASS
+  expected: 合格
 ```
 
 もう1つ、Load / Scalability観点のfindingも重要だった。
 
 ```yaml
 category: Load / Scalability
-finding: The vibe contact API had no rate limit or abuse boundary for POST /api/contact.
+finding: バイブ版の問い合わせAPIには、POST /api/contact に対するrate limitや濫用境界がなかった。
 severity: medium
 ideal_state: Public write endpoints state a request-rate assumption and enforce a minimal abuse guard, even in demos.
 fix_instruction: Add a small in-memory per-IP rate limit for the demo and return HTTP 429 with Retry-After when exceeded.
@@ -203,23 +203,23 @@ standard_update:
 改善版では、Codexに次の条件を渡した。
 
 ```markdown
-## Security Contract
-- Treat `name`, `email`, `company`, `message` as user-controlled; `name`, `email`, and `message` are PII or potentially confidential.
-- Require `Content-Type: application/json` for POST.
-- Set a small explicit request body limit.
-- Add browser-origin protection: reject disallowed `Origin` values. Use an `ALLOWED_ORIGINS` environment variable and document the default behavior for local demo.
-- Add a simple CSRF demo control: require `X-CSRF-Token` to match `CSRF_TOKEN` environment variable for browser-origin POST requests.
-- Add a tiny in-memory per-IP rate limit for `POST /api/contact`; return `429` when exceeded.
-- Do not log raw request bodies or PII fields.
+## セキュリティ契約
+- `name`, `email`, `company`, `message` はすべてユーザー入力として扱う。特に `name`, `email`, `message` はPIIまたは機密情報になり得る。
+- POSTでは `Content-Type: application/json` を必須にする。
+- 小さく明示的なリクエストbodyサイズ上限を設定する。
+- ブラウザOrigin保護を追加する。許可されていない `Origin` は拒否し、`ALLOWED_ORIGINS` 環境変数で許可Originを管理する。ローカルデモ時の既定値も文書化する。
+- 簡易CSRFデモ制御を追加する。ブラウザ由来のPOSTでは `X-CSRF-Token` が `CSRF_TOKEN` 環境変数と一致することを要求する。
+- `POST /api/contact` に小さなインメモリrate limitを追加し、超過時は `429` を返す。
+- 生のリクエストbodyやPII項目をログ出力しない。
 
-## Operations Contract
-- Generate or propagate a request id for every response via `X-Request-Id`.
-- Produce audit logs containing only non-PII metadata: request id, method, path, status code, and rate-limit/validation/security decision.
-- Add explicit retention policy: submissions are not persisted; only current request memory is used.
-- Add consistent error response contract: `{ ok: false, error: { code, message, requestId } }`.
+## 運用契約
+- すべてのレスポンスに `X-Request-Id` でrequest idを生成または伝播する。
+- 監査ログは非PIIメタデータだけにする: request id、method、path、status code、rate-limit/validation/securityの判断結果。
+- 保持方針を明示する: 問い合わせ内容は永続化せず、現在のリクエスト処理中のメモリだけで扱う。
+- エラーレスポンス契約を統一する: `{ ok: false, error: { code, message, requestId } }`。
 
-## Verification Evidence
-Create `SECURITY_OPERATIONS.md` inside `fixed-api/`.
+## 検証証拠
+`fixed-api/` 内に `SECURITY_OPERATIONS.md` を作る。
 ```
 
 実行コマンド:
@@ -242,42 +242,42 @@ SECURITY_OPERATIONS.md
 ```text
 GET /health => 200 {"ok":true,"status":"healthy","requestId":"81448d10-8b87-4184-b475-442f149b527f"}
 POST /api/contact valid => 202 {"ok":true,"data":{"accepted":true,"requestId":"e220c3ac-d8b8-4894-993e-f369ededaabf"}}
-response_headers_subset {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Request-Id': 'e220c3ac-d8b8-4894-993e-f369ededaabf'}
+レスポンスヘッダー抜粋 {'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Request-Id': 'e220c3ac-d8b8-4894-993e-f369ededaabf'}
 POST /api/contact invalid => 422 {"ok":false,"error":{"code":"validation_failed","message":"Contact submission is invalid.","requestId":"2d5b69f4-fc43-4ad1-bb0d-c86b056353af"}}
 ```
 
 静的監査はこう変わった。
 
 ```text
-PASS: CSRF or browser-origin protection is documented/implemented
-PASS: Origin allowlist policy exists
-PASS: rate limit with 429 behavior exists
-PASS: request id is generated or propagated
-PASS: audit logging policy exists
-PASS: console logging avoids direct PII payload dumping
-PASS: retention/no-persistence policy exists
-PASS: data classification covers PII
-PASS: error response contract is documented
-PASS: SECURITY_OPERATIONS.md evidence file exists
-PASS: evidence file contains verification commands/results
-SUMMARY: 20 passed / 0 failed
+合格: CSRFまたはブラウザOrigin保護が文書化/実装されている
+合格: Origin許可リスト方針がある
+合格: rate limitと429挙動がある
+合格: request idを生成または伝播している
+合格: 監査ログ方針がある
+合格: consoleログでPII payloadを直接出していない
+合格: 保持/no-persistence方針がある
+合格: データ分類がPIIを含んでいる
+合格: エラーレスポンス契約が文書化されている
+合格: SECURITY_OPERATIONS.md 証跡ファイルが存在する
+合格: 証跡ファイルが検証コマンド/結果を含む
+まとめ: 20件合格 / 0件不合格
 ```
 
 `SECURITY_OPERATIONS.md` には、後工程が読みたい内容が残った。
 
 ```markdown
-## CSRF / Origin Policy
-Browser-origin requests are accepted only when the Origin header exactly matches the allowlist in ALLOWED_ORIGINS.
-For browser-origin POST requests, X-CSRF-Token must match the CSRF_TOKEN environment variable.
+## CSRF / Origin方針
+ブラウザ由来のリクエストは、Originヘッダーが ALLOWED_ORIGINS の許可リストと完全一致する場合だけ受け付ける。
+ブラウザ由来のPOSTでは、X-CSRF-Token が CSRF_TOKEN 環境変数と一致する必要がある。
 
-## Rate Limit Policy
-POST /api/contact uses a tiny in-memory per-IP rate limit: 5 requests per 60 seconds.
+## Rate Limit方針
+POST /api/contact は、IPごとの小さなインメモリrate limitを使う: 60秒あたり5リクエスト。
 
-## Audit Logging Policy
-Audit logs are JSON lines containing only non-PII metadata.
+## 監査ログ方針
+監査ログは、PIIを含まないメタデータだけのJSON Linesにする。
 
-## Retention / No Persistence Policy
-Submissions are not persisted to disk, database, browser storage, queue, email, or external service.
+## 保持 / 永続化しない方針
+問い合わせ内容は、ディスク、DB、ブラウザストレージ、キュー、メール、外部サービスへ永続化しない。
 ```
 
 ## 10. 今回分かったこと
