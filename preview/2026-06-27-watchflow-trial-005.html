@@ -1,0 +1,216 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WatchFlow Trial 005：91点から96点へ、coverage thresholdとCI証跡の入口を入れる</title><style>
+:root {
+  color-scheme: light;
+  --fg:#172033; --muted:#667085; --bg:#f5f7fb; --card:#fff; --line:#d9e2f1;
+  --accent:#1d4ed8; --accent2:#7c3aed; --code:#0f172a; --soft:#eef4ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--fg); line-height:1.82; }
+a { color: var(--accent); }
+.layout { display:grid; grid-template-columns: 300px minmax(0, 1fr); min-height:100vh; }
+aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; background:#0b1220; color:#e5eefc; }
+.brand { font-weight:800; line-height:1.35; margin:0 0 16px; font-size:18px; letter-spacing:-.01em; }
+.series-note { color:#9fb4d8; font-size:12px; margin:0 0 18px; }
+.chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
+.chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
+.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
+main { max-width: 980px; padding: 42px 34px 80px; }
+article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
+h2 { font-size: clamp(22px, 3vw, 28px); margin: 46px 0 14px; padding-top:10px; border-top:1px solid #edf1f7; }
+h3 { font-size: 20px; margin: 30px 0 10px; }
+p { margin: 14px 0; }
+blockquote { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--accent); background:#eff6ff; color:#1e3a8a; border-radius: 10px; }
+pre { background:var(--code); color:#e2e8f0; padding:18px; border-radius:14px; overflow:auto; line-height:1.55; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+pre code { white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap:anywhere; word-break:break-word; }
+p code, li code { background:#eef2ff; color:#1e3a8a; padding:2px 5px; border-radius:5px; white-space:normal; }
+ul, ol { padding-left:1.45em; }
+li { overflow-wrap:anywhere; }
+img { max-width:100%; border:1px solid var(--line); border-radius:14px; background:white; margin:18px 0; height:auto; }
+table { border-collapse: collapse; width:100%; margin:18px 0; font-size:14px; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; min-width:120px; }
+th { background:#f1f5f9; }
+.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+.chapter-nav { display:flex; gap:12px; justify-content:space-between; margin:24px 0; }
+.chapter-nav a { flex:1; text-decoration:none; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px; color:#17315f; }
+.chapter-nav .next { text-align:right; }
+.chapter-nav span { display:block; color:var(--muted); font-size:12px; }
+.home-grid { display:grid; gap:14px; padding:0; list-style:none; }
+.home-grid li a { display:block; padding:18px; background:#fff; border:1px solid var(--line); border-radius:16px; text-decoration:none; box-shadow:0 8px 24px rgba(15,23,42,.05); }
+.mobile-index { display:none; background:#0b1220; padding:12px 16px; position:sticky; top:0; z-index:10; }
+.mobile-index details { color:#e5eefc; }
+.mobile-index summary { cursor:pointer; font-weight:700; }
+.mobile-index a { color:#c7d7ff; display:block; padding:8px 0; }
+@media (max-width: 900px) {
+  .layout { display:block; }
+  aside { display:none; }
+  .mobile-index { display:block; }
+  main { padding:16px; max-width:none; }
+  article { padding:24px 18px; border-radius:18px; }
+  .chapter-nav { flex-direction:column; }
+  .chapter-nav .next { text-align:left; }
+  pre { font-size:12px; padding:14px; }
+}
+@media (max-width: 480px) {
+  body { line-height:1.75; }
+  main { padding:10px; }
+  article { padding:20px 14px; border-radius:14px; }
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+}
+</style></head><body><div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a href="001-series-roadmap.html">第01回｜WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a href="2026-06-27-watchflow-trial-001.html">第02回｜WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a href="2026-06-27-watchflow-trial-002.html">第03回｜WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a href="2026-06-27-watchflow-trial-003.html">第04回｜WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a href="2026-06-27-watchflow-trial-004.html">第05回｜WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a href="2026-06-27-watchflow-trial-005.html">第06回｜WatchFlow Trial 005：91点から96点へ、coverage thresholdとCI証跡の入口を入れる</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a href="2026-06-27-performance-budget-vibe-gallery.html">過去記事02｜「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a href="2026-06-27-security-baseline-contact-form.html">過去記事03｜問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a href="2026-06-27-contact-api-threat-model.html">過去記事04｜問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a href="2026-06-28-mobile-state-contract.html">過去記事05｜スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></details></div><div class="layout "><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編と過去記事を分けて読めるプレビュー</p><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a class="chapter-link " href="001-series-roadmap.html"><span class="chapter-num">第01回</span>WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-001.html"><span class="chapter-num">第02回</span>WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-002.html"><span class="chapter-num">第03回</span>WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-003.html"><span class="chapter-num">第04回</span>WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-004.html"><span class="chapter-num">第05回</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a class="chapter-link current" href="2026-06-27-watchflow-trial-005.html"><span class="chapter-num">第06回</span>WatchFlow Trial 005：91点から96点へ、coverage thresholdとCI証跡の入口を入れる</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-27-performance-budget-vibe-gallery.html"><span class="chapter-num">過去記事 02</span>「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a class="chapter-link past " href="2026-06-27-security-baseline-contact-form.html"><span class="chapter-num">過去記事 03</span>問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-27-contact-api-threat-model.html"><span class="chapter-num">過去記事 04</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-28-mobile-state-contract.html"><span class="chapter-num">過去記事 05</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-27-watchflow-trial-004.html"><span>前の記事</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a><span></span></nav><article><h1>WatchFlow Trial 005：91点から96点へ、coverage thresholdとCI証跡の入口を入れる</h1>
+<blockquote>2026-06-27 / WatchFlow 100点チャレンジ  </blockquote>
+<blockquote>対象: Trial 005 / coverage threshold / 履歴削除 / プレイリスト操作 / mock doctor / GitHub Actions  </blockquote>
+<blockquote>結果: <strong>96 / 100</strong></blockquote>
+<p><img src="assets/2026-06-27-watchflow-trial005-score-card.png" alt="WatchFlow Trial 005 採点速報" loading="lazy"></p>
+<h2>結果</h2>
+<p>Trial 004は <strong>91 / 100</strong> だった。</p>
+<p>90点台には入ったが、まだ100点ではない。残っていた壁は、coverage threshold未導入、CI実行証跡なし、データ操作が浅い、Docker Compose経路の検証性が弱い、というものだった。</p>
+<p>Trial 005では、これらをさらにAI Task Packetへ戻した。</p>
+<p>結果は <strong>96 / 100</strong>。</p>
+<p><img src="assets/2026-06-27-watchflow-trial005-demo.gif" alt="Trial 005 GIF" loading="lazy"></p>
+<h2>主な改善</h2>
+<ul>
+<li>coverage thresholdを導入</li>
+<li>coverageが全指標で改善</li>
+<li>視聴履歴の表示/削除を追加</li>
+<li>後で見るリストの追加/解除を維持</li>
+<li>品質レビュープレイリストの追加/削除を追加</li>
+<li>Unit Test 21件 → 23件</li>
+<li>E2E 23件 → 27件</li>
+<li><code>mock:doctor</code> 追加</li>
+<li>repo rootにTrial 005専用GitHub Actions workflowを追加</li>
+<li>READMEにCI badgeと記事リンクを追加</li>
+</ul>
+<h2>画面</h2>
+<h3>ホーム</h3>
+<p><img src="assets/2026-06-27-watchflow-trial005-home.png" alt="Trial 005 ホーム" loading="lazy"></p>
+<p>見た目の大変更はしていない。Trial 005の主眼は、操作と検証の密度を上げることだった。</p>
+<h3>動画詳細</h3>
+<p><img src="assets/2026-06-27-watchflow-trial005-watch-detail.png" alt="Trial 005 動画詳細" loading="lazy"></p>
+<h3>後で見る + 品質レビュープレイリスト</h3>
+<p><img src="assets/2026-06-27-watchflow-trial005-library-actions.png" alt="Trial 005 ライブラリ操作" loading="lazy"></p>
+<p>Trial 005では、動画詳細画面にライブラリ操作を追加した。</p>
+<pre><code>後で見るへ追加
+品質レビューへ追加
+この動画の履歴を削除</code></pre>
+<p>これにより、ただ表示されているだけのUIから、ユーザー操作を伴うProduct Parityへ少し近づいた。</p>
+<h3>視聴履歴の削除</h3>
+<p><img src="assets/2026-06-27-watchflow-trial005-history-cleared.png" alt="Trial 005 履歴削除" loading="lazy"></p>
+<p>視聴履歴はlocalStorageベースの簡易実装だが、追加/削除の境界を明示した。docsには、将来的にmock APIへ移す永続化境界も書いた。</p>
+<h3>mock service doctor</h3>
+<p><img src="assets/2026-06-27-watchflow-trial005-terminal-mock-doctor.png" alt="Trial 005 Mock Doctor" loading="lazy"></p>
+<p><code>mock:doctor</code> を追加した。</p>
+<p>今回のローカル環境ではDocker daemonが起動していないため、Docker Composeの実起動はできない。ただし、compose設定の静的検証とNode fallback health確認は通った。</p>
+<pre><code>OK: Docker Compose
+OK: docker-compose.yml の静的検証
+OK: Node fallback 起動
+OK: mock-api health
+OK: mock-media health
+OK: mock-auth health
+OK: mock-billing health</code></pre>
+<h2>実行した検証</h2>
+<pre><code>pnpm install --frozen-lockfile  exit=0
+pnpm run lint                   exit=0
+pnpm run typecheck              exit=0
+pnpm run test                   exit=0
+pnpm run test:coverage          exit=0
+pnpm run build                  exit=0
+pnpm run mock:doctor            exit=0</code></pre>
+<p>Unit Testは23件合格。</p>
+<p><img src="assets/2026-06-27-watchflow-trial005-terminal-unit.png" alt="Trial 005 Unit" loading="lazy"></p>
+<p>coverage threshold導入後も合格した。</p>
+<pre><code>Statements: 71.34%
+Branches:   67.56%
+Functions:  60.82%
+Lines:      75.08%</code></pre>
+<p><img src="assets/2026-06-27-watchflow-trial005-terminal-coverage.png" alt="Trial 005 Coverage" loading="lazy"></p>
+<p>Trial 004からのcoverage差分：</p>
+<table>
+<tr><th>指標</th><th>Trial 004</th><th>Trial 005</th></tr>
+<tr><td>Statements</td><td>67.35%</td><td>71.34%</td></tr>
+<tr><td>Branches</td><td>64.28%</td><td>67.56%</td></tr>
+<tr><td>Functions</td><td>54.87%</td><td>60.82%</td></tr>
+<tr><td>Lines</td><td>71.08%</td><td>75.08%</td></tr>
+</table>
+<h2>E2E</h2>
+<pre><code>pnpm exec playwright test --project=chromium --project=webkit
+27 passed</code></pre>
+<p><img src="assets/2026-06-27-watchflow-trial005-terminal-e2e.png" alt="Trial 005 E2E" loading="lazy"></p>
+<p>増えた確認は主にこれだ。</p>
+<pre><code>後で見るリストへ追加と解除ができる
+視聴履歴を表示して削除できる
+品質レビュープレイリストへ追加と削除ができる</code></pre>
+<p>Firefoxはローカルにはまだない。</p>
+<p><img src="assets/2026-06-27-watchflow-trial005-terminal-doctor.png" alt="Trial 005 Doctor" loading="lazy"></p>
+<p>このため、Firefox込みの最終証跡はGitHub Actionsで取る方針にした。</p>
+<h2>root GitHub Actionsを追加</h2>
+<p>Trial 004までは、generated repo内にはCI workflowがあった。しかしGitHub Actionsが読むのはrepo rootの <code>.github/workflows</code> だけなので、そのままだと実際のGitHub上では走らない。</p>
+<p>Trial 005ではrepo rootに以下を追加した。</p>
+<pre><code>.github/workflows/watchflow-trial005-ci.yml</code></pre>
+<p>このworkflowは、次を実行する。</p>
+<pre><code>pnpm install --frozen-lockfile
+pnpm exec playwright install --with-deps
+pnpm run doctor:playwright
+pnpm run mock:doctor
+pnpm run lint
+pnpm run typecheck
+pnpm run test:coverage
+pnpm run build
+pnpm run test:e2e</code></pre>
+<p>artifactも保存する。</p>
+<pre><code>playwright-report
+test-results
+coverage</code></pre>
+<h2>採点</h2>
+<table>
+<tr><th>カテゴリ</th><th>配点</th><th>Trial 004</th><th>Trial 005</th><th>理由</th></tr>
+<tr><td>Product Parity</td><td>10</td><td>9</td><td>10</td><td>後で見る、履歴削除、品質レビュー操作が入った</td></tr>
+<tr><td>Video Experience</td><td>12</td><td>10</td><td>10</td><td>Trial 004水準維持。Firefoxローカル未完</td></tr>
+<tr><td>Network / State Handling</td><td>10</td><td>9</td><td>9</td><td>mock state操作維持。通知既読/premium制御は浅い</td></tr>
+<tr><td>Mock Backend Contracts</td><td>8</td><td>8</td><td>8</td><td>mock:doctor追加。Docker実起動は未確認</td></tr>
+<tr><td>Technical Foundation</td><td>10</td><td>9</td><td>10</td><td>coverage threshold、mock doctor、root workflow追加</td></tr>
+<tr><td>Next.js Architecture</td><td>10</td><td>9</td><td>9</td><td>external mock boundary維持。永続化はlocalStorage中心</td></tr>
+<tr><td>Component Architecture</td><td>8</td><td>7</td><td>8</td><td>WatchLibraryActionsを分離しUnit化</td></tr>
+<tr><td>Design System</td><td>8</td><td>7</td><td>7</td><td>既存水準維持</td></tr>
+<tr><td>Accessibility</td><td>8</td><td>8</td><td>8</td><td>axe合格維持</td></tr>
+<tr><td>E2E / Visual / Unit</td><td>13</td><td>12</td><td>13</td><td>Unit 23件、E2E 27件、coverage threshold合格</td></tr>
+<tr><td>Public Repo Operations</td><td>6</td><td>5</td><td>4</td><td>root workflow追加。ただし実CI run確認前なので控えめ</td></tr>
+<tr><td><strong>合計</strong></td><td><strong>100</strong></td><td><strong>91</strong></td><td><strong>96</strong></td><td>+5点</td></tr>
+</table>
+<h2>100点までの残り</h2>
+<p>96点まで来た。残り4点は、実行環境の証跡に近い。</p>
+<ol>
+<li>GitHub ActionsでFirefox込みCIを実際に成功させる</li>
+<li>CI artifactを確認する</li>
+<li>Docker daemonあり環境でdocker compose pathを実起動確認する</li>
+<li>premium権限制御や通知既読をE2E化する</li>
+</ol>
+<h2>まとめ</h2>
+<p>Trial 005は、派手な画面追加ではなく、<strong>100点に必要な検証の入口を増やす回</strong>だった。</p>
+<p>coverage thresholdを導入し、E2Eを増やし、repo rootにGitHub Actionsを置き、CI artifactの導線を作った。</p>
+<p>ここまで来ると、AI駆動開発の評価は「アプリが動くか」ではなく、<strong>第三者が同じ手順で品質を再確認できるか</strong>に移ってくる。</p></article><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-27-watchflow-trial-004.html"><span>前の記事</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a><span></span></nav></main></div></body></html>

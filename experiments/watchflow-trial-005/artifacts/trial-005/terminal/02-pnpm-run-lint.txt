@@ -1,0 +1,5 @@
+
+> watchflow@0.1.0 lint /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> eslint .
+
+exit=0

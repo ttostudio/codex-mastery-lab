@@ -1,0 +1,30 @@
+export const ja = {
+  appName: "WatchFlow",
+  searchPlaceholder: "動画、チャンネル、タグを検索",
+  searchButton: "検索",
+  homeTitle: "いま見たい動画",
+  relatedTitle: "関連動画",
+  commentsTitle: "コメント",
+  retry: "再試行",
+  loading: "読み込み中です",
+  empty: "該当する動画がありません",
+  offline: "ネットワークに接続できません",
+  timeout: "応答が時間内に完了しませんでした",
+  mediaFailure: "動画を取得できませんでした",
+  posterAlt: "動画ポスター",
+  play: "再生",
+  pause: "一時停止",
+  seek: "再生位置",
+  volume: "音量",
+  mute: "ミュート",
+  unmute: "ミュート解除",
+  captions: "字幕",
+  captionsUnavailable: "字幕は後から差し替え可能な設計です",
+  buffering: "バッファリング中",
+  auth: {
+    anonymous: "ゲスト",
+    logged_in: "ログイン中",
+    premium: "プレミアム会員",
+    session_expired: "セッション期限切れ"
+  }
+} as const;

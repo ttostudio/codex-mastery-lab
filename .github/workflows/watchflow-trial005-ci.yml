@@ -1,0 +1,114 @@
+name: WatchFlow Trial 005 CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "experiments/watchflow-trial-005/generated-repo/**"
+      - ".github/workflows/watchflow-trial005-ci.yml"
+
+jobs:
+  test:
+    name: lint typecheck test build e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: experiments/watchflow-trial-005/generated-repo
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: pnpm を設定
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - name: Node.js を設定
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: experiments/watchflow-trial-005/generated-repo/.node-version
+          cache: pnpm
+          cache-dependency-path: experiments/watchflow-trial-005/generated-repo/pnpm-lock.yaml
+
+      - name: 依存関係をインストール
+        run: pnpm install --frozen-lockfile
+
+      - name: Playwright ブラウザをインストール
+        run: pnpm exec playwright install --with-deps
+
+      - name: Playwright Doctor
+        run: pnpm run doctor:playwright
+
+      - name: Mock service Doctor
+        run: pnpm run mock:doctor
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Unit / Component / Coverage
+        run: pnpm run test:coverage
+
+      - name: Build
+        run: pnpm run build
+
+      - name: E2E Chromium Firefox WebKit
+        run: pnpm run test:e2e
+
+      - name: Actions summary
+        if: always()
+        run: |
+          {
+            echo "## WatchFlow Trial 005 CI Summary"
+            echo ""
+            echo "| 項目 | 確認先 |"
+            echo "| --- | --- |"
+            echo "| Coverage | coverage artifact / coverage-summary.json |"
+            echo "| E2E | playwright-report artifact |"
+            echo "| Browser projects | Chromium / Firefox / WebKit |"
+            echo "| Mock services | mock:doctor and Playwright webServer logs |"
+            echo ""
+            if [ -f coverage/coverage-summary.json ]; then
+              node - <<'NODE'
+          const { readFileSync } = require("node:fs");
+          const summary = JSON.parse(readFileSync("coverage/coverage-summary.json", "utf8")).total;
+          console.log("### Coverage");
+          console.log("");
+          console.log("| 指標 | % |");
+          console.log("| --- | ---: |");
+          for (const key of ["statements", "branches", "functions", "lines"]) {
+            console.log(`| ${key} | ${summary[key].pct} |`);
+          }
+          NODE
+            else
+              echo "coverage-summary.json は生成されていません。"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: experiments/watchflow-trial-005/generated-repo/playwright-report/
+          if-no-files-found: ignore
+
+      - name: Test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: experiments/watchflow-trial-005/generated-repo/test-results/
+          if-no-files-found: ignore
+
+      - name: Coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: experiments/watchflow-trial-005/generated-repo/coverage/
+          if-no-files-found: ignore

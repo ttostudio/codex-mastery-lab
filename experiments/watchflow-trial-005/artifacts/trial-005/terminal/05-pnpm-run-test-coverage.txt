@@ -1,0 +1,49 @@
+
+> watchflow@0.1.0 test:coverage /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> vitest run --coverage
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.9 [39m[90m/path/to/project-root/experiments/watchflow-trial-005/generated-repo[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m features/video/playerErrors.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m lib/mocks/display.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m lib/utils/format.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m mocks/media/server.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32m✓[39m features/video/WatchLibraryActions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 142[2mms[22m[39m
+ [32m✓[39m features/video/VideoPlayer.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+ [32m✓[39m lib/mocks/adapter.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 494[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+[2m      Tests [22m [1m[32m23 passed[39m[22m[90m (23)[39m
+[2m   Start at [22m 11:04:08
+[2m   Duration [22m 1.27s[2m (transform 185ms, setup 436ms, import 407ms, tests 837ms, environment 3.32s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   71.34 |    67.56 |   60.82 |   75.08 |                   
+ components/ui     |     100 |       80 |     100 |     100 |                   
+  Button.tsx       |     100 |       80 |     100 |     100 | 9                 
+ features/video    |   72.47 |    66.05 |    62.5 |   75.62 |                   
+  ...nsControl.tsx |     100 |       50 |     100 |     100 | 16-17             
+  ...rControls.tsx |   66.66 |    78.57 |      60 |   66.66 | 63-86             
+  VideoPlayer.tsx  |     100 |      100 |     100 |     100 |                   
+  ...ayerShell.tsx |      50 |    27.27 |   31.25 |      50 | 54-60,65,76,82-86 
+  ...ryActions.tsx |   94.11 |     92.3 |   93.33 |   95.83 | 24,46             
+  mediaAdapter.ts  |     100 |       80 |     100 |     100 | 13                
+  playerErrors.ts  |   85.71 |       80 |     100 |   85.71 | 15                
+  ...ateMachine.ts |   62.02 |       50 |      50 |   67.69 | ...64,73-74,83-90 
+ lib/i18n          |     100 |      100 |     100 |     100 |                   
+  ja.ts            |     100 |      100 |     100 |     100 |                   
+ lib/mocks         |   50.87 |    37.93 |   47.82 |   59.52 |                   
+  adapter.ts       |      44 |    37.93 |   47.82 |   51.42 | 31-54,68-69       
+  data.ts          |     100 |      100 |     100 |     100 |                   
+  display.ts       |     100 |      100 |     100 |     100 |                   
+ lib/utils         |   83.33 |       80 |      60 |   83.33 |                   
+  format.ts        |   83.33 |       80 |      60 |   83.33 | 14,29             
+ mocks/media       |   79.34 |    79.72 |      75 |      80 |                   
+  server.mjs       |   79.34 |    79.72 |      75 |      80 | ...12-113,132-134 
+-------------------|---------|----------|---------|---------|-------------------
+exit=0

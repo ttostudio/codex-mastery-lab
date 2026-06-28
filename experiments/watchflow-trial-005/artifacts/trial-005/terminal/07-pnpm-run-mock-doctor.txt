@@ -1,0 +1,24 @@
+
+> watchflow@0.1.0 mock:doctor /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> node scripts/doctor-mock-services.mjs
+
+OK: Docker Compose - Docker Compose version v5.1.4
+OK: docker-compose.yml の静的検証
+
+> watchflow@0.1.0 mock:start /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> node scripts/start-mock-services.mjs
+
+mock services mode: node fallback
+mock services are healthy
+OK: Node fallback 起動
+OK: mock-api health
+OK: mock-media health
+OK: mock-auth health
+OK: mock-billing health
+
+> watchflow@0.1.0 mock:stop /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> node scripts/stop-mock-services.mjs
+
+mock services stopped
+OK: doctor起動分の停止
+exit=0

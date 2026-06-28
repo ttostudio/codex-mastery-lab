@@ -1,0 +1,14 @@
+
+> watchflow@0.1.0 doctor:playwright /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> node scripts/doctor-playwright.mjs
+
+OK: Chromium が利用できます (/path/to/home/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing)
+NG: Firefox を起動できませんでした。
+browserType.launch: Executable doesn't exist at /path/to/home/Library/Caches/ms-playwright/firefox-1532/firefox/Nightly.app/Contents/MacOS/firefox
+OK: WebKit が利用できます (/path/to/home/Library/Caches/ms-playwright/webkit-2311/pw_run.sh)
+
+不足ブラウザ: Firefox
+次のコマンドでブラウザをインストールしてください:
+pnpm exec playwright install
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1

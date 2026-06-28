@@ -1,0 +1,5 @@
+
+> watchflow@0.1.0 typecheck /path/to/project-root/experiments/watchflow-trial-005/generated-repo
+> tsc --noEmit
+
+exit=0
