@@ -1,0 +1,9 @@
+
+> drillswipe@0.1.0 doctor:playwright <repo>/experiments/proof-tiktok-drill/generated-repo
+> node scripts/doctor-playwright.mjs
+
+OK: Chromium が利用できます (<home>/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing)
+OK: Firefox が利用できます (<home>/Library/Caches/ms-playwright/firefox-1532/firefox/Nightly.app/Contents/MacOS/firefox)
+OK: WebKit が利用できます (<home>/Library/Caches/ms-playwright/webkit-2311/pw_run.sh)
+Playwright の Chromium / Firefox / WebKit はすべて利用できます。
+exit=0
