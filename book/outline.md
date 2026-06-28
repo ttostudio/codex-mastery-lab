@@ -109,6 +109,7 @@ AIに「いい感じに作って」と頼む時代は終わる。これから必
 - 2026-06-27: 「プレミアムにしてで膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる」 — 第8章 Non-Functional Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第17章 16GB Mac miniで回す現実的なAI開発環境に接続。
 - 2026-06-27: 「問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する」 — 第7章 System Contract、第8章 Non-Functional Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet に接続。
 - 2026-06-27: 「問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する」 — 第7章 System Contract、第8章 Non-Functional Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第16章 AI実装レビューを3層に分ける に接続。
+- 2026-06-28: 「スマホフォームは『見た目が収まる』だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する」 — 第6章 Design Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第15章 スマホアプリ開発でAIが見落とす状態と権限 に接続。
 
 各記事は以下のどれかに分類する。
 

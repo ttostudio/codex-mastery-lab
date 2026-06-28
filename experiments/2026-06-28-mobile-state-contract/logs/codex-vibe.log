@@ -1,0 +1,8 @@
+作成しました。変更は `experiments/2026-06-28-mobile-state-contract/vibe-app` 内だけです。
+
+追加ファイル:
+- [index.html](/Users/tto/codex-mastery-lab/experiments/2026-06-28-mobile-state-contract/vibe-app/index.html)
+- [style.css](/Users/tto/codex-mastery-lab/experiments/2026-06-28-mobile-state-contract/vibe-app/style.css)
+- [script.js](/Users/tto/codex-mastery-lab/experiments/2026-06-28-mobile-state-contract/vibe-app/script.js)
+
+`node --check experiments/2026-06-28-mobile-state-contract/vibe-app/script.js` は成功しました。ブラウザでは `index.html` を直接開けば動きます。

@@ -30,6 +30,13 @@ accessibility_contract:
   collection_semantics: []
   keyboard_interactions: []
   focus_evidence: []
+mobile_interaction_contract:
+  target_viewports: []
+  touch_targets: string
+  input_keyboard_policy: []
+  state_transition_focus: string
+  reduced_motion_policy: string
+  mobile_overflow_policy: string
 security_contract:
   data_classification: string
   input_validation: []
@@ -294,7 +301,60 @@ verification_evidence:
     - logs/fixed-verification.txt
 ```
 
-## 7. AI Task Packetテンプレート Lite
+## 7. Mobile Interaction / State Design実験から追加した項目
+
+### 7.1 `mobile_interaction_contract`
+
+スマホ向けUIでは「画面幅に収まる」だけでは足りない。後工程のレビューは、タップ領域、入力キーボード、フォーカス移動、エラー復帰、横スクロールなし、モーション配慮を確認する。今回の雑プロンプト版は、見た目としてはスマホ対応に見えたが、項目別エラー、送信後の結果領域focus、`:focus-visible`、`prefers-reduced-motion`、証拠ファイルが抜けた。
+
+例:
+
+```yaml
+mobile_interaction_contract:
+  target_viewports:
+    - "360px mobile width without horizontal scroll"
+    - "720px tablet/small desktop width"
+  touch_targets: "Primary inputs and buttons must be at least 44px high; prefer 48px in forms."
+  input_keyboard_policy:
+    - "Use type=date for date input and type=time for time input when browser support is acceptable."
+    - "Use inputmode and autocomplete intentionally; do not rely on placeholders as labels."
+  state_transition_focus: "On successful submit, move focus to the result panel with tabindex=-1; on validation error, focus the first invalid field."
+  reduced_motion_policy: "If motion exists, provide prefers-reduced-motion. If no motion exists, document the no-motion policy in evidence."
+  mobile_overflow_policy: "At 360px width, no horizontal scroll; form controls use single column by default."
+```
+
+### 7.2 `state_design`をモバイル操作と接続する
+
+空状態・エラー状態・成功状態は、画面に文言があるだけでは不十分である。スマホではキーボード表示中に視界が狭くなるため、状態遷移後にどこへ視線とフォーカスを戻すかを仕様に含める。
+
+例:
+
+```yaml
+state_design:
+  empty: "Explain that no reminder exists and the form creates the first reminder."
+  error: "Show per-field Japanese messages, connect with aria-describedby, focus first invalid input."
+  success: "Show a live success message, render the reminder summary, and focus the result panel."
+  edit_return: "Provide a visible button to return focus to the first editable field."
+```
+
+### 7.3 `verification_evidence.mobile_state_file`
+
+スマホ操作の品質は、チャット上の「対応しました」では確認できない。状態設計と操作配慮を証拠ファイルに残し、軽量監査で再実行できるようにする。
+
+例:
+
+```yaml
+verification_evidence:
+  files_to_attach:
+    - MOBILE_STATE_EVIDENCE.md
+    - assets/<date>-mobile-state-vibe.gif
+    - assets/<date>-mobile-state-fixed.gif
+  logs_to_save:
+    - logs/vibe-audit.log
+    - logs/fixed-audit.log
+```
+
+## 8. AI Task Packetテンプレート Lite
 
 ```markdown
 # AI Task Packet: <task name>
@@ -326,6 +386,15 @@ verification_evidence:
 - Keyboard interactions:
 - Focus evidence:
 - Live regions:
+
+## Mobile Interaction Contract
+
+- Target viewports:
+- Touch targets:
+- Input keyboard policy:
+- State transition focus:
+- Reduced motion policy:
+- Mobile overflow policy:
 
 ## Security Contract
 
@@ -390,7 +459,7 @@ Run these commands and include results:
 - Known limitations:
 ```
 
-## 8. Control Plane機能仮説
+## 9. Control Plane機能仮説
 
 AIDD Control Planeでは、AI Task Packetを自由記述ではなくフォームとして生成する。
 
@@ -399,8 +468,9 @@ AIDD Control Planeでは、AI Task Packetを自由記述ではなくフォーム
 - `aria-controls` / `aria-describedby` / live region / list semantics を静的監査する
 - フォームUIでは PII/Data Classification、retention、consent、no-network/no-storage を必須入力にする
 - Codex実行ログ、監査結果、修正プロンプトを Learning Log に自動保存する
+- スマホフォームでは target viewport、tap target、inputmode/autocomplete、error focus、success focus、reduced motion を必須入力にする
 
-## 9. 今日の検証結果との対応
+## 10. 今日の検証結果との対応
 
 2026-06-27 の FAQ検索アプリ実験では、雑プロンプト版で以下が抜けた。
 
@@ -433,3 +503,14 @@ AI Task Packet v0.3に Security Contract / Privacy Contract / Verification Evide
 - `SECURITY_OPERATIONS.md` による監査証跡
 
 AI Task Packet v0.4に API Security Contract / API Operations Contract / Verification Evidence を事前に入れると、fixed-apiでは静的API監査が `20 passed / 0 failed` になった。
+
+2026-06-28 のリマインダー予約メモ Mobile Interaction / State Design実験では、雑プロンプト版で以下が抜けた。
+
+- 必須入力ごとの `aria-describedby` 付きエラー表示
+- エラー/成功/空状態を分けた live region
+- 送信成功後の結果領域focus
+- 件名/メモの `maxlength`
+- `:focus-visible` と `prefers-reduced-motion`
+- `MOBILE_STATE_EVIDENCE.md` による状態設計と検証証拠
+
+AI Task Packet v0.5に Mobile Interaction Contract / State Design / Verification Evidence を事前に入れると、fixed-appでは静的モバイル状態監査が `14 passed / 0 failed` になった。

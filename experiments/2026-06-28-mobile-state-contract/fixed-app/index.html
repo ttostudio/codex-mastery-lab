@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>リマインダー予約メモ</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <main class="app-shell" aria-labelledby="app-title">
+      <header class="app-header">
+        <p class="eyebrow">予約メモ</p>
+        <h1 id="app-title">リマインダー予約メモ</h1>
+      </header>
+
+      <section class="input-section" aria-labelledby="form-title">
+        <h2 id="form-title">予約内容を入力</h2>
+        <form id="reminder-form" class="reminder-form" novalidate>
+          <div class="field">
+            <label for="subject">件名 <span class="required">必須</span></label>
+            <input
+              id="subject"
+              name="subject"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              maxlength="80"
+              required
+              aria-describedby="subject-error"
+            >
+            <p id="subject-error" class="field-error" hidden></p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="date">日付 <span class="required">必須</span></label>
+              <input
+                id="date"
+                name="date"
+                type="date"
+                autocomplete="off"
+                required
+                aria-describedby="date-error"
+              >
+              <p id="date-error" class="field-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="time">時間 <span class="required">必須</span></label>
+              <input
+                id="time"
+                name="time"
+                type="time"
+                autocomplete="off"
+                required
+                aria-describedby="time-error"
+              >
+              <p id="time-error" class="field-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="method">通知方法</label>
+            <select id="method" name="method" autocomplete="off">
+              <option value="アプリ通知">アプリ通知</option>
+              <option value="メール">メール</option>
+              <option value="SMS">SMS</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="memo">メモ</label>
+            <textarea
+              id="memo"
+              name="memo"
+              rows="5"
+              inputmode="text"
+              autocomplete="off"
+              maxlength="300"
+              aria-describedby="memo-help"
+            ></textarea>
+            <p id="memo-help" class="field-help">300文字まで入力できます。</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">予約する</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="state-section" aria-labelledby="state-title">
+        <h2 id="state-title">予約状況</h2>
+        <div id="empty-state" class="empty-state" aria-live="polite">
+          <p>まだ予約はありません。</p>
+          <p>件名、日付、時間を入力すると、ここで予約内容を確認できます。</p>
+        </div>
+        <p id="error-status" class="status-message error-status" aria-live="polite"></p>
+        <p id="success-status" class="status-message success-status" aria-live="polite"></p>
+
+        <article
+          id="result-panel"
+          class="result-panel"
+          tabindex="-1"
+          aria-labelledby="result-title"
+          hidden
+        >
+          <h3 id="result-title">予約できました</h3>
+          <dl class="result-list">
+            <div>
+              <dt>件名</dt>
+              <dd id="result-subject"></dd>
+            </div>
+            <div>
+              <dt>日付</dt>
+              <dd id="result-date"></dd>
+            </div>
+            <div>
+              <dt>時間</dt>
+              <dd id="result-time"></dd>
+            </div>
+            <div>
+              <dt>通知方法</dt>
+              <dd id="result-method"></dd>
+            </div>
+            <div>
+              <dt>メモ</dt>
+              <dd id="result-memo"></dd>
+            </div>
+          </dl>
+          <button id="edit-button" class="secondary-button" type="button">再編集する</button>
+        </article>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

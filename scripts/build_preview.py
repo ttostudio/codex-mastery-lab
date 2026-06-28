@@ -250,7 +250,7 @@ def main():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True, exist_ok=True)
     OUT_ASSETS.mkdir(parents=True, exist_ok=True)
-    asset_patterns = ['2026-06-27*.svg', '2026-06-27*.gif', '2026-06-27*.png', '2026-06-27*.console.txt']
+    asset_patterns = ['2026-06-27*.svg', '2026-06-27*.gif', '2026-06-27*.png', '2026-06-27*.console.txt', '2026-06-28*.svg', '2026-06-28*.gif', '2026-06-28*.png', '2026-06-28*.console.txt']
     for asset in [p for pattern in asset_patterns for p in ASSETS.glob(pattern)]:
         shutil.copy2(asset, OUT_ASSETS / asset.name)
     series_articles, past_articles = ordered_articles()

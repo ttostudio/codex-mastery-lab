@@ -1,0 +1,8 @@
+experiments/2026-06-28-mobile-state-contract/AI_TASK_PACKET_v0.5.md を読んで、その内容どおりに fixed-app を実装してください。
+
+条件:
+- 変更は experiments/2026-06-28-mobile-state-contract/fixed-app/ 内に閉じてください。
+- 既存の vibe-app は変更しないでください。
+- 依存パッケージはインストールしないでください。
+- vanilla HTML/CSS/JavaScriptのみを使ってください。
+- 可能であれば指定された node --check と audit_mobile_state.py を実行し、結果を報告してください。

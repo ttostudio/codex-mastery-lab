@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" role="img" aria-labelledby="title desc">
+  <title id="title">Mobile State Contract reverse chain</title>
+  <desc id="desc">欠陥から理想状態、修正指示、前工程情報、AI Task Packetへ逆算する図</desc>
+  <rect width="1100" height="520" fill="#f6f8fb"/>
+  <style>
+    .box{fill:#fff;stroke:#cbd5e1;stroke-width:2;rx:18}.head{font:700 24px -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;fill:#0f172a}.txt{font:16px -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;fill:#334155}.small{font:14px -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;fill:#475569}.arrow{stroke:#2563eb;stroke-width:3;marker-end:url(#a)}
+  </style>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+  <text x="40" y="48" class="head">リマインダー予約メモ: 後工程から前工程への逆算</text>
+  <rect x="40" y="90" width="190" height="300" class="box"/>
+  <text x="62" y="128" class="head" font-size="20">監査で見つかった欠陥</text>
+  <text x="62" y="166" class="txt">aria-describedbyなし</text>
+  <text x="62" y="198" class="txt">成功後focusなし</text>
+  <text x="62" y="230" class="txt">maxlengthなし</text>
+  <text x="62" y="262" class="txt">:focus-visibleなし</text>
+  <text x="62" y="294" class="txt">証拠ファイルなし</text>
+  <line x1="238" y1="240" x2="290" y2="240" class="arrow"/>
+  <rect x="300" y="90" width="190" height="300" class="box"/>
+  <text x="322" y="128" class="head" font-size="20">理想状態</text>
+  <text x="322" y="166" class="txt">空/エラー/成功が分かる</text>
+  <text x="322" y="198" class="txt">状態遷移後に迷わない</text>
+  <text x="322" y="230" class="txt">スマホで押しやすい</text>
+  <text x="322" y="262" class="txt">キーボードでも追える</text>
+  <text x="322" y="294" class="txt">再監査できる証拠</text>
+  <line x1="498" y1="240" x2="550" y2="240" class="arrow"/>
+  <rect x="560" y="90" width="210" height="300" class="box"/>
+  <text x="582" y="128" class="head" font-size="20">修正指示</text>
+  <text x="582" y="166" class="txt">項目別エラー</text>
+  <text x="582" y="198" class="txt">結果領域へfocus</text>
+  <text x="582" y="230" class="txt">44px以上のタップ領域</text>
+  <text x="582" y="262" class="txt">reduced motion</text>
+  <text x="582" y="294" class="txt">MOBILE_STATE_EVIDENCE</text>
+  <line x1="778" y1="240" x2="830" y2="240" class="arrow"/>
+  <rect x="840" y="90" width="220" height="300" class="box"/>
+  <text x="862" y="128" class="head" font-size="20">前工程へ反映</text>
+  <text x="862" y="166" class="txt">Mobile Interaction Contract</text>
+  <text x="862" y="198" class="txt">State Design</text>
+  <text x="862" y="230" class="txt">Accessibility Contract</text>
+  <text x="862" y="262" class="txt">Verification Evidence</text>
+  <text x="862" y="294" class="txt">AI Task Packet v0.5</text>
+  <text x="40" y="450" class="small">結果: 雑プロンプト版 6 passed / 8 failed → AI Task Packet版 14 passed / 0 failed</text>
+</svg>

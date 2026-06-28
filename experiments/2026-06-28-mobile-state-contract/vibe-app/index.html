@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>リマインダー予約メモ</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="form-panel" aria-labelledby="app-title">
+        <div class="title-block">
+          <p class="eyebrow">予約メモ</p>
+          <h1 id="app-title">リマインダー予約メモ</h1>
+        </div>
+
+        <form id="reminder-form" class="reminder-form">
+          <label>
+            <span>件名</span>
+            <input id="subject" name="subject" type="text" placeholder="例: 薬を飲む" required>
+          </label>
+
+          <div class="input-grid">
+            <label>
+              <span>日付</span>
+              <input id="date" name="date" type="date" required>
+            </label>
+
+            <label>
+              <span>時間</span>
+              <input id="time" name="time" type="time" required>
+            </label>
+          </div>
+
+          <label>
+            <span>通知方法</span>
+            <select id="method" name="method" required>
+              <option value="アプリ通知">アプリ通知</option>
+              <option value="メール">メール</option>
+              <option value="SMS">SMS</option>
+              <option value="電話">電話</option>
+            </select>
+          </label>
+
+          <label>
+            <span>メモ</span>
+            <textarea id="memo" name="memo" rows="5" placeholder="必要なことを短くメモ"></textarea>
+          </label>
+
+          <button type="submit">予約する</button>
+        </form>
+      </section>
+
+      <section class="result-panel" aria-live="polite">
+        <h2>予約内容</h2>
+        <div id="empty-state" class="empty-state">
+          まだ予約はありません。
+        </div>
+        <article id="reservation-card" class="reservation-card" hidden>
+          <div>
+            <p class="card-label">件名</p>
+            <p id="result-subject" class="card-title"></p>
+          </div>
+          <dl>
+            <div>
+              <dt>日時</dt>
+              <dd id="result-datetime"></dd>
+            </div>
+            <div>
+              <dt>通知方法</dt>
+              <dd id="result-method"></dd>
+            </div>
+            <div>
+              <dt>メモ</dt>
+              <dd id="result-memo"></dd>
+            </div>
+          </dl>
+        </article>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

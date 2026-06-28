@@ -1,0 +1,15 @@
+合格: index.html / style.css / script.js が存在する
+合格: 日本語UIで lang=ja と viewport がある
+合格: 主要入力に visible label がある
+合格: 必須入力のエラー表示先が aria-describedby で結び付いている
+合格: エラー/成功/空状態の live region が分離されている
+合格: 送信後に結果領域へ focus 移動する
+合格: 件名/メモに maxlength がある
+合格: スマホのタップ領域が44px以上で明示されている
+合格: キーボードフォーカスが :focus-visible で見える
+合格: モーションに prefers-reduced-motion がある
+合格: 外部ネットワーク資産を使っていない
+合格: console.log で入力値を出していない
+合格: MOBILE_STATE_EVIDENCE.md がある
+合格: 証拠ファイルに状態設計/検証コマンド/既知制約がある
+SUMMARY: 14 passed / 0 failed

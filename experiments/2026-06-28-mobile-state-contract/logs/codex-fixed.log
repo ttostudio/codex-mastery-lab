@@ -1,0 +1,21 @@
+実装完了しました。変更は `experiments/2026-06-28-mobile-state-contract/fixed-app/` 内のみに追加しています。
+
+追加ファイル:
+- `index.html`
+- `style.css`
+- `script.js`
+- `MOBILE_STATE_EVIDENCE.md`
+
+対応内容:
+- 日本語UIのリマインダー予約メモ
+- 件名/日付/時間の必須バリデーション
+- `aria-describedby` 付きの項目別エラー
+- 空状態・エラー状態・成功状態
+- 成功時の結果領域 `.focus()`
+- `textContent` による安全な結果描画
+- スマホ向け 44px 以上のタップ領域、360px幅対応
+- 外部資産・永続保存・通信なし
+
+検証結果:
+- `node --check experiments/2026-06-28-mobile-state-contract/fixed-app/script.js`: exit code 0
+- `python3 experiments/2026-06-28-mobile-state-contract/audit_mobile_state.py experiments/2026-06-28-mobile-state-contract/fixed-app`: `SUMMARY: 14 passed / 0 failed`

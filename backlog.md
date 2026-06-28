@@ -9,7 +9,7 @@
 - [ ] 書籍企画: 「AI駆動開発時代の共通説明書」章立てを毎週更新する
 - [ ] Product Brief テンプレートとCodex検証
 - [ ] AI-Ready Requirement Spec テンプレートとCodex検証
-- [ ] Design Contract: 画面/状態/アクセシビリティ設計テンプレート
+- [x] Design Contract: 画面/状態/アクセシビリティ設計テンプレート（2026-06-28: Mobile Interaction Contract / State DesignをAI Task Packet v0.5へ反映）
 - [ ] System Contract: API/DB/権限/外部連携テンプレート
 - [x] Non-Functional Contract: Performance Budget / Asset Policy をAI Task Packetへ反映する（2026-06-27 performance-budget-vibe-gallery）
 - [ ] Non-Functional Contract: 性能/可用性/セキュリティ/コスト/運用テンプレート
@@ -52,6 +52,8 @@
 - [x] 次回候補: 問い合わせフォームの Security Baseline / Privacy Contract を静的監査で検証する（2026-06-27 security-baseline-contact-form）
 - [x] 次回候補: 同じ問い合わせフォームで、サーバーAPIを足した場合の CSRF / rate limit / audit log / retention を逆算する（2026-06-27 contact-api-threat-model）
 - [ ] 次回候補: 問い合わせAPIで Origin拒否 / CSRF拒否 / rate limit 429 のnegative testを実HTTPで自動化する
+- [x] 次回候補: スマホフォームの Mobile Interaction Contract / State Design を雑プロンプトとAI Task Packetで比較する（2026-06-28 mobile-state-contract）
+- [ ] 次回候補: UIの状態設計とAPI失敗状態をつなぎ、フォーム送信失敗時の復帰設計を検証する
 - [ ] 次回候補: SECURITY_OPERATIONS.mdをAIDD Control Planeのフォーム項目から生成するMVPを作る
 
 - [ ] 2つのCodexに実装案を競わせる
