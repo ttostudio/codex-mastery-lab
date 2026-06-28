@@ -88,6 +88,23 @@ th { background:#f1f5f9; }
 <blockquote>2026-06-28 / Codex Mastery Lab  </blockquote>
 <blockquote>対象: AIDD app-clone lab knowledge / StudyStream / DrillSwipe  </blockquote>
 <blockquote>結果: <strong>2つの別ゴールで100点手順を再利用できた</strong></blockquote>
+<h2>先にまとめ</h2>
+<table>
+<tr><th>項目</th><th>結果</th><th>証跡</th></tr>
+<tr><td>WatchFlow Trial 005</td><td>100点化完了</td><td>Firefox導入、3ブラウザE2E、GitHub Actions成功、artifact確認</td></tr>
+<tr><td>ナレッジ化</td><td>完了</td><td><code>AGENTS.md</code> と <code>skills/software-development/aidd-app-clone-lab/SKILL.md</code> に手順化</td></tr>
+<tr><td>もう一度0から作ったサンプル</td><td>成功</td><td><code>StudyStream</code>: YouTube風ではなく学習動画キュー。3ブラウザE2E 33 passed</td></tr>
+<tr><td>TikTok風への横展開</td><td>成功</td><td><code>DrillSwipe</code>: TikTok風ではなく短尺反復学習ドリル。3ブラウザE2E 12 passed</td></tr>
+<tr><td>CI</td><td>成功</td><td><code>App Clone Lab Proofs CI</code> が <code>success</code>。coverage / playwright-report artifactあり</td></tr>
+</table>
+<p>今回のポイントは、WatchFlowで100点に到達した手順を「その場限りの成功」にせず、<strong>別ゴールのアプリを0から作らせても再現できる知識</strong>としてrepoに固定したことだ。</p>
+<p>CI run:</p>
+<pre><code>https://github.com/ttomobile/codex-mastery-lab/actions/runs/28312855035</code></pre>
+<p>CI artifact:</p>
+<pre><code>StudyStream-playwright-report   222150
+StudyStream-coverage             65063
+DrillSwipe-playwright-report     207786
+DrillSwipe-coverage              22671</code></pre>
 <h2>何を試したか</h2>
 <p>Trial 005でWatchFlowは100点に到達した。そこで、成功した手順を一回限りの作業で終わらせず、repoの実行知識として残した。</p>
 <p>追加したのはこの2つだ。</p>
@@ -179,11 +196,11 @@ pnpm run mock:doctor            exit=0
 <p>逆に、まだ改善できる点もある。</p>
 <ul>
 <li>DrillSwipeのunit coverageはゲートとしては通ったが、対象範囲はまだ薄い</li>
-<li>Proof appsのCIはroot workflowでまとめて回す必要がある</li>
+<li>Proof appsのCIはroot workflowでまとめて回す形にし、今回成功まで確認した</li>
 <li>生成アプリが増えるとruntime artifactの除外ルールをさらに厳密にする必要がある</li>
 </ul>
 <h2>CI化</h2>
-<p>横展開用にroot workflowも追加した。</p>
+<p>横展開用にroot workflowを追加し、実際にGitHub Actionsで成功まで確認した。</p>
 <pre><code>.github/workflows/app-clone-lab-proofs-ci.yml</code></pre>
 <p>matrixで <code>StudyStream</code> と <code>DrillSwipe</code> を回す。</p>
 <pre><code>StudyStream: e2e/studystream.spec.ts

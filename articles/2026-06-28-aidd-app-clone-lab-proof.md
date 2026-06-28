@@ -4,6 +4,33 @@
 > 対象: AIDD app-clone lab knowledge / StudyStream / DrillSwipe  
 > 結果: **2つの別ゴールで100点手順を再利用できた**
 
+## 先にまとめ
+
+| 項目 | 結果 | 証跡 |
+| --- | --- | --- |
+| WatchFlow Trial 005 | 100点化完了 | Firefox導入、3ブラウザE2E、GitHub Actions成功、artifact確認 |
+| ナレッジ化 | 完了 | `AGENTS.md` と `skills/software-development/aidd-app-clone-lab/SKILL.md` に手順化 |
+| もう一度0から作ったサンプル | 成功 | `StudyStream`: YouTube風ではなく学習動画キュー。3ブラウザE2E 33 passed |
+| TikTok風への横展開 | 成功 | `DrillSwipe`: TikTok風ではなく短尺反復学習ドリル。3ブラウザE2E 12 passed |
+| CI | 成功 | `App Clone Lab Proofs CI` が `success`。coverage / playwright-report artifactあり |
+
+今回のポイントは、WatchFlowで100点に到達した手順を「その場限りの成功」にせず、**別ゴールのアプリを0から作らせても再現できる知識**としてrepoに固定したことだ。
+
+CI run:
+
+```text
+https://github.com/ttomobile/codex-mastery-lab/actions/runs/28312855035
+```
+
+CI artifact:
+
+```text
+StudyStream-playwright-report   222150
+StudyStream-coverage             65063
+DrillSwipe-playwright-report     207786
+DrillSwipe-coverage              22671
+```
+
 ## 何を試したか
 
 Trial 005でWatchFlowは100点に到達した。そこで、成功した手順を一回限りの作業で終わらせず、repoの実行知識として残した。
@@ -143,12 +170,12 @@ pnpm run mock:doctor            exit=0
 逆に、まだ改善できる点もある。
 
 - DrillSwipeのunit coverageはゲートとしては通ったが、対象範囲はまだ薄い
-- Proof appsのCIはroot workflowでまとめて回す必要がある
+- Proof appsのCIはroot workflowでまとめて回す形にし、今回成功まで確認した
 - 生成アプリが増えるとruntime artifactの除外ルールをさらに厳密にする必要がある
 
 ## CI化
 
-横展開用にroot workflowも追加した。
+横展開用にroot workflowを追加し、実際にGitHub Actionsで成功まで確認した。
 
 ```text
 .github/workflows/app-clone-lab-proofs-ci.yml
