@@ -4,7 +4,7 @@
   "description": "目的: M4 Mac mini (16GB RAM / 256GB SSD) という現実的な制約環境で、Codex CLI を使った安定的なシステム開発ワークフローを継続検証し、毎日「有料級の技術記事ドラフト」を生成する。",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --check experiments/2026-06-28-mobile-state-contract/vibe-app/script.js && node --check experiments/2026-06-28-mobile-state-contract/fixed-app/script.js && python3 experiments/2026-06-28-mobile-state-contract/audit_mobile_state.py experiments/2026-06-28-mobile-state-contract/fixed-app && python3 scripts/build_preview.py"
   },
   "keywords": [],
   "author": "",
