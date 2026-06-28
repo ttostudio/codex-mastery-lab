@@ -42,6 +42,26 @@ pnpm run doctor:aidd            exit=0
 
 今回の到達点は、**AIDD Control PlaneのL3ローカルMVP** である。
 
+
+
+## 画面キャプチャ
+
+まず、初期状態ではAIDD Control Planeが「何を作る画面なのか」を1ページで見せている。Dashboard、Project Brief Builder、AI Task Packet Builder、Packet Preview、Agent Runbook、Review Dashboard、Learning Logが同時に見える。
+
+![AIDD Control Plane MVP 001 初期画面](assets/aidd-control-plane-mvp001-empty.png)
+
+入力後は、Product BriefからAI Task PacketとAgent Runbookが更新される。ここで重要なのは、quality gateが最初から見えていることだ。ユーザーは「AIに何を作らせるか」だけでなく、「何を通したら完了か」も同時に確認できる。
+
+![AIDD Control Plane MVP 001 入力後のPacket Preview](assets/aidd-control-plane-mvp001-filled.png)
+
+failure contractも画面で確認できる。今回は外部API未接続、ログイン不要、課金機能は非ゴールという制約を明示し、AIが余計なログイン/DB/APIへ逸れないようにした。
+
+![AIDD Control Plane MVP 001 offline状態](assets/aidd-control-plane-mvp001-offline.png)
+
+最後に、検証ログも画像として残した。記事を読む人が、単なる説明ではなく実行結果の形で確認できるようにするためである。
+
+![AIDD Control Plane MVP 001 terminal evidence](assets/aidd-control-plane-mvp001-terminal-evidence.png)
+
 ## 何を作りたかったのか
 
 AIDD Control Planeは、AIにコードを書かせるだけのSaaSではない。

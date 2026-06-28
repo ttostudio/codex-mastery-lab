@@ -1,0 +1,11 @@
+$ playwright test
+[WebServer] $ next dev
+
+Running 3 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/contract-checker.spec.ts:3:1 › サンプル入力で全体statusが合格になる (304ms)
+  ✓  2 [chromium] › e2e/contract-checker.spec.ts:15:1 › 必須項目を削るとmissing_requiredとpathが表示される (284ms)
+  ✓  3 [chromium] › e2e/contract-checker.spec.ts:25:1 › 壊れたJSONでinvalid_json stateが表示される (276ms)
+
+  3 passed (2.9s)
+exit=0

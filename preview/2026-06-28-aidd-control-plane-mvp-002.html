@@ -1,0 +1,285 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</title><style>
+:root {
+  color-scheme: light;
+  --fg:#172033; --muted:#667085; --bg:#f5f7fb; --card:#fff; --line:#d9e2f1;
+  --accent:#1d4ed8; --accent2:#7c3aed; --code:#0f172a; --soft:#eef4ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--fg); line-height:1.82; }
+a { color: var(--accent); }
+.layout { display:grid; grid-template-columns: 300px minmax(0, 1fr); min-height:100vh; }
+aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; background:#0b1220; color:#e5eefc; }
+.brand { font-weight:800; line-height:1.35; margin:0 0 16px; font-size:18px; letter-spacing:-.01em; }
+.series-note { color:#9fb4d8; font-size:12px; margin:0 0 18px; }
+.chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
+.chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
+.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
+main { max-width: 980px; padding: 42px 34px 80px; }
+article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
+h2 { font-size: clamp(22px, 3vw, 28px); margin: 46px 0 14px; padding-top:10px; border-top:1px solid #edf1f7; }
+h3 { font-size: 20px; margin: 30px 0 10px; }
+p { margin: 14px 0; }
+blockquote { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--accent); background:#eff6ff; color:#1e3a8a; border-radius: 10px; }
+pre { background:var(--code); color:#e2e8f0; padding:18px; border-radius:14px; overflow:auto; line-height:1.55; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+pre code { white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap:anywhere; word-break:break-word; }
+p code, li code { background:#eef2ff; color:#1e3a8a; padding:2px 5px; border-radius:5px; white-space:normal; }
+ul, ol { padding-left:1.45em; }
+li { overflow-wrap:anywhere; }
+img { max-width:100%; border:1px solid var(--line); border-radius:14px; background:white; margin:18px 0; height:auto; }
+table { border-collapse: collapse; width:100%; margin:18px 0; font-size:14px; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; min-width:120px; }
+th { background:#f1f5f9; }
+.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+.chapter-nav { display:flex; gap:12px; justify-content:space-between; margin:24px 0; }
+.chapter-nav a { flex:1; text-decoration:none; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px; color:#17315f; }
+.chapter-nav .next { text-align:right; }
+.chapter-nav span { display:block; color:var(--muted); font-size:12px; }
+.home-grid { display:grid; gap:14px; padding:0; list-style:none; }
+.home-grid li a { display:block; padding:18px; background:#fff; border:1px solid var(--line); border-radius:16px; text-decoration:none; box-shadow:0 8px 24px rgba(15,23,42,.05); }
+.mobile-index { display:none; background:#0b1220; padding:12px 16px; position:sticky; top:0; z-index:10; }
+.mobile-index details { color:#e5eefc; }
+.mobile-index summary { cursor:pointer; font-weight:700; }
+.mobile-index a { color:#c7d7ff; display:block; padding:8px 0; }
+@media (max-width: 900px) {
+  .layout { display:block; }
+  aside { display:none; }
+  .mobile-index { display:block; }
+  main { padding:16px; max-width:none; }
+  article { padding:24px 18px; border-radius:18px; }
+  .chapter-nav { flex-direction:column; }
+  .chapter-nav .next { text-align:left; }
+  pre { font-size:12px; padding:14px; }
+}
+@media (max-width: 480px) {
+  body { line-height:1.75; }
+  main { padding:10px; }
+  article { padding:20px 14px; border-radius:14px; }
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+}
+</style></head><body><div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a href="001-series-roadmap.html">第01回｜WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a href="2026-06-27-watchflow-trial-001.html">第02回｜WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a href="2026-06-27-watchflow-trial-002.html">第03回｜WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a href="2026-06-27-watchflow-trial-003.html">第04回｜WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a href="2026-06-27-watchflow-trial-004.html">第05回｜WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a href="2026-06-27-watchflow-trial-005.html">第06回｜WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a href="2026-06-27-performance-budget-vibe-gallery.html">過去記事02｜「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a href="2026-06-27-security-baseline-contact-form.html">過去記事03｜問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a href="2026-06-27-contact-api-threat-model.html">過去記事04｜問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a href="2026-06-28-agents-skill-explained.html">過去記事05｜AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a href="2026-06-28-aidd-app-clone-lab-proof.html">過去記事06｜WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a href="2026-06-28-aidd-control-plane-mvp-001.html">過去記事07｜AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a href="2026-06-28-aidd-control-plane-mvp-002.html">過去記事08｜AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a href="2026-06-28-aidd-spec-v0.1-workflow-saas.html">過去記事09｜AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a href="2026-06-28-mobile-state-contract.html">過去記事10｜スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></details></div><div class="layout "><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編と過去記事を分けて読めるプレビュー</p><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a class="chapter-link " href="001-series-roadmap.html"><span class="chapter-num">第01回</span>WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-001.html"><span class="chapter-num">第02回</span>WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-002.html"><span class="chapter-num">第03回</span>WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-003.html"><span class="chapter-num">第04回</span>WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-004.html"><span class="chapter-num">第05回</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-005.html"><span class="chapter-num">第06回</span>WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-27-performance-budget-vibe-gallery.html"><span class="chapter-num">過去記事 02</span>「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a class="chapter-link past " href="2026-06-27-security-baseline-contact-form.html"><span class="chapter-num">過去記事 03</span>問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-27-contact-api-threat-model.html"><span class="chapter-num">過去記事 04</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-28-agents-skill-explained.html"><span class="chapter-num">過去記事 05</span>AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a class="chapter-link past " href="2026-06-28-aidd-app-clone-lab-proof.html"><span class="chapter-num">過去記事 06</span>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a class="chapter-link past " href="2026-06-28-aidd-control-plane-mvp-001.html"><span class="chapter-num">過去記事 07</span>AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a class="chapter-link past current" href="2026-06-28-aidd-control-plane-mvp-002.html"><span class="chapter-num">過去記事 08</span>AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a class="chapter-link past " href="2026-06-28-aidd-spec-v0.1-workflow-saas.html"><span class="chapter-num">過去記事 09</span>AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a class="chapter-link past " href="2026-06-28-mobile-state-contract.html"><span class="chapter-num">過去記事 10</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-28-aidd-control-plane-mvp-001.html"><span>前の記事</span>AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a><a class="next" href="2026-06-28-aidd-spec-v0.1-workflow-saas.html"><span>次の記事</span>AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a></nav><article><h1>AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</h1>
+<blockquote>2026-06-28 / Codex Mastery Lab  </blockquote>
+<blockquote>対象: AIDD Control Plane MVP / JSON Contract Checker / AIDD-Spec v0.1  </blockquote>
+<blockquote>結果: <strong>AI Task Packet、Verification Evidence、Review Record、Learning Logを画面上で検査し、不足pathと改善提案を出せるようになった</strong></blockquote>
+<h2>先に結論</h2>
+<p>MVP 001では、AIDD-Specの流れをSaaS画面にした。</p>
+<pre><code>Product Brief
+  -&gt; AI Task Packet
+  -&gt; Agent Runbook
+  -&gt; Review Record
+  -&gt; Learning Log</code></pre>
+<p>しかし、まだ弱い点があった。</p>
+<p>画面で入力できても、その入力が標準に沿っているかは人間が見る必要があった。</p>
+<p>そこでMVP 002では、AIDD-Specの成果物を <strong>JSON Contract Checker</strong> で検査する画面に進めた。</p>
+<p>今回検査対象にした成果物は4つ。</p>
+<ul>
+<li>AI Task Packet</li>
+<li>Verification Evidence</li>
+<li>Review Record</li>
+<li>Learning Log</li>
+</ul>
+<p>検証結果:</p>
+<pre><code>pnpm install --frozen-lockfile  exit=0
+pnpm run lint                   exit=0
+pnpm run typecheck              exit=0
+pnpm run test                   4 tests passed / exit=0
+pnpm run build                  exit=0
+pnpm run test:e2e               3 passed / exit=0
+pnpm run doctor:aidd            exit=0</code></pre>
+<p>自己評価は <strong>94 / 100</strong>。</p>
+<p>完成SaaSではないが、AIDD Control Planeが「入力を作る画面」から「入力を検査する画面」へ進んだ。</p>
+<h2>画面キャプチャ</h2>
+<p>初期画面では、Contract Checker Dashboard、Artifact JSON Editors、Schema Requirements、Validation Resultsが並ぶ。MVP 001よりも「標準成果物を検査する道具」らしくなった。</p>
+<p><img src="assets/aidd-control-plane-mvp002-empty.png" alt="AIDD Control Plane MVP 002 初期画面" loading="lazy"></p>
+<p>サンプルを入れると、AI Task Packet / Verification Evidence / Review Record / Learning Logがすべて合格になる。ここでユーザーは、標準成果物の最小形をそのまま見られる。</p>
+<p><img src="assets/aidd-control-plane-mvp002-valid.png" alt="AIDD Control Plane MVP 002 合格状態" loading="lazy"></p>
+<p>必須項目を1つ削ると、<code>missing_required</code> になり、不足pathが表示される。これは人間のレビューをかなり助ける。曖昧に「足りません」ではなく、どの成果物のどのpathが足りないかを出せるからだ。</p>
+<p><img src="assets/aidd-control-plane-mvp002-missing.png" alt="AIDD Control Plane MVP 002 missing_required状態" loading="lazy"></p>
+<p>JSONを壊すと <code>invalid_json</code> になる。AIエージェントが壊れたJSONや途中の出力を返したときに、まず形式エラーとして切り分けられる。</p>
+<p><img src="assets/aidd-control-plane-mvp002-invalid-json.png" alt="AIDD Control Plane MVP 002 invalid_json状態" loading="lazy"></p>
+<p>検証ログも画像化した。記事では、これ以降もできるだけ画面と実行結果のキャプチャを入れる。</p>
+<p><img src="assets/aidd-control-plane-mvp002-terminal-evidence.png" alt="AIDD Control Plane MVP 002 terminal evidence" loading="lazy"></p>
+<h2>何がSaaSらしくなったのか</h2>
+<p>MVP 001は、AIDD-Specの流れを見えるようにした。</p>
+<p>MVP 002は、そこに <strong>合否判定</strong> を入れた。</p>
+<p>違いは大きい。</p>
+<p>MVP 001:</p>
+<pre><code>入力を作る</code></pre>
+<p>MVP 002:</p>
+<pre><code>入力を作る
+入力を検査する
+不足をpathで示す
+改善提案を出す</code></pre>
+<p>AIDD Control PlaneをSaaSにするなら、ユーザーに文章を入力させるだけでは弱い。</p>
+<p>必要なのは、入力がAIエージェントに渡してよい品質かをチェックすることだ。</p>
+<h2>実装した検査</h2>
+<p>今回の検査は、完全なJSON Schema Draft validatorではない。</p>
+<p>まずはAIDD-Spec v0.1で必要な最小pathを定義し、存在と空配列/空文字を検査した。</p>
+<p>例: AI Task Packetの必須path。</p>
+<pre><code>spec_version
+task_id
+conformance_target
+product_brief.name
+product_brief.user_problem
+product_brief.target_pattern
+product_brief.non_goals
+experience_contract.screens
+experience_contract.states
+experience_contract.failure_contract
+implementation_contract.constraints
+quality_gates.required_commands
+expected_outputs.files
+acceptance_criteria</code></pre>
+<p>Verification Evidenceでは、次を必須にした。</p>
+<pre><code>id
+task_id
+overall_status
+command_logs
+reports
+screenshots
+checked_at</code></pre>
+<p>Review Recordでは、次を必須にした。</p>
+<pre><code>id
+task_id
+score
+passed
+findings
+remaining_risks</code></pre>
+<p>Learning Logでは、次を必須にした。</p>
+<pre><code>id
+task_id
+what_worked
+what_failed
+spec_updates_needed</code></pre>
+<h2>なぜpath表示が効くのか</h2>
+<p>初心者向けに言うと、これは健康診断の結果に近い。</p>
+<p>「体調が悪いです」だけでは次に何をすればよいか分からない。</p>
+<p>でも、</p>
+<pre><code>AI Task Packet.product_brief.user_problem が足りません</code></pre>
+<p>と表示されれば、直す場所が分かる。</p>
+<p>AIDD-Specは、AIに良い指示を渡すための説明書である。</p>
+<p>その説明書に必要な欄が空なら、AIは勝手に推測してしまう。</p>
+<p>だからAIDD Control Planeは、AIへ渡す前に不足欄を見つける必要がある。</p>
+<h2>実装ファイル</h2>
+<p>生成された主なファイル:</p>
+<pre><code>experiments/aidd-control-plane-mvp-002/generated-repo/app/page.tsx
+experiments/aidd-control-plane-mvp-002/generated-repo/src/lib/contracts.ts
+experiments/aidd-control-plane-mvp-002/generated-repo/src/lib/samples.ts
+experiments/aidd-control-plane-mvp-002/generated-repo/tests/contracts.test.ts
+experiments/aidd-control-plane-mvp-002/generated-repo/e2e/contract-checker.spec.ts
+experiments/aidd-control-plane-mvp-002/generated-repo/scripts/doctor-aidd.mjs</code></pre>
+<p>検証ロジックの中心は <code>src/lib/contracts.ts</code> にある。</p>
+<pre><code>validateArtifact
+validateContract
+parseArtifactJson
+statusLabel</code></pre>
+<p>UI、unit test、E2E、doctorが同じ契約を参照するようにした。</p>
+<h2>E2Eで確認したこと</h2>
+<p>Playwrightでは3つのシナリオを確認した。</p>
+<pre><code>サンプル入力で全体statusが合格になる
+必須項目を削るとmissing_requiredとpathが表示される
+壊れたJSONでinvalid_json stateが表示される</code></pre>
+<p>結果:</p>
+<pre><code>3 passed</code></pre>
+<h2>doctor:aidd</h2>
+<p><code>doctor:aidd</code> は、AIDD Control Planeとして最低限の静的契約を検査する。</p>
+<p>今回確認したもの:</p>
+<ul>
+<li>必須ファイル</li>
+<li>npm scripts</li>
+<li>必須UI token</li>
+<li>empty / valid / invalid_json / missing_required / warning / offline</li>
+<li>fetch/XMLHttpRequest/WebSocket/localStorage/sessionStorage禁止</li>
+<li>外部URL禁止</li>
+</ul>
+<p>結果:</p>
+<pre><code>doctor:aidd passed
+checked files: 12
+checked scripts: lint, typecheck, test, build, test:e2e, doctor:aidd
+checked states: empty, valid, invalid_json, missing_required, warning, offline
+exit=0</code></pre>
+<h2>今回分かったこと</h2>
+<h3>1. AIDD-Specは検査可能な形にできる</h3>
+<p>前回までは、AIDD-Specは仕様書・テンプレート・画面だった。</p>
+<p>今回は、最小限だが検査ロジックになった。</p>
+<p>これは重要だ。</p>
+<p>標準は、読まれるだけでは弱い。</p>
+<p>SaaSにするなら、入力と出力をチェックできる必要がある。</p>
+<h3>2. path単位の不足表示は初心者にも効く</h3>
+<p>「AI Task Packetが不十分です」では直せない。</p>
+<p>でも、</p>
+<pre><code>AI Task Packet.product_brief.user_problem</code></pre>
+<p>のようにpathで表示すれば、どこを直せばよいか分かる。</p>
+<p>これは、AIDD Control Planeの中核UIになりそうだ。</p>
+<h3>3. 完全なJSON Schemaの前に、最小Contract Checkerで十分価値がある</h3>
+<p>今回はJSON Schema Draftを完全実装していない。</p>
+<p>でも、必須path、空値、壊れたJSONだけでも価値が出た。</p>
+<p>つまりMVPとしては、最初から巨大なSchema validatorを作る必要はない。</p>
+<p>まずはAIDD-Specの最小契約をチェックし、その後にJSON Schemaへ寄せればよい。</p>
+<h2>まだ足りないもの</h2>
+<p>まだ完成SaaSではない。</p>
+<p>未到達:</p>
+<ul>
+<li>永続化</li>
+<li>複数プロジェクト</li>
+<li>実行ログアップロード</li>
+<li>GitHub Actions artifact取り込み</li>
+<li>完全なJSON Schema Draft対応</li>
+<li>CI上のL4検証</li>
+<li>ユーザー管理</li>
+<li>チーム共有</li>
+</ul>
+<h2>次に作るもの</h2>
+<p>次は <strong>MVP 003: Evidence Collector UI</strong> が自然だ。</p>
+<p>今は成果物JSONを検査できる。</p>
+<p>次は、実行ログ、スクリーンショット、Playwright report、CI URLをアップロード/登録し、Verification Evidenceとしてまとめる画面が必要になる。</p>
+<pre><code>MVP 001: ワークフロー画面
+MVP 002: Contract Checker
+MVP 003: Evidence Collector
+MVP 004: GitHub Actions連携
+MVP 005: 複数Project/Packet管理</code></pre>
+<h2>まとめ</h2>
+<p>MVP 002で、AIDD Control Planeは一段SaaSに近づいた。</p>
+<pre><code>AIDD-Spec成果物
+  -&gt; JSON editor
+  -&gt; Contract Checker
+  -&gt; missing path
+  -&gt; improvement suggestions
+  -&gt; Verification Evidence</code></pre>
+<p>これはまだ完成ではない。</p>
+<p>しかし、AIエージェントに渡す前の入力を「標準に照らして検査する」という、AIDD Control Planeの中核機能が動き始めた。</p></article><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-28-aidd-control-plane-mvp-001.html"><span>前の記事</span>AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a><a class="next" href="2026-06-28-aidd-spec-v0.1-workflow-saas.html"><span>次の記事</span>AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a></nav></main></div></body></html>

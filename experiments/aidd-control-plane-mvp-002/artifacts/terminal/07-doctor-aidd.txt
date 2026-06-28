@@ -1,0 +1,6 @@
+$ node scripts/doctor-aidd.mjs
+doctor:aidd passed
+checked files: 12
+checked scripts: lint, typecheck, test, build, test:e2e, doctor:aidd
+checked states: empty, valid, invalid_json, missing_required, warning, offline
+exit=0
