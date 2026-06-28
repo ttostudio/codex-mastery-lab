@@ -1,0 +1,29 @@
+
+> drillswipe@0.1.0 test:coverage <repo>/experiments/proof-tiktok-drill/generated-repo
+> vitest run --coverage
+
+
+ RUN  v4.1.9 <repo>/experiments/proof-tiktok-drill/generated-repo
+      Coverage enabled with v8
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:01:52
+   Duration  397ms (transform 15ms, setup 32ms, import 11ms, tests 2ms, environment 256ms)
+
+ % Coverage report from v8
+----------------|---------|----------|---------|---------|-------------------
+File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------|---------|----------|---------|---------|-------------------
+All files       |      36 |     12.5 |   66.66 |      35 |                   
+ mock-state.ts  |       0 |        0 |       0 |       0 | 16-33             
+ persistence.ts |    37.5 |    14.28 |   66.66 |   33.33 | 18-35             
+----------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 36% ( 9/25 )
+Branches     : 12.5% ( 2/16 )
+Functions    : 66.66% ( 6/9 )
+Lines        : 35% ( 7/20 )
+================================================================================

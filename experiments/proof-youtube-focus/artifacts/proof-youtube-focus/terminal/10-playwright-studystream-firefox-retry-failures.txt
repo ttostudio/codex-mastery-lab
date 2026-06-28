@@ -1,0 +1,14 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 [firefox] › e2e/studystream.spec.ts:32:7 › StudyStream E2E › 動画取得失敗時にリトライ導線を表示する (23.7s)
+  ✓  2 [firefox] › e2e/studystream.spec.ts:56:7 › StudyStream E2E › mock-mediaの失敗状態を動画画面で表示できる (21.5s)
+  ✓  3 [firefox] › e2e/studystream.spec.ts:72:7 › StudyStream E2E › 学習履歴を表示して削除できる (20.7s)
+
+> studystream@0.1.0 mock:stop <repo>/experiments/proof-youtube-focus/generated-repo
+> node scripts/stop-mock-services.mjs
+
+mock services stopped
+
+  3 passed (1.2m)
+exit=0

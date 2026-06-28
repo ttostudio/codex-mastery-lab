@@ -1,0 +1,37 @@
+[WebServer] (node:52265) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer]  Network generated-repo_default Creating 
+[WebServer]  Network generated-repo_default Created 
+[WebServer]  Container generated-repo-mock-auth-1 Creating 
+[WebServer]  Container generated-repo-mock-api-1 Creating 
+[WebServer]  Container generated-repo-mock-billing-1 Creating 
+[WebServer]  Container generated-repo-mock-media-1 Creating 
+[WebServer]  Container generated-repo-mock-media-1 Created 
+[WebServer]  Container generated-repo-mock-auth-1 Created 
+[WebServer]  Container generated-repo-mock-billing-1 Created 
+[WebServer]  Container generated-repo-mock-api-1 Created 
+[WebServer]  Container generated-repo-mock-auth-1 Starting 
+[WebServer]  Container generated-repo-mock-api-1 Starting 
+[WebServer]  Container generated-repo-mock-media-1 Starting 
+[WebServer]  Container generated-repo-mock-billing-1 Starting 
+[WebServer]  Container generated-repo-mock-billing-1 Started 
+[WebServer]  Container generated-repo-mock-auth-1 Started 
+[WebServer]  Container generated-repo-mock-api-1 Started 
+[WebServer]  Container generated-repo-mock-media-1 Started 
+[WebServer] (node:52294) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:52295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:52301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:52305) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] ⨯ Error: Manifest file is empty
+[WebServer]     at ignore-listed frames {
+[WebServer]   page: '/'
+[WebServer] }
+[WebServer] [browser] Uncaught Error: Manifest file is empty
+  ✘   1 [chromium] › e2e/drillswipe.spec.ts:18:5 › フィード遷移、保存、復習キュー、正解、不正解、履歴削除ができる (1.5m)

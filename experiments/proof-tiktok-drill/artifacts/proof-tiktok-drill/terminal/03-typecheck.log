@@ -1,0 +1,4 @@
+
+> drillswipe@0.1.0 typecheck <repo>/experiments/proof-tiktok-drill/generated-repo
+> tsc --noEmit
+

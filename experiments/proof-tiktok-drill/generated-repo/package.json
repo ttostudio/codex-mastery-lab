@@ -1,0 +1,49 @@
+{
+  "name": "drillswipe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "短尺反復学習フィード DrillSwipe",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "doctor:playwright": "node scripts/doctor-playwright.mjs",
+    "mock:start": "node scripts/start-mock-services.mjs",
+    "mock:stop": "node scripts/stop-mock-services.mjs",
+    "mock:doctor": "node scripts/doctor-mock-services.mjs",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "lucide-react": "1.21.0",
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.0",
+    "@eslint/eslintrc": "3.3.5",
+    "@playwright/test": "1.61.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "26.0.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "@vitest/coverage-v8": "4.1.9",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.2.9",
+    "jsdom": "29.1.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.9"
+  },
+  "packageManager": "pnpm@10.24.0"
+}

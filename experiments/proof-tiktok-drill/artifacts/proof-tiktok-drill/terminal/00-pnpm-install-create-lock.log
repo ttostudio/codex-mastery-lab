@@ -1,0 +1,41 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 449, reused 396, downloaded 1, added 0
+Packages: +450
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 532, reused 457, downloaded 1, added 79
+Progress: resolved 532, reused 457, downloaded 1, added 448
+Progress: resolved 532, reused 457, downloaded 1, added 450, done
+
+dependencies:
++ lucide-react 1.21.0
++ next 16.2.9
++ react 19.2.7
++ react-dom 19.2.7
+
+devDependencies:
++ @axe-core/playwright 4.11.0 (4.12.1 is available)
++ @eslint/eslintrc 3.3.5
++ @playwright/test 1.61.1
++ @testing-library/jest-dom 6.9.1
++ @testing-library/react 16.3.2
++ @testing-library/user-event 14.6.1
++ @types/node 26.0.1
++ @types/react 19.2.7 (19.2.17 is available)
++ @types/react-dom 19.2.3
++ @vitejs/plugin-react 6.0.3
++ @vitest/coverage-v8 4.1.9
++ eslint 9.39.2 (10.6.0 is available)
++ eslint-config-next 16.2.9
++ jsdom 29.1.1
++ typescript 6.0.3
++ vitest 4.1.9
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: sharp, unrs-resolver.                               │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Done in 4s using pnpm v10.24.0

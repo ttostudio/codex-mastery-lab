@@ -1,0 +1,13 @@
+
+> drillswipe@0.1.0 test <repo>/experiments/proof-tiktok-drill/generated-repo
+> vitest run
+
+
+ RUN  v4.1.9 <repo>/experiments/proof-tiktok-drill/generated-repo
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:01:19
+   Duration  536ms (transform 36ms, setup 50ms, import 23ms, tests 2ms, environment 379ms)
+

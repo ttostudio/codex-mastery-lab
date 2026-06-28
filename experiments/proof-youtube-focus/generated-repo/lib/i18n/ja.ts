@@ -1,0 +1,30 @@
+export const ja = {
+  appName: "StudyStream",
+  searchPlaceholder: "講座、講師、タグを検索",
+  searchButton: "検索",
+  homeTitle: "今日進める学習動画",
+  relatedTitle: "次に学ぶ動画",
+  commentsTitle: "学習メモ",
+  retry: "再試行",
+  loading: "読み込み中です",
+  empty: "該当する動画がありません",
+  offline: "ネットワークに接続できません",
+  timeout: "応答が時間内に完了しませんでした",
+  mediaFailure: "動画を取得できませんでした",
+  posterAlt: "学習動画ポスター",
+  play: "再生",
+  pause: "一時停止",
+  seek: "再生位置",
+  volume: "音量",
+  mute: "ミュート",
+  unmute: "ミュート解除",
+  captions: "字幕",
+  captionsUnavailable: "字幕は後から差し替え可能な設計です",
+  buffering: "バッファリング中",
+  auth: {
+    anonymous: "匿名学習者",
+    logged_in: "ログイン中",
+    premium: "プレミアム会員",
+    session_expired: "セッション期限切れ"
+  }
+} as const;

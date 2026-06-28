@@ -1,0 +1,5 @@
+
+> studystream@0.1.0 lint <repo>/experiments/proof-youtube-focus/generated-repo
+> eslint .
+
+exit=0

@@ -1,0 +1,205 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</title><style>
+:root {
+  color-scheme: light;
+  --fg:#172033; --muted:#667085; --bg:#f5f7fb; --card:#fff; --line:#d9e2f1;
+  --accent:#1d4ed8; --accent2:#7c3aed; --code:#0f172a; --soft:#eef4ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--fg); line-height:1.82; }
+a { color: var(--accent); }
+.layout { display:grid; grid-template-columns: 300px minmax(0, 1fr); min-height:100vh; }
+aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; background:#0b1220; color:#e5eefc; }
+.brand { font-weight:800; line-height:1.35; margin:0 0 16px; font-size:18px; letter-spacing:-.01em; }
+.series-note { color:#9fb4d8; font-size:12px; margin:0 0 18px; }
+.chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
+.chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
+.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
+main { max-width: 980px; padding: 42px 34px 80px; }
+article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
+h2 { font-size: clamp(22px, 3vw, 28px); margin: 46px 0 14px; padding-top:10px; border-top:1px solid #edf1f7; }
+h3 { font-size: 20px; margin: 30px 0 10px; }
+p { margin: 14px 0; }
+blockquote { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--accent); background:#eff6ff; color:#1e3a8a; border-radius: 10px; }
+pre { background:var(--code); color:#e2e8f0; padding:18px; border-radius:14px; overflow:auto; line-height:1.55; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+pre code { white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap:anywhere; word-break:break-word; }
+p code, li code { background:#eef2ff; color:#1e3a8a; padding:2px 5px; border-radius:5px; white-space:normal; }
+ul, ol { padding-left:1.45em; }
+li { overflow-wrap:anywhere; }
+img { max-width:100%; border:1px solid var(--line); border-radius:14px; background:white; margin:18px 0; height:auto; }
+table { border-collapse: collapse; width:100%; margin:18px 0; font-size:14px; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; min-width:120px; }
+th { background:#f1f5f9; }
+.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+.chapter-nav { display:flex; gap:12px; justify-content:space-between; margin:24px 0; }
+.chapter-nav a { flex:1; text-decoration:none; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px; color:#17315f; }
+.chapter-nav .next { text-align:right; }
+.chapter-nav span { display:block; color:var(--muted); font-size:12px; }
+.home-grid { display:grid; gap:14px; padding:0; list-style:none; }
+.home-grid li a { display:block; padding:18px; background:#fff; border:1px solid var(--line); border-radius:16px; text-decoration:none; box-shadow:0 8px 24px rgba(15,23,42,.05); }
+.mobile-index { display:none; background:#0b1220; padding:12px 16px; position:sticky; top:0; z-index:10; }
+.mobile-index details { color:#e5eefc; }
+.mobile-index summary { cursor:pointer; font-weight:700; }
+.mobile-index a { color:#c7d7ff; display:block; padding:8px 0; }
+@media (max-width: 900px) {
+  .layout { display:block; }
+  aside { display:none; }
+  .mobile-index { display:block; }
+  main { padding:16px; max-width:none; }
+  article { padding:24px 18px; border-radius:18px; }
+  .chapter-nav { flex-direction:column; }
+  .chapter-nav .next { text-align:left; }
+  pre { font-size:12px; padding:14px; }
+}
+@media (max-width: 480px) {
+  body { line-height:1.75; }
+  main { padding:10px; }
+  article { padding:20px 14px; border-radius:14px; }
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+}
+</style></head><body><div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a href="001-series-roadmap.html">第01回｜WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a href="2026-06-27-watchflow-trial-001.html">第02回｜WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a href="2026-06-27-watchflow-trial-002.html">第03回｜WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a href="2026-06-27-watchflow-trial-003.html">第04回｜WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a href="2026-06-27-watchflow-trial-004.html">第05回｜WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a href="2026-06-27-watchflow-trial-005.html">第06回｜WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a href="2026-06-27-performance-budget-vibe-gallery.html">過去記事02｜「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a href="2026-06-27-security-baseline-contact-form.html">過去記事03｜問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a href="2026-06-27-contact-api-threat-model.html">過去記事04｜問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a href="2026-06-28-aidd-app-clone-lab-proof.html">過去記事05｜WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a href="2026-06-28-mobile-state-contract.html">過去記事06｜スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></details></div><div class="layout "><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編と過去記事を分けて読めるプレビュー</p><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a class="chapter-link " href="001-series-roadmap.html"><span class="chapter-num">第01回</span>WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-001.html"><span class="chapter-num">第02回</span>WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-002.html"><span class="chapter-num">第03回</span>WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-003.html"><span class="chapter-num">第04回</span>WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-004.html"><span class="chapter-num">第05回</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-005.html"><span class="chapter-num">第06回</span>WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-27-performance-budget-vibe-gallery.html"><span class="chapter-num">過去記事 02</span>「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a class="chapter-link past " href="2026-06-27-security-baseline-contact-form.html"><span class="chapter-num">過去記事 03</span>問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-27-contact-api-threat-model.html"><span class="chapter-num">過去記事 04</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a class="chapter-link past current" href="2026-06-28-aidd-app-clone-lab-proof.html"><span class="chapter-num">過去記事 05</span>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a class="chapter-link past " href="2026-06-28-mobile-state-contract.html"><span class="chapter-num">過去記事 06</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-27-contact-api-threat-model.html"><span>前の記事</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a><a class="next" href="2026-06-28-mobile-state-contract.html"><span>次の記事</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></nav><article><h1>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</h1>
+<blockquote>2026-06-28 / Codex Mastery Lab  </blockquote>
+<blockquote>対象: AIDD app-clone lab knowledge / StudyStream / DrillSwipe  </blockquote>
+<blockquote>結果: <strong>2つの別ゴールで100点手順を再利用できた</strong></blockquote>
+<h2>何を試したか</h2>
+<p>Trial 005でWatchFlowは100点に到達した。そこで、成功した手順を一回限りの作業で終わらせず、repoの実行知識として残した。</p>
+<p>追加したのはこの2つだ。</p>
+<pre><code>AGENTS.md
+skills/software-development/aidd-app-clone-lab/SKILL.md</code></pre>
+<p>このナレッジには、次の完了条件を入れた。</p>
+<ul>
+<li>Next.js + TypeScript + pnpm</li>
+<li>日本語UI、日本語テスト名、日本語docs</li>
+<li>mock-api / mock-media / mock-auth / mock-billing</li>
+<li>各mock serviceの <code>/health</code>, <code>/state</code>, <code>/__control/state</code></li>
+<li>Docker Compose優先 + Node fallback</li>
+<li>lint / typecheck / unit / coverage / build</li>
+<li>Playwright doctor / mock doctor</li>
+<li>Chromium / Firefox / WebKit の3ブラウザE2E</li>
+<li>GitHub Actions artifact</li>
+<li>記事化とローカルパス漏れ検査</li>
+</ul>
+<p>重要なのは、<strong>同じWatchFlowをもう一度作る</strong>のではなく、別のアプリ目的に移しても効くかを見ることだ。</p>
+<h2>Proof 001: StudyStream</h2>
+<p>最初の横展開は <code>StudyStream</code>。YouTube風の認識しやすい動画体験を使うが、目的は娯楽視聴ではなく <strong>学習動画キュー</strong> に変えた。</p>
+<pre><code>experiments/proof-youtube-focus/generated-repo</code></pre>
+<p>主要体験はこうした。</p>
+<ul>
+<li>ホーム: 学習動画カード、今日の学習目標、集中キュー</li>
+<li>検索: 講座、講師、タグ検索</li>
+<li>動画詳細: 再生プレースホルダー、章立て、学習メモ</li>
+<li>ライブラリ: 保存、集中キュー追加/解除、学習履歴削除</li>
+<li>状態: media failure、offline、timeout、auth、billing failure</li>
+</ul>
+<p>Codexは一度Firefoxで詰まった。FirefoxではNext dev上の一部ページ表示がChromium/WebKitよりかなり遅く、15秒のexpect timeoutでは <code>loading.tsx</code> のまま失敗した。</p>
+<p>そこで、Firefoxを外すのではなく設定を広げた。</p>
+<pre><code>timeout: 120_000,
+expect: { timeout: 90_000 },
+workers: 1,
+retries: process.env.CI ? 2 : 1,</code></pre>
+<p>結果、3ブラウザE2Eは成功した。</p>
+<pre><code>33 passed (Chromium / Firefox / WebKit)</code></pre>
+<p>実行したゲートはこれだ。</p>
+<pre><code>pnpm install --frozen-lockfile  exit=0
+pnpm run lint                   exit=0
+pnpm run typecheck              exit=0
+pnpm run test                   exit=0
+pnpm run test:coverage          exit=0
+pnpm run build                  exit=0
+pnpm run doctor:playwright      exit=0
+pnpm run mock:doctor            exit=0
+3 browser E2E                   33 passed</code></pre>
+<h2>Proof 002: DrillSwipe</h2>
+<p>次は <code>DrillSwipe</code>。TikTok風の縦スクロール短尺フィードを使うが、目的は娯楽ではなく <strong>短尺反復学習ドリル</strong> に変えた。</p>
+<pre><code>experiments/proof-tiktok-drill/generated-repo</code></pre>
+<p>主要体験はこうした。</p>
+<ul>
+<li>縦型短尺ドリルフィード</li>
+<li>現在のドリル、進捗、復習キュー</li>
+<li>正解/不正解の選択</li>
+<li>保存、復習キュー追加、履歴削除</li>
+<li>auth premium、billing failed、media failed</li>
+<li>offline / timeout</li>
+</ul>
+<p>DrillSwipeでは別の失敗が出た。Next devのTurbopackでReact Client Manifest関連のエラーが出た。</p>
+<pre><code>Could not find the module ... global-error.js#default in the React Client Manifest</code></pre>
+<p>これはアプリの要件不備というより、Next dev / Turbopack / Playwright webServerの組み合わせで起きる不安定さだった。Playwright側のwebServerをwebpack dev serverへ切り替えた。</p>
+<pre><code>webServer: {
+  command: &quot;pnpm run mock:start &amp;&amp; pnpm exec next dev --webpack --hostname 127.0.0.1 --port 3000&quot;,
+  url: &quot;http://127.0.0.1:3000&quot;
+}</code></pre>
+<p>その後、削除なしの再実行で3ブラウザE2Eが成功した。</p>
+<pre><code>12 passed (Chromium / Firefox / WebKit)</code></pre>
+<p>実行したゲートはこれだ。</p>
+<pre><code>pnpm install --frozen-lockfile  exit=0
+pnpm run lint                   exit=0
+pnpm run typecheck              exit=0
+pnpm run test                   exit=0
+pnpm run test:coverage          exit=0
+pnpm run build                  exit=0
+pnpm run doctor:playwright      exit=0
+pnpm run mock:doctor            exit=0
+3 browser E2E                   12 passed</code></pre>
+<h2>何が分かったか</h2>
+<p>今回の再実証で、100点化の本質は特定アプリの作り込みではなく、<strong>完了条件を実行可能な契約として先に置くこと</strong>だと確認できた。</p>
+<p>特に効いたのはこの4つ。</p>
+<ol>
+<li>UIと独立したmock serviceを用意する</li>
+<li>E2Eからmock serviceの状態を変える</li>
+<li>Firefoxを対象外にせず、遅さを前提に安定化する</li>
+<li>docs、score、terminal logを同じ実験単位に置く</li>
+</ol>
+<p>逆に、まだ改善できる点もある。</p>
+<ul>
+<li>DrillSwipeのunit coverageはゲートとしては通ったが、対象範囲はまだ薄い</li>
+<li>Proof appsのCIはroot workflowでまとめて回す必要がある</li>
+<li>生成アプリが増えるとruntime artifactの除外ルールをさらに厳密にする必要がある</li>
+</ul>
+<h2>CI化</h2>
+<p>横展開用にroot workflowも追加した。</p>
+<pre><code>.github/workflows/app-clone-lab-proofs-ci.yml</code></pre>
+<p>matrixで <code>StudyStream</code> と <code>DrillSwipe</code> を回す。</p>
+<pre><code>StudyStream: e2e/studystream.spec.ts
+DrillSwipe: e2e/drillswipe.spec.ts</code></pre>
+<p>CIでは次を実行する。</p>
+<pre><code>pnpm install --frozen-lockfile
+pnpm exec playwright install --with-deps
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run test:coverage
+pnpm run build
+pnpm run doctor:playwright
+pnpm run mock:doctor
+pnpm exec playwright test ... --project=chromium --project=firefox --project=webkit</code></pre>
+<h2>結論</h2>
+<p>Trial 005の100点化は、WatchFlow専用の偶然ではなかった。</p>
+<p><code>AGENTS.md</code> と <code>aidd-app-clone-lab</code> skillに落としたことで、動画学習キューと短尺ドリルという別ゴールでも、mock backend、失敗状態、3ブラウザE2Eまで到達できた。</p>
+<p>次にやるべきことは、この手順をAIDD-Specの「アプリパターン実験プロトコル」として整理し、各app cloneで同じ採点表とCI証跡を比較できるようにすることだ。</p></article><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-27-contact-api-threat-model.html"><span>前の記事</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a><a class="next" href="2026-06-28-mobile-state-contract.html"><span>次の記事</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a></nav></main></div></body></html>

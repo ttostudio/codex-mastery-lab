@@ -1,0 +1,5 @@
+
+> drillswipe@0.1.0 doctor:playwright <repo>/experiments/proof-tiktok-drill/generated-repo
+> node scripts/doctor-playwright.mjs
+
+Playwright browsers available: chromium, firefox, webkit

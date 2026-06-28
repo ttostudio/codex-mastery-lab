@@ -1,0 +1,48 @@
+
+> drillswipe@0.1.0 mock:doctor <repo>/experiments/proof-tiktok-drill/generated-repo
+> node scripts/doctor-mock-services.mjs
+
+ Network generated-repo_default Creating 
+ Network generated-repo_default Created 
+ Container generated-repo-mock-billing-1 Creating 
+ Container generated-repo-mock-auth-1 Creating 
+ Container generated-repo-mock-api-1 Creating 
+ Container generated-repo-mock-media-1 Creating 
+ Container generated-repo-mock-auth-1 Created 
+ Container generated-repo-mock-api-1 Created 
+ Container generated-repo-mock-media-1 Created 
+ Container generated-repo-mock-billing-1 Created 
+ Container generated-repo-mock-media-1 Starting 
+ Container generated-repo-mock-auth-1 Starting 
+ Container generated-repo-mock-billing-1 Starting 
+ Container generated-repo-mock-api-1 Starting 
+ Container generated-repo-mock-billing-1 Started 
+ Container generated-repo-mock-api-1 Started 
+ Container generated-repo-mock-media-1 Started 
+ Container generated-repo-mock-auth-1 Started 
+mock services started with Docker Compose
+ok http://127.0.0.1:4110/health
+ok http://127.0.0.1:4111/health
+ok http://127.0.0.1:4112/health
+ok http://127.0.0.1:4113/health
+mock doctor passed
+ Container generated-repo-mock-api-1 Stopping 
+ Container generated-repo-mock-auth-1 Stopping 
+ Container generated-repo-mock-billing-1 Stopping 
+ Container generated-repo-mock-media-1 Stopping 
+ Container generated-repo-mock-billing-1 Stopped 
+ Container generated-repo-mock-billing-1 Removing 
+ Container generated-repo-mock-billing-1 Removed 
+ Container generated-repo-mock-api-1 Stopped 
+ Container generated-repo-mock-api-1 Removing 
+ Container generated-repo-mock-api-1 Removed 
+ Container generated-repo-mock-auth-1 Stopped 
+ Container generated-repo-mock-auth-1 Removing 
+ Container generated-repo-mock-auth-1 Removed 
+ Container generated-repo-mock-media-1 Stopped 
+ Container generated-repo-mock-media-1 Removing 
+ Container generated-repo-mock-media-1 Removed 
+ Network generated-repo_default Removing 
+ Network generated-repo_default Removed 
+mock services stopped
+exit=0

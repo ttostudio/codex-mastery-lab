@@ -1,0 +1,5 @@
+
+> studystream@0.1.0 typecheck <repo>/experiments/proof-youtube-focus/generated-repo
+> tsc --noEmit
+
+exit=0

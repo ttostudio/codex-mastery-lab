@@ -1,0 +1,45 @@
+services:
+  mock-api:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "scripts/mock-service.mjs"]
+    environment:
+      MOCK_SERVICE: api
+      PORT: 4110
+    volumes:
+      - ./:/app
+    ports:
+      - "4110:4110"
+  mock-media:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "scripts/mock-service.mjs"]
+    environment:
+      MOCK_SERVICE: media
+      PORT: 4111
+    volumes:
+      - ./:/app
+    ports:
+      - "4111:4111"
+  mock-auth:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "scripts/mock-service.mjs"]
+    environment:
+      MOCK_SERVICE: auth
+      PORT: 4112
+    volumes:
+      - ./:/app
+    ports:
+      - "4112:4112"
+  mock-billing:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "scripts/mock-service.mjs"]
+    environment:
+      MOCK_SERVICE: billing
+      PORT: 4113
+    volumes:
+      - ./:/app
+    ports:
+      - "4113:4113"

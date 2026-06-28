@@ -1,0 +1,44 @@
+
+Running 33 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/studystream.spec.ts:14:7 › StudyStream E2E › ホームから学習動画詳細へ移動できる (1.5s)
+  ✓   2 [chromium] › e2e/studystream.spec.ts:27:7 › StudyStream E2E › 検索結果の空状態を表示できる (605ms)
+  ✓   3 [chromium] › e2e/studystream.spec.ts:32:7 › StudyStream E2E › 動画取得失敗時にリトライ導線を表示する (450ms)
+  ✓   4 [chromium] › e2e/studystream.spec.ts:38:7 › StudyStream E2E › 認証と課金の失敗状態を表示できる (579ms)
+  ✓   5 [chromium] › e2e/studystream.spec.ts:44:7 › StudyStream E2E › 独立mock serviceの状態変更が画面に反映される (490ms)
+  ✓   6 [chromium] › e2e/studystream.spec.ts:56:7 › StudyStream E2E › mock-mediaの失敗状態を動画画面で表示できる (560ms)
+  ✓   7 [chromium] › e2e/studystream.spec.ts:63:7 › StudyStream E2E › 保存へ追加と解除ができる (504ms)
+  ✓   8 [chromium] › e2e/studystream.spec.ts:72:7 › StudyStream E2E › 学習履歴を表示して削除できる (448ms)
+  ✓   9 [chromium] › e2e/studystream.spec.ts:81:7 › StudyStream E2E › 集中キューへ追加と解除ができる (495ms)
+  ✓  10 [chromium] › e2e/studystream.spec.ts:89:7 › StudyStream E2E › オフライン状態とタイムアウト状態を表示できる (226ms)
+  ✓  11 [chromium] › e2e/studystream.spec.ts:96:7 › StudyStream E2E › 基本ページで axe 違反がない (1.3s)
+  ✓  12 [firefox] › e2e/studystream.spec.ts:14:7 › StudyStream E2E › ホームから学習動画詳細へ移動できる (18.1s)
+  ✓  13 [firefox] › e2e/studystream.spec.ts:27:7 › StudyStream E2E › 検索結果の空状態を表示できる (11.7s)
+  ✓  14 [firefox] › e2e/studystream.spec.ts:32:7 › StudyStream E2E › 動画取得失敗時にリトライ導線を表示する (24.3s)
+  ✓  15 [firefox] › e2e/studystream.spec.ts:38:7 › StudyStream E2E › 認証と課金の失敗状態を表示できる (328ms)
+  ✓  16 [firefox] › e2e/studystream.spec.ts:44:7 › StudyStream E2E › 独立mock serviceの状態変更が画面に反映される (324ms)
+  ✓  17 [firefox] › e2e/studystream.spec.ts:56:7 › StudyStream E2E › mock-mediaの失敗状態を動画画面で表示できる (19.2s)
+  ✓  18 [firefox] › e2e/studystream.spec.ts:63:7 › StudyStream E2E › 保存へ追加と解除ができる (20.8s)
+  ✓  19 [firefox] › e2e/studystream.spec.ts:72:7 › StudyStream E2E › 学習履歴を表示して削除できる (20.8s)
+  ✓  20 [firefox] › e2e/studystream.spec.ts:81:7 › StudyStream E2E › 集中キューへ追加と解除ができる (21.3s)
+  ✓  21 [firefox] › e2e/studystream.spec.ts:89:7 › StudyStream E2E › オフライン状態とタイムアウト状態を表示できる (1.4s)
+  ✓  22 [firefox] › e2e/studystream.spec.ts:96:7 › StudyStream E2E › 基本ページで axe 違反がない (20.9s)
+  ✓  23 [webkit] › e2e/studystream.spec.ts:14:7 › StudyStream E2E › ホームから学習動画詳細へ移動できる (1.2s)
+  ✓  24 [webkit] › e2e/studystream.spec.ts:27:7 › StudyStream E2E › 検索結果の空状態を表示できる (402ms)
+  ✓  25 [webkit] › e2e/studystream.spec.ts:32:7 › StudyStream E2E › 動画取得失敗時にリトライ導線を表示する (538ms)
+  ✓  26 [webkit] › e2e/studystream.spec.ts:38:7 › StudyStream E2E › 認証と課金の失敗状態を表示できる (290ms)
+  ✓  27 [webkit] › e2e/studystream.spec.ts:44:7 › StudyStream E2E › 独立mock serviceの状態変更が画面に反映される (309ms)
+  ✓  28 [webkit] › e2e/studystream.spec.ts:56:7 › StudyStream E2E › mock-mediaの失敗状態を動画画面で表示できる (537ms)
+  ✓  29 [webkit] › e2e/studystream.spec.ts:63:7 › StudyStream E2E › 保存へ追加と解除ができる (620ms)
+  ✓  30 [webkit] › e2e/studystream.spec.ts:72:7 › StudyStream E2E › 学習履歴を表示して削除できる (620ms)
+  ✓  31 [webkit] › e2e/studystream.spec.ts:81:7 › StudyStream E2E › 集中キューへ追加と解除ができる (610ms)
+  ✓  32 [webkit] › e2e/studystream.spec.ts:89:7 › StudyStream E2E › オフライン状態とタイムアウト状態を表示できる (336ms)
+  ✓  33 [webkit] › e2e/studystream.spec.ts:96:7 › StudyStream E2E › 基本ページで axe 違反がない (2.0s)
+
+> studystream@0.1.0 mock:stop <repo>/experiments/proof-youtube-focus/generated-repo
+> node scripts/stop-mock-services.mjs
+
+mock services stopped
+
+  33 passed (3.0m)
+exit=0

@@ -1,0 +1,59 @@
+[WebServer]  Network generated-repo_default Creating 
+[WebServer]  Network generated-repo_default Created 
+[WebServer]  Container generated-repo-mock-media-1 Creating 
+[WebServer]  Container generated-repo-mock-api-1 Creating 
+[WebServer]  Container generated-repo-mock-billing-1 Creating 
+[WebServer]  Container generated-repo-mock-auth-1 Creating 
+[WebServer]  Container generated-repo-mock-api-1 Created 
+[WebServer]  Container generated-repo-mock-media-1 Created 
+[WebServer]  Container generated-repo-mock-auth-1 Created 
+[WebServer]  Container generated-repo-mock-billing-1 Created 
+[WebServer]  Container generated-repo-mock-media-1 Starting 
+[WebServer]  Container generated-repo-mock-api-1 Starting 
+[WebServer]  Container generated-repo-mock-billing-1 Starting 
+[WebServer]  Container generated-repo-mock-auth-1 Starting 
+[WebServer]  Container generated-repo-mock-api-1 Started 
+[WebServer]  Container generated-repo-mock-billing-1 Started 
+[WebServer]  Container generated-repo-mock-media-1 Started 
+[WebServer]  Container generated-repo-mock-auth-1 Started 
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/drillswipe.spec.ts:18:5 › フィード遷移、保存、復習キュー、正解、不正解、履歴削除ができる (663ms)
+  ✓   2 [chromium] › e2e/drillswipe.spec.ts:41:5 › mock状態をUIに反映できる (689ms)
+  ✓   3 [chromium] › e2e/drillswipe.spec.ts:52:5 › offline と timeout をUIに出せる (4.3s)
+  ✓   4 [chromium] › e2e/drillswipe.spec.ts:62:5 › 主要画面に重大なアクセシビリティ違反がない (567ms)
+  ✓   5 [firefox] › e2e/drillswipe.spec.ts:18:5 › フィード遷移、保存、復習キュー、正解、不正解、履歴削除ができる (2.4s)
+  ✓   6 [firefox] › e2e/drillswipe.spec.ts:41:5 › mock状態をUIに反映できる (919ms)
+  ✓   7 [firefox] › e2e/drillswipe.spec.ts:52:5 › offline と timeout をUIに出せる (4.8s)
+  ✓   8 [firefox] › e2e/drillswipe.spec.ts:62:5 › 主要画面に重大なアクセシビリティ違反がない (749ms)
+  ✓   9 [webkit] › e2e/drillswipe.spec.ts:18:5 › フィード遷移、保存、復習キュー、正解、不正解、履歴削除ができる (771ms)
+  ✓  10 [webkit] › e2e/drillswipe.spec.ts:41:5 › mock状態をUIに反映できる (732ms)
+  ✓  11 [webkit] › e2e/drillswipe.spec.ts:52:5 › offline と timeout をUIに出せる (4.4s)
+  ✓  12 [webkit] › e2e/drillswipe.spec.ts:62:5 › 主要画面に重大なアクセシビリティ違反がない (697ms)
+
+> drillswipe@0.1.0 mock:stop <repo>/experiments/proof-tiktok-drill/generated-repo
+> node scripts/stop-mock-services.mjs
+
+ Container generated-repo-mock-media-1 Stopping 
+ Container generated-repo-mock-billing-1 Stopping 
+ Container generated-repo-mock-auth-1 Stopping 
+ Container generated-repo-mock-api-1 Stopping 
+ Container generated-repo-mock-auth-1 Stopped 
+ Container generated-repo-mock-auth-1 Removing 
+ Container generated-repo-mock-auth-1 Removed 
+ Container generated-repo-mock-billing-1 Stopped 
+ Container generated-repo-mock-billing-1 Removing 
+ Container generated-repo-mock-billing-1 Removed 
+ Container generated-repo-mock-api-1 Stopped 
+ Container generated-repo-mock-api-1 Removing 
+ Container generated-repo-mock-api-1 Removed 
+ Container generated-repo-mock-media-1 Stopped 
+ Container generated-repo-mock-media-1 Removing 
+ Container generated-repo-mock-media-1 Removed 
+ Network generated-repo_default Removing 
+ Network generated-repo_default Removed 
+mock services stopped
+
+  12 passed (26.2s)
+exit=0

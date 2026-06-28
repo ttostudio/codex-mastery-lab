@@ -1,0 +1,33 @@
+services:
+  mock-api:
+    image: node:22-alpine
+    working_dir: /workspace
+    command: ["sh", "-lc", "corepack enable && pnpm --dir mocks/api start"]
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./:/workspace
+  mock-media:
+    image: node:22-alpine
+    working_dir: /workspace
+    command: ["sh", "-lc", "corepack enable && pnpm --dir mocks/media start"]
+    ports:
+      - "4020:4020"
+    volumes:
+      - ./:/workspace
+  mock-auth:
+    image: node:22-alpine
+    working_dir: /workspace
+    command: ["sh", "-lc", "corepack enable && pnpm --dir mocks/auth start"]
+    ports:
+      - "4030:4030"
+    volumes:
+      - ./:/workspace
+  mock-billing:
+    image: node:22-alpine
+    working_dir: /workspace
+    command: ["sh", "-lc", "corepack enable && pnpm --dir mocks/billing start"]
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./:/workspace
