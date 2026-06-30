@@ -1,0 +1,254 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIDD Control Plane MVP 006：AI依頼書と検証ログをつなぐ Verification Run Tracker</title><style>
+:root {
+  color-scheme: light;
+  --fg:#172033; --muted:#667085; --bg:#f5f7fb; --card:#fff; --line:#d9e2f1;
+  --accent:#1d4ed8; --accent2:#7c3aed; --code:#0f172a; --soft:#eef4ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--fg); line-height:1.82; }
+a { color: var(--accent); }
+.layout { display:grid; grid-template-columns: 300px minmax(0, 1fr); min-height:100vh; }
+aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; background:#0b1220; color:#e5eefc; }
+.brand { font-weight:800; line-height:1.35; margin:0 0 16px; font-size:18px; letter-spacing:-.01em; }
+.series-note { color:#9fb4d8; font-size:12px; margin:0 0 18px; }
+.chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
+.chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
+.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
+main { max-width: 980px; padding: 42px 34px 80px; }
+article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
+h2 { font-size: clamp(22px, 3vw, 28px); margin: 46px 0 14px; padding-top:10px; border-top:1px solid #edf1f7; }
+h3 { font-size: 20px; margin: 30px 0 10px; }
+p { margin: 14px 0; }
+blockquote { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--accent); background:#eff6ff; color:#1e3a8a; border-radius: 10px; }
+pre { background:var(--code); color:#e2e8f0; padding:18px; border-radius:14px; overflow:auto; line-height:1.55; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+pre code { white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap:anywhere; word-break:break-word; }
+p code, li code { background:#eef2ff; color:#1e3a8a; padding:2px 5px; border-radius:5px; white-space:normal; }
+ul, ol { padding-left:1.45em; }
+li { overflow-wrap:anywhere; }
+img { max-width:100%; border:1px solid var(--line); border-radius:14px; background:white; margin:18px 0; height:auto; }
+table { border-collapse: collapse; width:100%; margin:18px 0; font-size:14px; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; min-width:120px; }
+th { background:#f1f5f9; }
+.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+.chapter-nav { display:flex; gap:12px; justify-content:space-between; margin:24px 0; }
+.chapter-nav a { flex:1; text-decoration:none; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px; color:#17315f; }
+.chapter-nav .next { text-align:right; }
+.chapter-nav span { display:block; color:var(--muted); font-size:12px; }
+.home-grid { display:grid; gap:14px; padding:0; list-style:none; }
+.home-grid li a { display:block; padding:18px; background:#fff; border:1px solid var(--line); border-radius:16px; text-decoration:none; box-shadow:0 8px 24px rgba(15,23,42,.05); }
+.mobile-index { display:none; background:#0b1220; padding:12px 16px; position:sticky; top:0; z-index:10; }
+.mobile-index details { color:#e5eefc; }
+.mobile-index summary { cursor:pointer; font-weight:700; }
+.mobile-index a { color:#c7d7ff; display:block; padding:8px 0; }
+@media (max-width: 900px) {
+  .layout { display:block; }
+  aside { display:none; }
+  .mobile-index { display:block; }
+  main { padding:16px; max-width:none; }
+  article { padding:24px 18px; border-radius:18px; }
+  .chapter-nav { flex-direction:column; }
+  .chapter-nav .next { text-align:left; }
+  pre { font-size:12px; padding:14px; }
+}
+@media (max-width: 480px) {
+  body { line-height:1.75; }
+  main { padding:10px; }
+  article { padding:20px 14px; border-radius:14px; }
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+}
+</style></head><body><div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a href="001-series-roadmap.html">第01回｜WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a href="2026-06-27-watchflow-trial-001.html">第02回｜WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a href="2026-06-27-watchflow-trial-002.html">第03回｜WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a href="2026-06-27-watchflow-trial-003.html">第04回｜WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a href="2026-06-27-watchflow-trial-004.html">第05回｜WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a href="2026-06-27-watchflow-trial-005.html">第06回｜WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">AIDD Control Plane SaaS化</div><a href="2026-06-28-aidd-control-plane-mvp-001.html">MVP01｜AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a href="2026-06-28-aidd-control-plane-mvp-002.html">MVP02｜AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a href="2026-06-28-aidd-control-plane-mvp-003.html">MVP03｜AIDD Control Plane MVP 003：実行ログとスクリーンショットをVerification Evidenceにまとめる</a>
+<a href="2026-06-29-aidd-control-plane-mvp-004.html">MVP04｜AIDD Control Plane MVP 004：AIに頼む前の質問から、設計書と依頼書を作る</a>
+<a href="2026-06-30-aidd-control-plane-mvp-005.html">MVP05｜AIDD Control Plane MVP 005：アプリ種別テンプレートで、白紙の依頼を減らす</a>
+<a href="2026-06-30-aidd-control-plane-mvp-006.html">MVP06｜AIDD Control Plane MVP 006：AI依頼書と検証ログをつなぐ Verification Run Tracker</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a href="2026-06-27-performance-budget-vibe-gallery.html">過去記事02｜「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a href="2026-06-27-security-baseline-contact-form.html">過去記事03｜問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a href="2026-06-27-contact-api-threat-model.html">過去記事04｜問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a href="2026-06-28-agents-skill-explained.html">過去記事05｜AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a href="2026-06-28-aidd-app-clone-lab-proof.html">過去記事06｜WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a href="2026-06-28-aidd-spec-v0.1-workflow-saas.html">過去記事07｜AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a href="2026-06-28-mobile-state-contract.html">過去記事08｜スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a>
+<a href="2026-06-29-api-failure-state.html">過去記事09｜「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a>
+<a href="2026-06-30-playwright-api-state.html">過去記事10｜Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</a></details></div><div class="layout "><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編、AIDD Control Plane SaaS化、過去記事を分けて読めるプレビュー</p><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a class="chapter-link " href="001-series-roadmap.html"><span class="chapter-num">第01回</span>WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-001.html"><span class="chapter-num">第02回</span>WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-002.html"><span class="chapter-num">第03回</span>WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-003.html"><span class="chapter-num">第04回</span>WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-004.html"><span class="chapter-num">第05回</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-005.html"><span class="chapter-num">第06回</span>WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">AIDD Control Plane SaaS化</div><a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-001.html"><span class="chapter-num">MVP 01</span>AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-002.html"><span class="chapter-num">MVP 02</span>AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-003.html"><span class="chapter-num">MVP 03</span>AIDD Control Plane MVP 003：実行ログとスクリーンショットをVerification Evidenceにまとめる</a>
+<a class="chapter-link " href="2026-06-29-aidd-control-plane-mvp-004.html"><span class="chapter-num">MVP 04</span>AIDD Control Plane MVP 004：AIに頼む前の質問から、設計書と依頼書を作る</a>
+<a class="chapter-link " href="2026-06-30-aidd-control-plane-mvp-005.html"><span class="chapter-num">MVP 05</span>AIDD Control Plane MVP 005：アプリ種別テンプレートで、白紙の依頼を減らす</a>
+<a class="chapter-link current" href="2026-06-30-aidd-control-plane-mvp-006.html"><span class="chapter-num">MVP 06</span>AIDD Control Plane MVP 006：AI依頼書と検証ログをつなぐ Verification Run Tracker</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-27-performance-budget-vibe-gallery.html"><span class="chapter-num">過去記事 02</span>「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a class="chapter-link past " href="2026-06-27-security-baseline-contact-form.html"><span class="chapter-num">過去記事 03</span>問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-27-contact-api-threat-model.html"><span class="chapter-num">過去記事 04</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-28-agents-skill-explained.html"><span class="chapter-num">過去記事 05</span>AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a class="chapter-link past " href="2026-06-28-aidd-app-clone-lab-proof.html"><span class="chapter-num">過去記事 06</span>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a class="chapter-link past " href="2026-06-28-aidd-spec-v0.1-workflow-saas.html"><span class="chapter-num">過去記事 07</span>AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a class="chapter-link past " href="2026-06-28-mobile-state-contract.html"><span class="chapter-num">過去記事 08</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-29-api-failure-state.html"><span class="chapter-num">過去記事 09</span>「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-30-playwright-api-state.html"><span class="chapter-num">過去記事 10</span>Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-30-aidd-control-plane-mvp-005.html"><span>前の記事</span>AIDD Control Plane MVP 005：アプリ種別テンプレートで、白紙の依頼を減らす</a><span></span></nav><article><h1>AIDD Control Plane MVP 006：AI依頼書と検証ログをつなぐ Verification Run Tracker</h1>
+<blockquote>2026-06-30 / Codex Mastery Lab  </blockquote>
+<blockquote>対象: AIDD Control Plane SaaS化 / Verification Evidence / Review Record / Learning Log / AIDD-Spec v0.1  </blockquote>
+<blockquote>結果: <strong>AI Task Packetに対して、品質ゲートが未実行・成功・失敗・証跡不足のどれなのかを画面で追えるようにした</strong></blockquote>
+<h2>読者の悩み：AIが「できました」と言っても、何が本当に通ったのか分からない</h2>
+<p>MVP 004では、ユーザーが「何を作りたいか」から Product Brief、AI Task Packet、Verification Plan、Codex Promptを生成できるようにした。</p>
+<p>MVP 005では、アプリ種別テンプレートを追加し、学習支援、予約管理、動画サービス風、社内申請などで必要な状態契約・品質ゲート・リスク・証跡要件を最初から入れられるようにした。</p>
+<p>でも、まだ大事な穴が残っていた。</p>
+<pre><code>AIに依頼書を渡した。
+Codexが「テストしました」と言った。
+でも、どのコマンドが本当に通った？
+E2Eは3ブラウザで通った？
+スクリーンショットやterminal evidenceは残っている？
+失敗ログはReview RecordやLearning Logへ戻った？</code></pre>
+<p>AI駆動開発で怖いのは、完成報告が上手に見えるのに、証拠が薄いことだ。家計簿で「今月は大丈夫」と言われても、レシートと残高がなければ確認できない。それと同じで、AI開発にも「実行結果のレシート」が必要になる。</p>
+<h2>今回の仮説</h2>
+<p>AIDD Control Planeの画面に Verification Run Tracker を置けば、AI Task Packet と検証ログのズレを早く見つけられるはずだ。</p>
+<p>今回の仮説はこうだ。</p>
+<pre><code>AI Task Packet
+  -&gt; 必要な品質ゲート
+  -&gt; 実行ログ
+  -&gt; terminal evidence
+  -&gt; screenshot evidence
+  -&gt; Review Record
+  -&gt; Learning Log</code></pre>
+<p>この流れが画面で見えれば、「AIが言ったから完了」ではなく、「証跡が揃ったから完了」に近づける。</p>
+<h2>実験内容</h2>
+<p>Codexに、MVP 005のProject Intake WizardとApp Type Templatesを壊さず、MVP 006として Verification Run Tracker を追加させた。</p>
+<p>今回のTrackerは、次の品質ゲートを扱う。</p>
+<table>
+<tr><th>品質ゲート</th><th>何を確認したいのか</th><th>なぜ必要か</th></tr>
+<tr><td>lint</td><td>基本的なコード品質違反がないか</td><td>小さなルール違反を後工程へ持ち越さないため</td></tr>
+<tr><td>typecheck</td><td>TypeScript上の型エラーがないか</td><td>画面で触る前に壊れたデータの扱いを見つけるため</td></tr>
+<tr><td>test</td><td>ドメインロジックが期待通りか</td><td>UIの見た目だけでは分からない判定を守るため</td></tr>
+<tr><td>build</td><td>本番ビルドが通るか</td><td>dev serverだけ動く状態を完了扱いしないため</td></tr>
+<tr><td>e2e</td><td>ブラウザで主要フローが動くか</td><td>ユーザー操作として成立するか確認するため</td></tr>
+<tr><td>doctor:aidd</td><td>AIDD-Spec上の必須文言・証跡・構造があるか</td><td>プロジェクト固有の品質契約を自動で点検するため</td></tr>
+</table>
+<p>各ゲートには、status、command、summary、evidence fileを持たせた。statusは <code>未実行</code>、<code>成功</code>、<code>失敗</code>、<code>証跡不足</code> の4種類にした。</p>
+<h2>初期状態：未実行と証跡不足を隠さない</h2>
+<p>初期画面では、Project Intake Wizardの右側にReadiness Reviewがあり、下部にVerification Run Trackerが表示される。</p>
+<p><img src="assets/aidd-control-plane-mvp006-empty.png" alt="AIDD Control Plane MVP 006 初期画面" loading="lazy"></p>
+<p>ここで重要なのは、まだ何も実行していない状態を曖昧にしないことだ。</p>
+<pre><code>not ready: failure stateがあります
+lint: 未実行
+terminal evidence不足
+screenshot evidence不足</code></pre>
+<p>初心者向けSaaSとしては、重要なゲートを「あとで任意に見る」場所へ隠すべきではない。AIDD Control Planeは、AIに渡す前・AIから戻った後の両方で、足りない証拠を見える場所に置く必要がある。</p>
+<h2>成功状態：3ブラウザE2Eと証跡が揃う</h2>
+<p>成功サンプルを適用すると、lint、typecheck、test、build、e2e、doctor:aiddが成功になり、Chromium / Firefox / WebKit のE2E成功も表示される。</p>
+<p><img src="assets/aidd-control-plane-mvp006-ready.png" alt="AIDD Control Plane MVP 006 ready状態" loading="lazy"></p>
+<p>この状態では、terminal evidenceとscreenshot evidenceも表示される。</p>
+<pre><code>terminal evidence:
+- experiments/aidd-control-plane-mvp-006/artifacts/terminal/lint.txt
+- experiments/aidd-control-plane-mvp-006/artifacts/terminal/e2e.txt
+- experiments/aidd-control-plane-mvp-006/artifacts/terminal/doctor-aidd.txt
+
+screenshot evidence:
+- experiments/aidd-control-plane-mvp-006/artifacts/screenshots/aidd-control-plane-mvp006-ready.png
+- assets/aidd-control-plane-mvp006-ready.png</code></pre>
+<p>AIDD-Specでいう Verification Evidence は、単なる「ログ置き場」ではない。AI Task Packetで約束した検証が、本当に実行されたことを確認するための証拠セットだ。</p>
+<h2>failure state：E2Eやdoctorが落ちたらreadyにしない</h2>
+<p>失敗サンプルでは、e2eとdoctor:aiddを失敗にした。WebKitも失敗として表示される。</p>
+<p><img src="assets/aidd-control-plane-mvp006-failure.png" alt="AIDD Control Plane MVP 006 failure状態" loading="lazy"></p>
+<p>ここでの狙いは、失敗を記事の都合で隠さないことだ。</p>
+<p>AI駆動開発では、失敗ログは価値がある。どのゲートが落ちたか、どのブラウザで壊れたか、どの証跡が足りないかをReview Recordに残すことで、次のAI Task Packetを改善できる。</p>
+<h2>証跡不足：コマンド成功でも完了ではない</h2>
+<p>もう一つの重要な状態として、コマンドは成功しているがevidence fileが足りないケースを作った。</p>
+<p><img src="assets/aidd-control-plane-mvp006-evidence-missing.png" alt="AIDD Control Plane MVP 006 証跡不足状態" loading="lazy"></p>
+<p>これは現場で起きやすい。</p>
+<pre><code>テストは通った。
+でもログを保存していない。
+スクリーンショットもない。
+あとから第三者が確認できない。</code></pre>
+<p>AIDD-Specでは、この状態を成功扱いにしない。なぜなら、AIと人間のレビューで共通の説明に戻れないからだ。</p>
+<h2>実装で追加したもの</h2>
+<p>Codexには <code>CODEX_PROMPT.md</code> で次を依頼した。</p>
+<pre><code>- Verification Run Tracker セクションを追加する
+- lint / typecheck / test / build / e2e / doctor:aidd を表示する
+- status、command、summary、evidence file を持たせる
+- 初期、成功、失敗、証跡不足の状態を作る
+- Readiness Review と生成物へ Verification Run を反映する
+- unit test / 3ブラウザE2E / doctor:aidd / capture script を更新する</code></pre>
+<p>実装後、Codexの自己申告は信用せず、こちらで個別に検証した。</p>
+<p><img src="assets/aidd-control-plane-mvp006-terminal-evidence.png" alt="AIDD Control Plane MVP 006 terminal evidence" loading="lazy"></p>
+<h2>検証ログ</h2>
+<p>今回の独立検証結果は次の通り。</p>
+<table>
+<tr><th>command</th><th>result</th></tr>
+<tr><td><code>pnpm install --frozen-lockfile</code></td><td>pass</td></tr>
+<tr><td><code>pnpm run lint</code></td><td>pass</td></tr>
+<tr><td><code>pnpm run typecheck</code></td><td>pass</td></tr>
+<tr><td><code>pnpm run test</code></td><td>11 tests passed</td></tr>
+<tr><td><code>pnpm run build</code></td><td>pass</td></tr>
+<tr><td><code>pnpm run test:e2e</code></td><td>Chromium / Firefox / WebKitで24 tests passed</td></tr>
+<tr><td><code>pnpm run doctor:aidd</code></td><td>pass</td></tr>
+</table>
+<p>E2Eでは、次を確認した。</p>
+<pre><code>初期empty stateが表示される
+テンプレート未選択/未適用が表示される
+テンプレート適用後に生成結果へリスクと証跡要件が入る
+成功サンプルで全ゲート成功と3ブラウザE2E成功が表示される
+失敗サンプルでe2e / doctor:aidd失敗が表示される
+証跡不足サンプルでevidence file不足が表示される
+Chromium / Firefox / WebKitで同じ確認が通る</code></pre>
+<p>なお、Next.js buildではESLint plugin検出に関する警告が出ている。ビルド自体は成功しているが、AIDD-Spec的には今後の改善対象として残す。</p>
+<h2>読者がすぐ使えるチェックリスト</h2>
+<table>
+<tr><th>チェック項目</th><th>何を確認したいのか</th><th>なぜ必要か</th></tr>
+<tr><td>AI Task Packetに品質ゲートがあるか</td><td>lint/typecheck/test/build/e2e/doctorなどが明記されているか</td><td>AIが「適当に確認しました」で終わるのを防ぐため</td></tr>
+<tr><td>各ゲートに実行ログがあるか</td><td>コマンドごとのterminal evidenceが残っているか</td><td>後から第三者が再確認できるようにするため</td></tr>
+<tr><td>3ブラウザE2Eを分けて見たか</td><td>Chromium / Firefox / WebKitの結果が分かるか</td><td>1ブラウザだけの成功を過大評価しないため</td></tr>
+<tr><td>スクリーンショット証跡があるか</td><td>empty、ready、failure、証跡不足などの画面が残っているか</td><td>UI状態の説明を文章だけに頼らないため</td></tr>
+<tr><td>証跡不足を失敗として扱ったか</td><td>コマンド成功でもログや画像がなければnot readyにしたか</td><td>完了判断を感想ではなく証拠にするため</td></tr>
+<tr><td>Review Recordに戻したか</td><td>pass/fail/findings/remaining riskを残したか</td><td>次の修正指示を具体化するため</td></tr>
+<tr><td>Learning Logに戻したか</td><td>失敗・修正・次回Spec改善点を残したか</td><td>同じ失敗を次のAI依頼で減らすため</td></tr>
+</table>
+<h2>AIDD-Specへの接続</h2>
+<p>今回のMVP 006は、AIDD-Spec v0.1の次の項目に接続する。</p>
+<ul>
+<li>AI Task Packet</li>
+<li>Test Plan</li>
+<li>Verification Evidence</li>
+<li>Review Record</li>
+<li>Learning Log</li>
+<li>Conformance Target L2 Lite</li>
+</ul>
+<p>重要なのは、Verification Evidenceを「おまけの添付ファイル」にしないことだ。</p>
+<p>AIに渡す依頼書、実行したコマンド、保存したログ、画面キャプチャ、レビュー記録、次回改善が一列につながって、はじめてAI駆動開発の再現性が上がる。</p>
+<h2>SaaSとしての意味</h2>
+<p>AIDD Control Planeは、別のコーディングエージェントを作るSaaSではない。</p>
+<p>今回のVerification Run Trackerは、次の価値に近い。</p>
+<pre><code>粗いアプリ案
+  -&gt; Project Intake Wizard
+  -&gt; App Type Templates
+  -&gt; AI Task Packet
+  -&gt; Verification Run Tracker
+  -&gt; Verification Evidence
+  -&gt; Review Record
+  -&gt; Learning Log
+  -&gt; 次のAI Task Packet改善</code></pre>
+<p>ユーザーにとっての価値は、「どのAIを使うか」よりも、「何を頼み、何を確認し、どんな証拠を残すか」が揃うことだ。</p>
+<p>将来的には、ここにGitHub Actionsのrun URL、artifact一覧、Playwright report、coverage、レビューコメントを接続できる。MVP 006は、その前段階として、画面上の状態モデルを作った。</p>
+<h2>noteで読む価値について</h2>
+<p>今回の記事で大事なのは、「AIで記事を量産した」ことではない。</p>
+<p>実際にCodexへ依頼し、実装を受け取り、別プロセスでlint/typecheck/unit/build/3ブラウザE2E/doctorを走らせ、スクリーンショットとterminal evidenceを残した。これは実験した本人しか書けない一次情報だ。</p>
+<p>noteで読まれる可能性があるのは、こういう再利用できる失敗・修正・証跡のセットだと思う。</p>
+<h2>次回</h2>
+<p>次の自然な改善は、<strong>CI/artifact連携</strong> だ。</p>
+<p>MVP 007では、Verification Run TrackerにGitHub Actions風のrun URL、artifact名、coverage、Playwright reportを紐づけ、SaaS上で「ローカル検証」と「CI検証」の差分を見えるようにしたい。</p></article><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-30-aidd-control-plane-mvp-005.html"><span>前の記事</span>AIDD Control Plane MVP 005：アプリ種別テンプレートで、白紙の依頼を減らす</a><span></span></nav></main></div></body></html>
