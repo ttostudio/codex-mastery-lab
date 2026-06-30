@@ -1,0 +1,339 @@
+:root {
+  color-scheme: light;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #24313d;
+  background: #f4f6f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.hero,
+.control-panel,
+.summary-strip,
+.message-panel,
+.shipment-card {
+  border: 1px solid #d7dee6;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #596a7a;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 12px;
+  font-size: 1.18rem;
+}
+
+.lead,
+.control-note {
+  margin-bottom: 0;
+  color: #596a7a;
+  line-height: 1.7;
+}
+
+.sync-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #b8c4d0;
+  border-radius: 999px;
+  color: #314252;
+  background: #f8fbfd;
+  white-space: nowrap;
+}
+
+.sync-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #b7791f;
+}
+
+.sync-dot.success {
+  background: #2f855a;
+}
+
+.sync-dot.error {
+  background: #c53030;
+}
+
+.control-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.scenario-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.scenario-button,
+.retry-button {
+  min-height: 40px;
+  border: 1px solid #9aaabe;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #26394c;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.scenario-button:hover,
+.retry-button:hover {
+  background: #eef3f7;
+}
+
+.scenario-button.active {
+  border-color: #1f6feb;
+  color: #ffffff;
+  background: #1f6feb;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.search-box {
+  display: grid;
+  gap: 6px;
+  color: #314252;
+  font-weight: 700;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #aebdca;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #24313d;
+  background: #ffffff;
+}
+
+.search-box input:focus,
+.scenario-button:focus,
+.retry-button:focus {
+  outline: 3px solid #b6d4fe;
+  outline-offset: 2px;
+}
+
+.retry-button {
+  min-width: 112px;
+  color: #ffffff;
+  background: #31566f;
+}
+
+.retry-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.message-panel {
+  margin-bottom: 18px;
+  padding: 16px;
+  border-left: 6px solid #c53030;
+}
+
+.message-panel.empty {
+  border-left-color: #596a7a;
+}
+
+.message-title {
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.message-action {
+  margin-bottom: 0;
+  color: #596a7a;
+  line-height: 1.65;
+}
+
+.summary-strip {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+}
+
+.summary-strip p {
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.shipment-list {
+  display: grid;
+  gap: 12px;
+}
+
+.shipment-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(180px, 0.8fr);
+  gap: 16px;
+  padding: 18px;
+}
+
+.shipment-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.shipment-title h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #ffffff;
+  background: #4a5568;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.badge.delivering {
+  background: #2563a9;
+}
+
+.badge.scheduled {
+  background: #805500;
+}
+
+.badge.hold {
+  background: #805ad5;
+}
+
+.badge.arrived {
+  background: #2f855a;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.meta-label {
+  margin-bottom: 2px;
+  color: #647587;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.meta-value {
+  margin: 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.memo {
+  min-width: 0;
+  margin-bottom: 0;
+  padding: 12px;
+  border-radius: 8px;
+  color: #314252;
+  background: #f7fafc;
+  line-height: 1.65;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 16px;
+  }
+
+  .hero,
+  .control-panel,
+  .toolbar,
+  .shipment-card,
+  .meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .sync-panel,
+  .retry-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .scenario-group {
+    justify-content: flex-start;
+  }
+}

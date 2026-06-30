@@ -55,7 +55,8 @@
 - [x] 次回候補: スマホフォームの Mobile Interaction Contract / State Design を雑プロンプトとAI Task Packetで比較する（2026-06-28 mobile-state-contract）
 - [ ] 次回候補: UIの状態設計とAPI失敗状態をつなぎ、フォーム送信失敗時の復帰設計を検証する
 - [x] 次回候補: APIから取得するUIで offline / timeout / server error / retry をAI Task Packetに入れると欠陥が減るか検証する（2026-06-29 api-failure-state）
-- [ ] 次回候補: SECURITY_OPERATIONS.mdをAIDD Control Planeのフォーム項目から生成するMVPを作る
+- [x] 次回候補: API失敗状態をPlaywrightの実ブラウザE2Eで検証する契約をAI Task Packetに入れる（2026-06-30 playwright-api-state）
+- [ ] 次回候補: AIDD Control Planeの入力フォームから Playwright E2E Contract を生成するMVPを作る
 
 - [ ] 2つのCodexに実装案を競わせる
 - [ ] Codex実装をHermesがレビューする二段構え

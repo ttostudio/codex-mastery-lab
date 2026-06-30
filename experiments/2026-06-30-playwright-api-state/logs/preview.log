@@ -1,0 +1,9 @@
+Wrote 20 articles to /path/to/project-root/preview
+# preview files
+preview article generated
+preview/2026-06-30-playwright-api-state.html:17:.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+preview/2026-06-30-playwright-api-state.html:38:.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+preview/2026-06-30-playwright-api-state.html:39:.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+experiments/2026-06-30-playwright-api-state/logs/verification.log:30:    at Object.filterProjects (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/runner/index.js:2096:11)
+experiments/2026-06-30-playwright-api-state/logs/verification.log:31:    at runTests (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/cli/testActions.js:61:30)
+experiments/2026-06-30-playwright-api-state/logs/verification.log:33:    at async _Command.<anonymous> (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/program.js:53:7)

@@ -1,0 +1,45 @@
+このgitリポジトリ内で、experiments/2026-06-30-playwright-api-state/fixed-app に、日本語UIの小さな静的Webアプリを作ってください。
+
+題材は「配送状況トラッカー」です。vibe-app と同じ題材ですが、今回は AIDD-Spec の AI Task Packet として以下を必須にします。
+
+# Scope
+- 変更は experiments/2026-06-30-playwright-api-state/fixed-app/ と experiments/2026-06-30-playwright-api-state/tests/ のみ。
+- vanilla HTML/CSS/JavaScriptのみ。新しい依存パッケージはインストールしない。
+- UI文言、サンプルデータ、テスト名、証拠ファイルは日本語。
+
+# Functional Requirements
+- 荷物名、配送会社、予定日、現在地、状態、メモを表示する。
+- 検索入力で荷物名、配送会社、メモを絞り込める。
+- API境界関数 requestShipments({ scenario, signal }) をUI描画から分離する。
+
+# API Failure State Contract
+- 画面上で success / offline / timeout / server-error / empty を切り替えられるデモ制御を置く。
+- timeout は AbortController または明示的な timeout branch で表現する。
+- offline / timeout / server-error では、日本語で「何が起きたか」と「次に何をすればよいか」を表示する。
+- 失敗時も検索入力の値と直前に取得済みの一覧を保持する。
+- 再試行ボタンを置き、現在選択中の scenario で再取得できる。
+- success に戻したら一覧が復帰する。
+- 状態変化は aria-live で伝える。
+- 利用者入力やメモを console.log しない。
+
+# Playwright E2E Contract
+- experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js を作る。
+- Playwright の @playwright/test を使う。root の既存 devDependency を使い、新規installしない。
+- test名は日本語。
+- file:// で fixed-app/index.html を開く。
+- 少なくとも次を検証する。
+  1. success 初期表示で荷物一覧が表示される。
+  2. 検索語を入力した後、offline に切り替えても検索語が残り、エラー文言と再試行ボタンが見える。
+  3. timeout に切り替えると timeout の日本語文言が出る。
+  4. server-error に切り替えると server error の日本語文言が出る。
+  5. empty に切り替えると空状態が出る。
+  6. success に戻して再試行すると一覧が復帰する。
+
+# Verification Evidence
+- fixed-app/PLAYWRIGHT_API_STATE_EVIDENCE.md を日本語で作る。
+- 必ず含める: 失敗状態一覧、E2Eで確認すること、実行コマンド、既知制約、AIDD-Specへ戻す項目。
+
+# Quality Gate
+- node --check fixed-app/app.js
+- pnpm exec playwright test experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js --project=chromium で通る想定にする。
+- 可能なら上記を実行して終了する。

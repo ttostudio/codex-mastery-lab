@@ -1,0 +1,19 @@
+作成しました。変更は `experiments/2026-06-30-playwright-api-state/vibe-app/` 内だけです。
+
+追加ファイル:
+- [index.html](/path/to/project-root/experiments/2026-06-30-playwright-api-state/vibe-app/index.html)
+- [styles.css](/path/to/project-root/experiments/2026-06-30-playwright-api-state/vibe-app/styles.css)
+- [app.js](/path/to/project-root/experiments/2026-06-30-playwright-api-state/vibe-app/app.js)
+
+内容:
+- 日本語UIの配送状況トラッカー
+- API読み込み風の非同期表示
+- 荷物名・配送会社・メモの検索
+- 荷物名、配送会社、予定日、現在地、状態、メモを表示
+- スマホ向けレスポンシブ対応
+- vanilla HTML/CSS/JavaScriptのみ、依存追加なし
+
+確認:
+- `node --check experiments/2026-06-30-playwright-api-state/vibe-app/app.js` 成功
+
+静的アプリなので、`index.html` をブラウザで直接開けば動きます。

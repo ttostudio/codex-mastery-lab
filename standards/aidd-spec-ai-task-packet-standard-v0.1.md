@@ -81,6 +81,14 @@ asset_policy:
 quality_gate:
   required_commands: []
   expected_results: []
+playwright_e2e_contract:
+  target_browsers: []
+  launch_url: string
+  state_scenarios: []
+  preserved_inputs: []
+  recovery_flows: []
+  negative_tests: []
+  config_policy: string
 verification_evidence:
   files_to_attach: []
   logs_to_save: []
@@ -389,6 +397,42 @@ verification_evidence:
 ```
 
 Control Plane化する場合は、API呼び出しを含むUIタスクで success / offline / timeout / server_error / empty のチェックボックスを必須化し、再試行導線、入力保持、エラーメッセージ、タイムアウト制御、証拠ファイルを自動監査する。
+
+### 7.5 `playwright_e2e_contract`
+
+静的監査で `offline` や `timeout` という文字列を確認するだけでは、後工程のE2E担当は「利用者が本当に復帰できるか」を判断できない。2026-06-30 の配送状況トラッカー実験では、雑プロンプト版が成功表示と検索までは作ったが、失敗状態をブラウザで切り替えるUI、検索語保持、再試行、Playwrightテスト、E2E証拠ファイルが抜けた。
+
+API失敗状態を扱うUIタスクでは、AI Task Packetに次を入れる。
+
+```yaml
+playwright_e2e_contract:
+  target_browsers:
+    - chromium
+  launch_url: "file:// or local dev server URL used by the test"
+  state_scenarios:
+    - success_initial_list_visible
+    - offline_keeps_search_and_previous_results
+    - timeout_shows_recoverable_message
+    - server_error_shows_recoverable_message
+    - empty_shows_empty_state
+  preserved_inputs:
+    - search query
+    - current scenario selection
+  recovery_flows:
+    - "Switch from error scenario to success and click retry; list must return."
+  negative_tests:
+    - "Do not clear user input on API failure."
+    - "Do not hide last known results unless explicitly specified."
+  config_policy: "If root Playwright config has no named project, create a scoped config near the test and document the exact command."
+verification_evidence:
+  files_to_attach:
+    - PLAYWRIGHT_API_STATE_EVIDENCE.md
+  logs_to_save:
+    - logs/verification.log
+    - playwright-report or text output
+```
+
+Control Plane化する場合は、API状態契約を入力した時点で「この状態をPlaywrightで確認するか」をチェックボックス化し、root config / scoped config / 実行コマンドの不一致も警告する。今回、`--project=chromium` はroot configなしでは失敗したため、E2E契約には「期待コマンド」だけでなく「そのコマンドを成立させる設定の置き場所」まで含める必要がある。
 
 ## 8. AI Task Packetテンプレート Lite
 

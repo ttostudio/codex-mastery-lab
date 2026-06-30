@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>配送状況トラッカー</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="app-title">
+        <p class="eyebrow">配送APIモニター</p>
+        <div class="hero-row">
+          <div>
+            <h1 id="app-title">配送状況トラッカー</h1>
+            <p class="lead">複数の配送会社から届いた荷物情報をまとめて確認できます。</p>
+          </div>
+          <div class="sync-panel" aria-live="polite">
+            <span class="sync-dot" aria-hidden="true"></span>
+            <span id="sync-status">APIに接続中...</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="検索と集計">
+        <label class="search-box">
+          <span>検索</span>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="荷物名・配送会社・メモで検索"
+            autocomplete="off"
+          />
+        </label>
+        <div class="summary" id="summary">読み込み中</div>
+      </section>
+
+      <section class="status-strip" id="status-strip" aria-label="状態別の件数"></section>
+
+      <section aria-labelledby="list-title">
+        <div class="list-heading">
+          <h2 id="list-title">荷物一覧</h2>
+          <button class="ghost-button" id="reload-button" type="button">再読み込み</button>
+        </div>
+        <div class="shipment-list" id="shipment-list" aria-live="polite"></div>
+        <p class="empty-state" id="empty-state" hidden>条件に一致する荷物はありません。</p>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

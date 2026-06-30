@@ -1,0 +1,7 @@
+Tue Jun 30 09:00:30 JST 2026
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+Filesystem        Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk2s1s1   228Gi    12Gi   132Gi     9%    459k  1.4G    0%   /
+?? logs/cron-env-2026-06-30-090030.log

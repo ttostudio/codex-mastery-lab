@@ -1,0 +1,26 @@
+実装しました。追加したのは指定範囲内だけです。
+
+- [fixed-app/index.html](/path/to/project-root/experiments/2026-06-30-playwright-api-state/fixed-app/index.html)
+- [fixed-app/app.js](/path/to/project-root/experiments/2026-06-30-playwright-api-state/fixed-app/app.js)
+- [fixed-app/styles.css](/path/to/project-root/experiments/2026-06-30-playwright-api-state/fixed-app/styles.css)
+- [fixed-app/PLAYWRIGHT_API_STATE_EVIDENCE.md](/path/to/project-root/experiments/2026-06-30-playwright-api-state/fixed-app/PLAYWRIGHT_API_STATE_EVIDENCE.md)
+- [tests/api-state-e2e.spec.js](/path/to/project-root/experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js)
+- [tests/playwright.config.js](/path/to/project-root/experiments/2026-06-30-playwright-api-state/tests/playwright.config.js)
+
+確認結果:
+
+```bash
+node --check experiments/2026-06-30-playwright-api-state/fixed-app/app.js
+# pass
+
+pnpm exec playwright test --config=experiments/2026-06-30-playwright-api-state/tests/playwright.config.js api-state-e2e.spec.js --project=chromium
+# 6 passed
+```
+
+注意点として、指定の厳密なコマンド:
+
+```bash
+pnpm exec playwright test experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js --project=chromium
+```
+
+は、ルートにPlaywright configがないため `Project(s) "chromium" not found` で失敗します。スコープが `fixed-app/` と `tests/` のみなので、ルート設定は追加せず、`tests/playwright.config.js` を置いてconfig指定つきで通る状態にしています。

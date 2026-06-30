@@ -1,0 +1,379 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</title><style>
+:root {
+  color-scheme: light;
+  --fg:#172033; --muted:#667085; --bg:#f5f7fb; --card:#fff; --line:#d9e2f1;
+  --accent:#1d4ed8; --accent2:#7c3aed; --code:#0f172a; --soft:#eef4ff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif; background:var(--bg); color:var(--fg); line-height:1.82; }
+a { color: var(--accent); }
+.layout { display:grid; grid-template-columns: 300px minmax(0, 1fr); min-height:100vh; }
+aside { position:sticky; top:0; height:100vh; overflow:auto; padding:22px; background:#0b1220; color:#e5eefc; }
+.brand { font-weight:800; line-height:1.35; margin:0 0 16px; font-size:18px; letter-spacing:-.01em; }
+.series-note { color:#9fb4d8; font-size:12px; margin:0 0 18px; }
+.chapter-link { color:#c7d7ff; text-decoration:none; display:block; padding:10px 10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin:8px 0; font-size:14px; background:rgba(255,255,255,.03); }
+.chapter-link:hover, .chapter-link.current { color:#fff; background:rgba(59,130,246,.22); border-color:rgba(147,197,253,.45); }
+.chapter-num { color:#93c5fd; font-weight:700; font-size:12px; display:block; margin-bottom:2px; }
+.nav-section-title { color:#93c5fd; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:18px 0 8px; }
+.chapter-link.past { color:#d7e1f7; background:rgba(255,255,255,.02); }
+.chapter-link.past .chapter-num { color:#a8b6d8; }
+main { max-width: 980px; padding: 42px 34px 80px; }
+article { background:var(--card); padding:42px 48px; border:1px solid var(--line); border-radius:24px; box-shadow:0 18px 50px rgba(15,23,42,.08); }
+h1 { font-size: clamp(28px, 5vw, 42px); line-height:1.24; margin: 0 0 22px; letter-spacing:-.03em; }
+h2 { font-size: clamp(22px, 3vw, 28px); margin: 46px 0 14px; padding-top:10px; border-top:1px solid #edf1f7; }
+h3 { font-size: 20px; margin: 30px 0 10px; }
+p { margin: 14px 0; }
+blockquote { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--accent); background:#eff6ff; color:#1e3a8a; border-radius: 10px; }
+pre { background:var(--code); color:#e2e8f0; padding:18px; border-radius:14px; overflow:auto; line-height:1.55; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+pre code { white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap:anywhere; word-break:break-word; }
+p code, li code { background:#eef2ff; color:#1e3a8a; padding:2px 5px; border-radius:5px; white-space:normal; }
+ul, ol { padding-left:1.45em; }
+li { overflow-wrap:anywhere; }
+img { max-width:100%; border:1px solid var(--line); border-radius:14px; background:white; margin:18px 0; height:auto; }
+table { border-collapse: collapse; width:100%; margin:18px 0; font-size:14px; display:block; overflow-x:auto; }
+th, td { border:1px solid var(--line); padding:8px 10px; vertical-align:top; min-width:120px; }
+th { background:#f1f5f9; }
+.meta { color:var(--muted); font-size:14px; margin-bottom:24px; }
+.hero { background:linear-gradient(135deg,#eff6ff,#faf5ff); border:1px solid #dbeafe; border-radius:24px; padding:28px; margin-bottom:22px; }
+.chapter-nav { display:flex; gap:12px; justify-content:space-between; margin:24px 0; }
+.chapter-nav a { flex:1; text-decoration:none; background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px; color:#17315f; }
+.chapter-nav .next { text-align:right; }
+.chapter-nav span { display:block; color:var(--muted); font-size:12px; }
+.home-grid { display:grid; gap:14px; padding:0; list-style:none; }
+.home-grid li a { display:block; padding:18px; background:#fff; border:1px solid var(--line); border-radius:16px; text-decoration:none; box-shadow:0 8px 24px rgba(15,23,42,.05); }
+.mobile-index { display:none; background:#0b1220; padding:12px 16px; position:sticky; top:0; z-index:10; }
+.mobile-index details { color:#e5eefc; }
+.mobile-index summary { cursor:pointer; font-weight:700; }
+.mobile-index a { color:#c7d7ff; display:block; padding:8px 0; }
+@media (max-width: 900px) {
+  .layout { display:block; }
+  aside { display:none; }
+  .mobile-index { display:block; }
+  main { padding:16px; max-width:none; }
+  article { padding:24px 18px; border-radius:18px; }
+  .chapter-nav { flex-direction:column; }
+  .chapter-nav .next { text-align:left; }
+  pre { font-size:12px; padding:14px; }
+}
+@media (max-width: 480px) {
+  body { line-height:1.75; }
+  main { padding:10px; }
+  article { padding:20px 14px; border-radius:14px; }
+  h1 { font-size:28px; }
+  h2 { font-size:22px; }
+}
+</style></head><body><div class="mobile-index"><details><summary>目次を開く</summary><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a href="001-series-roadmap.html">第01回｜WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a href="2026-06-27-watchflow-trial-001.html">第02回｜WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a href="2026-06-27-watchflow-trial-002.html">第03回｜WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a href="2026-06-27-watchflow-trial-003.html">第04回｜WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a href="2026-06-27-watchflow-trial-004.html">第05回｜WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a href="2026-06-27-watchflow-trial-005.html">第06回｜WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">AIDD Control Plane SaaS化</div><a href="2026-06-28-aidd-control-plane-mvp-001.html">MVP01｜AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a href="2026-06-28-aidd-control-plane-mvp-002.html">MVP02｜AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a href="2026-06-28-aidd-control-plane-mvp-003.html">MVP03｜AIDD Control Plane MVP 003：実行ログとスクリーンショットをVerification Evidenceにまとめる</a>
+<a href="2026-06-29-aidd-control-plane-mvp-004.html">MVP04｜AIDD Control Plane MVP 004：AIに頼む前の質問から、設計書と依頼書を作る</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a href="2026-06-27-performance-budget-vibe-gallery.html">過去記事02｜「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a href="2026-06-27-security-baseline-contact-form.html">過去記事03｜問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a href="2026-06-27-contact-api-threat-model.html">過去記事04｜問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a href="2026-06-28-agents-skill-explained.html">過去記事05｜AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a href="2026-06-28-aidd-app-clone-lab-proof.html">過去記事06｜WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a href="2026-06-28-aidd-spec-v0.1-workflow-saas.html">過去記事07｜AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a href="2026-06-28-mobile-state-contract.html">過去記事08｜スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a>
+<a href="2026-06-29-api-failure-state.html">過去記事09｜「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a>
+<a href="2026-06-30-playwright-api-state.html">過去記事10｜Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</a></details></div><div class="layout "><aside><p class="brand">Codex Mastery Lab<br>AIDD-Spec Preview</p><p class="series-note">WatchFlow本編、AIDD Control Plane SaaS化、過去記事を分けて読めるプレビュー</p><div class="nav-section-title">WatchFlow 100点チャレンジ</div><a class="chapter-link " href="001-series-roadmap.html"><span class="chapter-num">第01回</span>WatchFlow 100点チャレンジ 第1回：YouTube風アプリでAI駆動開発の正解を探す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-001.html"><span class="chapter-num">第02回</span>WatchFlow Trial 001：雑プロンプトからNext.js動画アプリはどこまで作れるか</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-002.html"><span class="chapter-num">第03回</span>WatchFlow Trial 002：61点から75点へ、AI Task Packetに失点を戻す</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-003.html"><span class="chapter-num">第04回</span>WatchFlow Trial 003：75点から84点へ、mock serviceとアクセシビリティを詰める</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-004.html"><span class="chapter-num">第05回</span>WatchFlow Trial 004：84点から91点へ、mock serviceをE2Eの実依存にする</a>
+<a class="chapter-link " href="2026-06-27-watchflow-trial-005.html"><span class="chapter-num">第06回</span>WatchFlow Trial 005：91点から100点へ、Firefox/CI/artifactまで通して実験を閉じる</a><div class="nav-section-title">AIDD Control Plane SaaS化</div><a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-001.html"><span class="chapter-num">MVP 01</span>AIDD Control Plane MVP 001：AIDD-SpecをSaaSの画面に落とし込む最初の実装</a>
+<a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-002.html"><span class="chapter-num">MVP 02</span>AIDD Control Plane MVP 002：AI Task PacketをJSON Contract Checkerで検査する</a>
+<a class="chapter-link " href="2026-06-28-aidd-control-plane-mvp-003.html"><span class="chapter-num">MVP 03</span>AIDD Control Plane MVP 003：実行ログとスクリーンショットをVerification Evidenceにまとめる</a>
+<a class="chapter-link " href="2026-06-29-aidd-control-plane-mvp-004.html"><span class="chapter-num">MVP 04</span>AIDD Control Plane MVP 004：AIに頼む前の質問から、設計書と依頼書を作る</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-27-performance-budget-vibe-gallery.html"><span class="chapter-num">過去記事 02</span>「プレミアムにして」で膨らむCSSを、Performance Budgetから逆算してAI Task Packetに入れる</a>
+<a class="chapter-link past " href="2026-06-27-security-baseline-contact-form.html"><span class="chapter-num">過去記事 03</span>問い合わせフォームのPIIを、Security BaselineからAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-27-contact-api-threat-model.html"><span class="chapter-num">過去記事 04</span>問い合わせAPIのCSRF・Rate Limit・監査ログを、AI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-28-agents-skill-explained.html"><span class="chapter-num">過去記事 05</span>AGENTS.mdとaidd-app-clone-lab skillは何に効いたのか：100点化手順を読み解く</a>
+<a class="chapter-link past " href="2026-06-28-aidd-app-clone-lab-proof.html"><span class="chapter-num">過去記事 06</span>WatchFlow 100点ナレッジを別アプリに移植する：StudyStreamとDrillSwipeで再実証</a>
+<a class="chapter-link past " href="2026-06-28-aidd-spec-v0.1-workflow-saas.html"><span class="chapter-num">過去記事 07</span>AIDD-Spec v0.1を仕様書にする：AIエージェント開発ワークフローとSaaS化の最初の実演</a>
+<a class="chapter-link past " href="2026-06-28-mobile-state-contract.html"><span class="chapter-num">過去記事 08</span>スマホフォームは「見た目が収まる」だけでは足りない：Mobile Interaction ContractをAI Task Packetへ逆算する</a>
+<a class="chapter-link past " href="2026-06-29-api-failure-state.html"><span class="chapter-num">過去記事 09</span>「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a>
+<a class="chapter-link past current" href="2026-06-30-playwright-api-state.html"><span class="chapter-num">過去記事 10</span>Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-29-api-failure-state.html"><span>前の記事</span>「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a><span></span></nav><article><h1>Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</h1>
+<blockquote>2026-06-30 / Codex Mastery Lab 日次ドラフト  </blockquote>
+<blockquote>想定読了時間: 約10分  </blockquote>
+<blockquote>種別: Experiment / Template / Failure  </blockquote>
+<blockquote>将来の書籍章: 第7章 System Contract、第9章 AI Task Packet、第10章 Verification Evidence、第12章 雑プロンプト vs AI Task Packet、第16章 AI実装レビューを3層に分ける</blockquote>
+<p><img src="assets/2026-06-30-playwright-api-state-reverse-chain.svg" alt="Playwright API State reverse chain" loading="lazy"></p>
+<h2>前回の振り返り</h2>
+<p>前回は「読書ログ同期ビューア」を題材に、APIから取得するUIの失敗状態を見た。雑な依頼でも、CodexはAPI読込風の遅延、一覧、検索、同期状態を自然に作った。しかし、offline、timeout、server error、再試行、入力保持、証拠ファイルは抜けた。</p>
+<p>そこで AI Task Packet に <code>api_failure_state_contract</code> を追加した。改善版では、状態切替UI、再試行ボタン、AbortController風のtimeout、失敗時の検索入力保持、<code>API_FAILURE_STATE_EVIDENCE.md</code> まで出た。静的監査では、雑プロンプト版が <code>10 passed / 6 failed</code>、改善版が <code>16 passed / 0 failed</code> だった。</p>
+<p>ただし、前回の最後に残った課題がある。監査はまだ文字列中心だった。<code>offline</code> という文字列があることと、利用者がブラウザ上でofflineに切り替えて復帰できることは違う。料理のレシピで言えば、「焦げたら火を弱める」と書いてあるだけで、実際に焦げかけた鍋を戻せるか試していない状態に近い。</p>
+<h2>今回やること</h2>
+<p>今日の問いはこれである。</p>
+<blockquote>API失敗状態を、静的監査ではなくPlaywrightで実際に操作して確認する契約をAI Task Packetに入れると、Codexの成果物は後工程で検査しやすくなるか？</blockquote>
+<p>題材は日本語UIの「配送状況トラッカー」にした。荷物名、配送会社、予定日、現在地、状態、メモを表示し、検索できる小さな静的Webアプリである。</p>
+<p>今回の比較は2つ。</p>
+<ol>
+<li>雑プロンプト版: 「APIから配送状況一覧を読み込む雰囲気」とだけ頼む。</li>
+<li>指示見直し版: API Failure State Contractに加えて、Playwright E2E Contractを渡す。</li>
+</ol>
+<p>監査カテゴリは3つに絞った。</p>
+<ul>
+<li>Requirement Fit / Failure State</li>
+<li>Test Plan / Playwright E2E</li>
+<li>Verification Evidence</li>
+</ul>
+<h2>仮説</h2>
+<p>仮説は次の通り。</p>
+<blockquote>Codexは雑プロンプトでも、成功状態の一覧表示と検索は作る。しかし、offline / timeout / server-error / empty をブラウザで切り替えるUI、検索語保持、前回一覧保持、再試行、Playwrightの日本語E2E、証拠ファイルは、AI Task Packetで明示しない限り抜けやすい。</blockquote>
+<p>現場では「テストも書いて」と言うだけでは足りない。何をテストするか、どのブラウザで、どのURLで、どの状態を切り替え、どの入力が残るべきかまで決めないと、AIはhappy pathだけを確認して終わりがちである。</p>
+<h2>実験環境</h2>
+<pre><code>実行日時: 2026-06-30 09:01 JST
+Machine: Apple M4 Mac mini / 16GB RAM / 256GB SSD
+OS: macOS 26.5.1 / Build 25F80
+Codex CLI: codex-cli 0.142.3
+Disk: 228Gi total / 132Gi available
+Repo: /path/to/project-root
+Experiment: /path/to/project-root/experiments/2026-06-30-playwright-api-state</code></pre>
+<p>最初に <code>codex</code> がPATHに見つからず、<code>/path/to/home/.local/bin/codex</code> には存在することを確認した。cron実行ではPATHが普段のシェルと違うため、以後は絶対パスでCodex CLIを呼んだ。これも運用上の学びである。</p>
+<h2>Step 1: Codexに雑に作らせる</h2>
+<p>実際にCodexへ渡した雑プロンプトはこれである。</p>
+<pre><code>このgitリポジトリ内で、experiments/2026-06-30-playwright-api-state/vibe-app に、日本語UIの小さな静的Webアプリを作ってください。
+
+アプリは「配送状況トラッカー」です。
+- APIから配送状況一覧を読み込んで表示する雰囲気にしてください
+- 検索入力で荷物名、配送会社、メモを絞り込めるようにしてください
+- 荷物には荷物名、配送会社、予定日、現在地、状態、メモを表示してください
+- vanilla HTML/CSS/JavaScriptのみを使ってください
+- 依存パッケージはインストールしないでください
+- UI文言とサンプルデータは日本語にしてください
+- 見た目はシンプルでよいですが、スマホでも読めるようにしてください
+- 変更は vibe-app ディレクトリ内だけに閉じてください
+- 可能なら node --check も実行して終了してください</code></pre>
+<p>実行コマンド:</p>
+<pre><code>PROMPT=$(&lt; experiments/2026-06-30-playwright-api-state/prompt-vibe.txt)
+/path/to/codex exec --sandbox danger-full-access &quot;$PROMPT&quot; \
+  | tee experiments/2026-06-30-playwright-api-state/logs/codex-vibe.log</code></pre>
+<p>生成されたファイルは3つだった。</p>
+<pre><code>vibe-app/index.html
+vibe-app/styles.css
+vibe-app/app.js</code></pre>
+<p>Codexの自己確認では、<code>node --check experiments/2026-06-30-playwright-api-state/vibe-app/app.js</code> が成功した。</p>
+<p>ブラウザ操作GIFはこれである。</p>
+<p><img src="assets/2026-06-30-playwright-api-state-vibe.gif" alt="vibe app gif" loading="lazy"></p>
+<p>コンソールログも静かだった。</p>
+<pre><code>No console messages captured.</code></pre>
+<p>見た目は悪くない。配送状況カードが並び、検索もできる。<code>APIに接続中...</code> から <code>API同期済み</code> へ変わる。ここだけ見ると、「APIから取得する画面」として十分に見える。</p>
+<p>しかしコードを読むと、実際には <code>mockFetchShipments()</code> が450ms後に成功データを返すだけだった。offline、timeout、server-error、emptyを切り替える入口はない。失敗時の再試行や検索語保持の確認もできない。つまり、利用者が困る場面を後工程が触れない。</p>
+<h2>Step 2: 静的監査を作る</h2>
+<p>今回の監査スクリプトでは、次を確認した。</p>
+<ul>
+<li><code>index.html / app.js / styles.css</code> があるか</li>
+<li><code>lang=&quot;ja&quot;</code> と viewport があるか</li>
+<li>API境界関数 <code>requestShipments</code> があるか</li>
+<li>success / offline / timeout / server-error / empty を扱うか</li>
+<li>AbortControllerまたは明示timeoutがあるか</li>
+<li>再試行ボタンがあるか</li>
+<li>失敗時の入力保持・前回一覧保持方針があるか</li>
+<li><code>aria-live</code> があるか</li>
+<li>Playwright E2Eテストがあるか</li>
+<li>証拠ファイルがあるか</li>
+</ul>
+<p>実行結果:</p>
+<pre><code># static audit vibe
+合格: index.html / app.js / styles.css が存在する
+合格: 日本語UIとして lang=ja と viewport がある
+不合格: API境界関数 requestShipments がある
+不合格: success / offline / timeout / server-error / empty を扱う
+合格: AbortController または明示timeoutがある
+不合格: 再試行ボタンがある
+不合格: 失敗時の入力保持・前回一覧保持方針がある
+合格: aria-live で状態変化を伝える
+合格: Playwright E2Eテストがある
+合格: E2Eテスト名が日本語で、失敗状態を検証する
+不合格: PLAYWRIGHT_API_STATE_EVIDENCE.md がある
+SUMMARY: 6 passed / 5 failed</code></pre>
+<p>ここで監査スクリプト側の甘さも見えた。<code>tests/</code> ディレクトリは後から改善版のために作ったため、vibe-app監査でも「Playwright E2Eテストがある」と判定されてしまった。本来はappごとに紐づく証拠として分けるべきである。失敗を隠さず書くなら、今日の静的監査は「vibeとfixedを完全分離できていない」という欠陥を含んでいる。</p>
+<p>それでも、重要な欠陥は見えた。雑プロンプト版には、失敗状態を実際に動かすための契約がない。</p>
+<h2>Step 3: 欠陥を標準フォーマットで記録する</h2>
+<p>代表findingは次の通り。</p>
+<pre><code>category: Test Plan / Playwright E2E
+finding: 雑プロンプト版は成功状態の一覧と検索は実装したが、offline / timeout / server-error / empty をブラウザで切り替えて検証するUI、再試行、検索語保持、前回一覧保持、Playwrightテスト、証拠ファイルがなかった。
+severity: high
+observed_by: browser operation, audit_playwright_api_state.py
+ideal_state: API依存UIは、失敗状態を画面で再現でき、Playwrightで利用者操作として検証できる。E2Eは日本語テスト名で、入力保持、前回一覧保持、再試行復帰を確認する。
+fix_instruction: requestShipments({ scenario, signal }) をUI描画から分離し、success/offline/timeout/server-error/empty の切替UI、再試行ボタン、aria-live、Playwright E2E、PLAYWRIGHT_API_STATE_EVIDENCE.mdを追加する。
+needed_upstream_info:
+  - API Failure State Contract
+  - Playwright E2E Contract
+  - Verification Evidence
+standard_update:
+  document: AI Task Packet Standard
+  field: playwright_e2e_contract
+codex_prompt_delta: |
+  API失敗状態は文字列監査だけでなく、Playwrightで実際に切り替え、検索語保持・前回一覧保持・再試行復帰を検証する。
+verification:
+  command: pnpm exec playwright test --config=experiments/2026-06-30-playwright-api-state/tests/playwright.config.js api-state-e2e.spec.js --project=chromium
+  expected: 6 passed</code></pre>
+<p>もう1つのfindingは、実行コマンドと設定の不一致である。</p>
+<pre><code>category: Verification Evidence / Tooling
+finding: AI Task Packetで指定した `pnpm exec playwright test ... --project=chromium` は、rootにPlaywright configがないため `Project(s) &quot;chromium&quot; not found` で失敗した。
+severity: medium
+ideal_state: E2E契約には、テストファイルだけでなく、どのPlaywright configを使い、どのproject名が存在するかを含める。
+needed_upstream_info:
+  - Playwright config policy
+  - Required command contract
+standard_update:
+  document: AI Task Packet Standard
+  field: playwright_e2e_contract.config_policy</code></pre>
+<h2>Step 4: AI Task Packetとして再指示する</h2>
+<p>指示見直し版では、Codexに次の要点を渡した。</p>
+<pre><code># API Failure State Contract
+- 画面上で success / offline / timeout / server-error / empty を切り替えられるデモ制御を置く。
+- timeout は AbortController または明示的な timeout branch で表現する。
+- offline / timeout / server-error では、日本語で「何が起きたか」と「次に何をすればよいか」を表示する。
+- 失敗時も検索入力の値と直前に取得済みの一覧を保持する。
+- 再試行ボタンを置き、現在選択中の scenario で再取得できる。
+- success に戻したら一覧が復帰する。
+- 状態変化は aria-live で伝える。
+- 利用者入力やメモを console.log しない。
+
+# Playwright E2E Contract
+- experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js を作る。
+- Playwright の @playwright/test を使う。root の既存 devDependency を使い、新規installしない。
+- test名は日本語。
+- file:// で fixed-app/index.html を開く。
+- 少なくとも次を検証する。
+  1. success 初期表示で荷物一覧が表示される。
+  2. 検索語を入力した後、offline に切り替えても検索語が残り、エラー文言と再試行ボタンが見える。
+  3. timeout に切り替えると timeout の日本語文言が出る。
+  4. server-error に切り替えると server error の日本語文言が出る。
+  5. empty に切り替えると空状態が出る。
+  6. success に戻して再試行すると一覧が復帰する。</code></pre>
+<p>実行コマンド:</p>
+<pre><code>PROMPT=$(&lt; experiments/2026-06-30-playwright-api-state/prompt-fixed.txt)
+/path/to/codex exec --sandbox danger-full-access &quot;$PROMPT&quot; \
+  | tee experiments/2026-06-30-playwright-api-state/logs/codex-fixed.log</code></pre>
+<p>Codexが生成したファイルは次の通り。</p>
+<pre><code>fixed-app/index.html
+fixed-app/styles.css
+fixed-app/app.js
+fixed-app/PLAYWRIGHT_API_STATE_EVIDENCE.md
+tests/api-state-e2e.spec.js
+tests/playwright.config.js</code></pre>
+<p>改善版の操作GIFはこれである。</p>
+<p><img src="assets/2026-06-30-playwright-api-state-fixed.gif" alt="fixed app gif" loading="lazy"></p>
+<p>コンソールログは静かだった。</p>
+<pre><code>No console messages captured.</code></pre>
+<p>改善版は、画面上で <code>success / offline / timeout / server-error / empty</code> を切り替えられる。検索語に「コーヒー」を入れた状態でofflineにすると、検索語と直前一覧を保持したまま、「ネットワークに接続できません」「通信環境を確認し、接続が戻ったら再試行してください」と表示される。server-errorやtimeoutも、日本語の次アクション付きで出る。</p>
+<h2>Step 5: 再検証する</h2>
+<p>実行したコマンドと結果は次の通り。</p>
+<pre><code># node checks
+node --check experiments/2026-06-30-playwright-api-state/vibe-app/app.js
+node --check experiments/2026-06-30-playwright-api-state/fixed-app/app.js
+node --check experiments/2026-06-30-playwright-api-state/capture_api_state_gif.js
+
+# static audit fixed
+合格: index.html / app.js / styles.css が存在する
+合格: 日本語UIとして lang=ja と viewport がある
+合格: API境界関数 requestShipments がある
+合格: success / offline / timeout / server-error / empty を扱う
+合格: AbortController または明示timeoutがある
+合格: 再試行ボタンがある
+合格: 失敗時の入力保持・前回一覧保持方針がある
+合格: aria-live で状態変化を伝える
+合格: Playwright E2Eテストがある
+合格: E2Eテスト名が日本語で、失敗状態を検証する
+合格: PLAYWRIGHT_API_STATE_EVIDENCE.md がある
+SUMMARY: 11 passed / 0 failed</code></pre>
+<p>Playwrightは一度失敗した。AI Task Packetで指定した厳密なコマンドは、rootにPlaywright projectがないため失敗した。</p>
+<pre><code>Error: Project(s) &quot;chromium&quot; not found. Available projects: &quot;&quot;</code></pre>
+<p>これは大事な失敗である。テストファイルを作るだけでは足りない。<code>--project=chromium</code> と書くなら、そのprojectを定義したconfigも必要である。Codexは <code>tests/playwright.config.js</code> を作っていたので、configを明示したコマンドでは通った。</p>
+<pre><code>pnpm exec playwright test --config=experiments/2026-06-30-playwright-api-state/tests/playwright.config.js api-state-e2e.spec.js --project=chromium
+
+Running 6 tests using 1 worker
+
+✓ success初期表示で荷物一覧が表示される
+✓ 検索語入力後にofflineへ切り替えても検索語と一覧を保持し、エラーと再試行を表示する
+✓ timeoutへ切り替えるとタイムアウトの日本語文言が表示される
+✓ server-errorへ切り替えるとサーバーエラーの日本語文言が表示される
+✓ emptyへ切り替えると空状態が表示される
+✓ successへ戻して再試行すると一覧が復帰する
+
+6 passed (2.4s)</code></pre>
+<h2>逆算: 前工程で何を渡すべきだったか</h2>
+<p>今回の欠陥を逆算すると、こうなる。</p>
+<table>
+<tr><th>欠陥</th><th>必要だった前工程情報</th><th>AIDD-Spec成果物</th><th>AI Task Packetに入れるべき項目</th></tr>
+<tr><td>成功画面しか実際に触れない</td><td>失敗状態の操作シナリオ</td><td>API Failure State Contract</td><td>success / offline / timeout / server-error / empty</td></tr>
+<tr><td>失敗時に検索語が残るか不明</td><td>保持すべき入力一覧</td><td>Playwright E2E Contract</td><td>preserved_inputs</td></tr>
+<tr><td>前回一覧を消してよいか不明</td><td>復旧体験の方針</td><td>State Design</td><td>last known results policy</td></tr>
+<tr><td>再試行復帰が未検証</td><td>復帰フロー</td><td>Playwright E2E Contract</td><td>recovery_flows</td></tr>
+<tr><td>テストコマンドが設定不足で失敗</td><td>configの置き場所とproject名</td><td>Quality Gate / Verification Evidence</td><td>config_policy</td></tr>
+</table>
+<p>つまり、最初からCodexに渡すべきだったものは、「テストも書いて」ではなかった。</p>
+<pre><code>APIを呼ぶUIでは、success/offline/timeout/server-error/emptyをブラウザで切り替えられるようにする。Playwrightで、検索語保持、前回一覧保持、エラー文言、再試行、success復帰を利用者操作として検証する。E2Eの実行コマンドは、Playwright configとproject名が一致する形で証拠ファイルに残す。</code></pre>
+<h2>AIDD-Specへの反映</h2>
+<p>更新した標準ドキュメントは次の2つである。</p>
+<ul>
+<li><code>standards/aidd-spec-ai-task-packet-standard-v0.1.md</code></li>
+<li><code>standards/templates/ai-task-packet-template-v0.1.md</code></li>
+</ul>
+<p>追加した項目は <code>playwright_e2e_contract</code> である。</p>
+<pre><code>playwright_e2e_contract:
+  target_browsers:
+    - chromium
+  launch_url: &quot;file:// or local dev server URL used by the test&quot;
+  state_scenarios:
+    - success_initial_list_visible
+    - offline_keeps_search_and_previous_results
+    - timeout_shows_recoverable_message
+    - server_error_shows_recoverable_message
+    - empty_shows_empty_state
+  preserved_inputs:
+    - search query
+  recovery_flows:
+    - &quot;Switch from error scenario to success and click retry; list must return.&quot;
+  negative_tests:
+    - &quot;Do not clear user input on API failure.&quot;
+  config_policy: &quot;If root Playwright config has no named project, create a scoped config near the test and document the exact command.&quot;</code></pre>
+<p>AIDD Control Planeにするなら、API状態契約を入力した時点で「どの状態をE2Eで確認するか」をチェックボックス化する。さらに、生成されたテストコマンドが本当に通るか、configとproject名を機械的に検査する。今日の失敗は、SaaS化した場合の良い機能仮説になった。</p>
+<h2>実務で使うならどうするか</h2>
+<p>実務でAPI依存UIをAIに作らせるなら、次の順番で依頼する。</p>
+<ol>
+<li>画面に必要な状態を列挙する。</li>
+<li>失敗状態で保持すべき入力と表示を決める。</li>
+<li>復帰操作を決める。</li>
+<li>Playwrightで確認するユーザー操作を書く。</li>
+<li>実行コマンドとconfigの置き場所を指定する。</li>
+<li>証拠ファイルに、通ったコマンドと既知制約を残す。</li>
+</ol>
+<p>「APIから取って表示して」と頼むだけでは、AIは成功時の見た目を作りやすい。だが、後工程が欲しいのは、壊れたときに何が起きるか、利用者がどう戻れるか、テストで再現できるかである。</p>
+<h2>今回の学び</h2>
+<p>1つ目の学びは、雑プロンプトでも成功画面はかなり自然に作られることだ。カード、検索、同期済み表示、レスポンシブは問題なく出た。</p>
+<p>2つ目の学びは、E2E契約を渡すと、CodexはテストしやすいUI構造を作ることだ。状態切替ボタン、<code>requestShipments({ scenario, signal })</code>、<code>aria-live</code>、証拠ファイルが揃った。</p>
+<p>3つ目の学びは、テストコマンドも仕様の一部だということだ。<code>--project=chromium</code> と書いても、configがなければ動かない。AI Task Packetには、テストファイル名だけでなく、Playwright config policyも必要である。</p>
+<h2>明日から使えるチェックリスト</h2>
+<ul>
+<li><input type="checkbox" disabled> API依存UIに success / empty / offline / timeout / server-error を定義したか</li>
+<li><input type="checkbox" disabled> 失敗状態をブラウザ上で切り替える方法があるか</li>
+<li><input type="checkbox" disabled> 検索語や入力値を失敗時に保持するか決めたか</li>
+<li><input type="checkbox" disabled> 前回取得済み一覧を残すか消すか決めたか</li>
+<li><input type="checkbox" disabled> 再試行でsuccessへ復帰するE2Eを書いたか</li>
+<li><input type="checkbox" disabled> Playwright configとproject名が実行コマンドと一致しているか</li>
+<li><input type="checkbox" disabled> 証拠ファイルに、通ったコマンドと既知制約を残したか</li>
+</ul>
+<h2>次回検証</h2>
+<p>次回は、この <code>playwright_e2e_contract</code> をAIDD Control Planeの入力フォームへつなげたい。API状態を選ぶと、必要なE2Eシナリオ、保持入力、復帰フロー、config policyが自動生成されるかを検証する。Control Planeが「AIに頼む前のチェックリスト」から「実行可能な検証計画」へ進めるかを見たい。</p>
+<h2>付録: 生ログ / 参照ファイル</h2>
+<ul>
+<li>Experiment path: <code>experiments/2026-06-30-playwright-api-state/</code></li>
+<li>Vibe Codex log: <code>experiments/2026-06-30-playwright-api-state/logs/codex-vibe.log</code></li>
+<li>Fixed Codex log: <code>experiments/2026-06-30-playwright-api-state/logs/codex-fixed.log</code></li>
+<li>Verification log: <code>experiments/2026-06-30-playwright-api-state/logs/verification.log</code></li>
+<li>Capture log: <code>experiments/2026-06-30-playwright-api-state/logs/capture.log</code></li>
+<li>Vibe GIF: <code>assets/2026-06-30-playwright-api-state-vibe.gif</code></li>
+<li>Fixed GIF: <code>assets/2026-06-30-playwright-api-state-fixed.gif</code></li>
+<li>Reverse chain: <code>assets/2026-06-30-playwright-api-state-reverse-chain.svg</code></li>
+<li>Standards updated: <code>standards/aidd-spec-ai-task-packet-standard-v0.1.md</code>, <code>standards/templates/ai-task-packet-template-v0.1.md</code></li>
+</ul></article><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-06-29-api-failure-state.html"><span>前の記事</span>「APIから取る雰囲気」では足りない：失敗状態契約をAI Task Packetへ逆算する</a><span></span></nav></main></div></body></html>

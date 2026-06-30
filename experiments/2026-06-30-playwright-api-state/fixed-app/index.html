@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>配送状況トラッカー</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="app-title">
+        <div>
+          <p class="eyebrow">API状態デモ</p>
+          <h1 id="app-title">配送状況トラッカー</h1>
+          <p class="lead">荷物の予定日、現在地、状態をまとめて確認します。</p>
+        </div>
+        <div class="sync-panel" aria-live="polite" aria-atomic="true">
+          <span class="sync-dot" id="sync-dot" aria-hidden="true"></span>
+          <span id="sync-status">読み込み中</span>
+        </div>
+      </section>
+
+      <section class="control-panel" aria-label="デモ制御">
+        <div>
+          <h2>デモ制御</h2>
+          <p class="control-note">APIの応答状態を切り替えて、画面の復旧動作を確認します。</p>
+        </div>
+        <div class="scenario-group" role="group" aria-label="APIシナリオ">
+          <button class="scenario-button active" type="button" data-scenario="success">success</button>
+          <button class="scenario-button" type="button" data-scenario="offline">offline</button>
+          <button class="scenario-button" type="button" data-scenario="timeout">timeout</button>
+          <button class="scenario-button" type="button" data-scenario="server-error">server-error</button>
+          <button class="scenario-button" type="button" data-scenario="empty">empty</button>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="検索と再取得">
+        <label class="search-box">
+          <span>検索</span>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="荷物名・配送会社・メモで検索"
+            autocomplete="off"
+          />
+        </label>
+        <button class="retry-button" id="retry-button" type="button">再試行</button>
+      </section>
+
+      <section
+        class="message-panel"
+        id="message-panel"
+        aria-live="polite"
+        aria-atomic="true"
+        hidden
+      ></section>
+
+      <section class="summary-strip" aria-label="表示件数">
+        <p id="summary">読み込み中</p>
+      </section>
+
+      <section aria-labelledby="list-title">
+        <h2 id="list-title">荷物一覧</h2>
+        <div class="shipment-list" id="shipment-list" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

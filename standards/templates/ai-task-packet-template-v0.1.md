@@ -53,6 +53,14 @@ api_failure_state_contract:
 quality_gates:
   required_commands: []
   required_artifacts: []
+playwright_e2e_contract:
+  target_browsers: []
+  launch_url: ""
+  state_scenarios: []
+  preserved_inputs: []
+  recovery_flows: []
+  negative_tests: []
+  config_policy: ""
 expected_output:
   files: []
   docs: []

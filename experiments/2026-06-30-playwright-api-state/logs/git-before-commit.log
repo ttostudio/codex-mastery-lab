@@ -1,0 +1,92 @@
+# final status before add
+ M backlog.md
+ M book/outline.md
+ M preview/001-series-roadmap.html
+ M preview/2026-06-27-accessibility-contract-vibe-faq.html
+ M preview/2026-06-27-contact-api-threat-model.html
+ M preview/2026-06-27-performance-budget-vibe-gallery.html
+ M preview/2026-06-27-security-baseline-contact-form.html
+ M preview/2026-06-27-watchflow-trial-001.html
+ M preview/2026-06-27-watchflow-trial-002.html
+ M preview/2026-06-27-watchflow-trial-003.html
+ M preview/2026-06-27-watchflow-trial-004.html
+ M preview/2026-06-27-watchflow-trial-005.html
+ M preview/2026-06-28-agents-skill-explained.html
+ M preview/2026-06-28-aidd-app-clone-lab-proof.html
+ M preview/2026-06-28-aidd-control-plane-mvp-001.html
+ M preview/2026-06-28-aidd-control-plane-mvp-002.html
+ M preview/2026-06-28-aidd-control-plane-mvp-003.html
+ M preview/2026-06-28-aidd-spec-v0.1-workflow-saas.html
+ M preview/2026-06-28-mobile-state-contract.html
+ M preview/2026-06-29-aidd-control-plane-mvp-004.html
+ M preview/2026-06-29-api-failure-state.html
+ M preview/index.html
+ M standards/aidd-spec-ai-task-packet-standard-v0.1.md
+ M standards/templates/ai-task-packet-template-v0.1.md
+?? articles/2026-06-30-playwright-api-state.md
+?? assets/2026-06-30-playwright-api-state-fixed.console.txt
+?? assets/2026-06-30-playwright-api-state-fixed.gif
+?? assets/2026-06-30-playwright-api-state-reverse-chain.svg
+?? assets/2026-06-30-playwright-api-state-vibe.console.txt
+?? assets/2026-06-30-playwright-api-state-vibe.gif
+?? experiments/2026-06-30-playwright-api-state/
+?? logs/cron-env-2026-06-30-090030.log
+?? logs/cron-env-2026-06-30-codex-install.log
+?? preview/2026-06-30-playwright-api-state.html
+# changed files
+ backlog.md                                         |  3 +-
+ book/outline.md                                    |  1 +
+ preview/001-series-roadmap.html                    |  6 ++-
+ ...2026-06-27-accessibility-contract-vibe-faq.html |  6 ++-
+ preview/2026-06-27-contact-api-threat-model.html   |  6 ++-
+ ...2026-06-27-performance-budget-vibe-gallery.html |  6 ++-
+ .../2026-06-27-security-baseline-contact-form.html |  6 ++-
+ preview/2026-06-27-watchflow-trial-001.html        |  6 ++-
+ preview/2026-06-27-watchflow-trial-002.html        |  6 ++-
+ preview/2026-06-27-watchflow-trial-003.html        |  6 ++-
+ preview/2026-06-27-watchflow-trial-004.html        |  6 ++-
+ preview/2026-06-27-watchflow-trial-005.html        |  6 ++-
+ preview/2026-06-28-agents-skill-explained.html     |  6 ++-
+ preview/2026-06-28-aidd-app-clone-lab-proof.html   |  6 ++-
+ preview/2026-06-28-aidd-control-plane-mvp-001.html |  6 ++-
+ preview/2026-06-28-aidd-control-plane-mvp-002.html |  6 ++-
+ preview/2026-06-28-aidd-control-plane-mvp-003.html |  6 ++-
+ .../2026-06-28-aidd-spec-v0.1-workflow-saas.html   |  6 ++-
+ preview/2026-06-28-mobile-state-contract.html      |  6 ++-
+ preview/2026-06-29-aidd-control-plane-mvp-004.html |  6 ++-
+ preview/2026-06-29-api-failure-state.html          |  8 ++--
+ preview/index.html                                 |  6 ++-
+ .../aidd-spec-ai-task-packet-standard-v0.1.md      | 44 ++++++++++++++++++++++
+ .../templates/ai-task-packet-template-v0.1.md      |  8 ++++
+ 24 files changed, 136 insertions(+), 42 deletions(-)
+# untracked
+articles/2026-06-30-playwright-api-state.md
+assets/2026-06-30-playwright-api-state-fixed.console.txt
+assets/2026-06-30-playwright-api-state-fixed.gif
+assets/2026-06-30-playwright-api-state-reverse-chain.svg
+assets/2026-06-30-playwright-api-state-vibe.console.txt
+assets/2026-06-30-playwright-api-state-vibe.gif
+experiments/2026-06-30-playwright-api-state/PLAN.md
+experiments/2026-06-30-playwright-api-state/audit_playwright_api_state.py
+experiments/2026-06-30-playwright-api-state/capture_api_state_gif.js
+experiments/2026-06-30-playwright-api-state/fixed-app/PLAYWRIGHT_API_STATE_EVIDENCE.md
+experiments/2026-06-30-playwright-api-state/fixed-app/app.js
+experiments/2026-06-30-playwright-api-state/fixed-app/index.html
+experiments/2026-06-30-playwright-api-state/fixed-app/styles.css
+experiments/2026-06-30-playwright-api-state/logs/00-before-env.log
+experiments/2026-06-30-playwright-api-state/logs/capture.log
+experiments/2026-06-30-playwright-api-state/logs/codex-fixed.log
+experiments/2026-06-30-playwright-api-state/logs/codex-vibe.log
+experiments/2026-06-30-playwright-api-state/logs/git-before-commit.log
+experiments/2026-06-30-playwright-api-state/logs/preview.log
+experiments/2026-06-30-playwright-api-state/logs/verification.log
+experiments/2026-06-30-playwright-api-state/prompt-fixed.txt
+experiments/2026-06-30-playwright-api-state/prompt-vibe.txt
+experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js
+experiments/2026-06-30-playwright-api-state/tests/playwright.config.js
+experiments/2026-06-30-playwright-api-state/vibe-app/app.js
+experiments/2026-06-30-playwright-api-state/vibe-app/index.html
+experiments/2026-06-30-playwright-api-state/vibe-app/styles.css
+logs/cron-env-2026-06-30-090030.log
+logs/cron-env-2026-06-30-codex-install.log
+preview/2026-06-30-playwright-api-state.html

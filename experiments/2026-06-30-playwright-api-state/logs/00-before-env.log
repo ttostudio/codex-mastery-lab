@@ -1,0 +1,12 @@
+# git status before
+?? experiments/2026-06-30-playwright-api-state/
+?? logs/cron-env-2026-06-30-090030.log
+?? logs/cron-env-2026-06-30-codex-install.log
+# env
+Tue Jun 30 09:01:25 JST 2026
+codex-cli 0.142.3
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+Filesystem        Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk2s1s1   228Gi    12Gi   132Gi     9%    459k  1.4G    0%   /

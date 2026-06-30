@@ -1,0 +1,45 @@
+# node checks
+# static audit vibe
+合格: index.html / app.js / styles.css が存在する
+合格: 日本語UIとして lang=ja と viewport がある
+不合格: API境界関数 requestShipments がある
+不合格: success / offline / timeout / server-error / empty を扱う
+合格: AbortController または明示timeoutがある
+不合格: 再試行ボタンがある
+不合格: 失敗時の入力保持・前回一覧保持方針がある
+合格: aria-live で状態変化を伝える
+合格: Playwright E2Eテストがある
+合格: E2Eテスト名が日本語で、失敗状態を検証する
+不合格: PLAYWRIGHT_API_STATE_EVIDENCE.md がある
+SUMMARY: 6 passed / 5 failed
+# static audit fixed
+合格: index.html / app.js / styles.css が存在する
+合格: 日本語UIとして lang=ja と viewport がある
+合格: API境界関数 requestShipments がある
+合格: success / offline / timeout / server-error / empty を扱う
+合格: AbortController または明示timeoutがある
+合格: 再試行ボタンがある
+合格: 失敗時の入力保持・前回一覧保持方針がある
+合格: aria-live で状態変化を伝える
+合格: Playwright E2Eテストがある
+合格: E2Eテスト名が日本語で、失敗状態を検証する
+合格: PLAYWRIGHT_API_STATE_EVIDENCE.md がある
+SUMMARY: 11 passed / 0 failed
+# playwright strict command expected maybe fail
+Error: Project(s) "chromium" not found. Available projects: ""
+    at Object.filterProjects (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/runner/index.js:2096:11)
+    at runTests (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/cli/testActions.js:61:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async _Command.<anonymous> (/path/to/project-root/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/lib/program.js:53:7)
+# playwright config command
+
+Running 6 tests using 1 worker
+
+  ✓  1 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:22:3 › 配送状況トラッカーのAPI状態 › success初期表示で荷物一覧が表示される (328ms)
+  ✓  2 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:28:3 › 配送状況トラッカーのAPI状態 › 検索語入力後にofflineへ切り替えても検索語と一覧を保持し、エラーと再試行を表示する (362ms)
+  ✓  3 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:48:3 › 配送状況トラッカーのAPI状態 › timeoutへ切り替えるとタイムアウトの日本語文言が表示される (275ms)
+  ✓  4 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:55:3 › 配送状況トラッカーのAPI状態 › server-errorへ切り替えるとサーバーエラーの日本語文言が表示される (273ms)
+  ✓  5 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:64:3 › 配送状況トラッカーのAPI状態 › emptyへ切り替えると空状態が表示される (276ms)
+  ✓  6 [chromium] › experiments/2026-06-30-playwright-api-state/tests/api-state-e2e.spec.js:72:3 › 配送状況トラッカーのAPI状態 › successへ戻して再試行すると一覧が復帰する (500ms)
+
+  6 passed (2.4s)
