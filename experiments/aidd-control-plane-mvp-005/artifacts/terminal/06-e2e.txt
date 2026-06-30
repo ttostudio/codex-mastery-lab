@@ -1,0 +1,24 @@
+$ playwright test
+[WebServer] $ next dev
+
+Running 15 tests using 1 worker
+
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+  ✓   1 [chromium] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (291ms)
+  ✓   2 [chromium] › e2e/intake-wizard.spec.ts:13:1 › テンプレートを選択して未適用failure stateを表示できる (300ms)
+  ✓   3 [chromium] › e2e/intake-wizard.spec.ts:22:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (351ms)
+  ✓   4 [chromium] › e2e/intake-wizard.spec.ts:39:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (337ms)
+  ✓   5 [chromium] › e2e/intake-wizard.spec.ts:52:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (364ms)
+  ✓   6 [firefox] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (719ms)
+  ✓   7 [firefox] › e2e/intake-wizard.spec.ts:13:1 › テンプレートを選択して未適用failure stateを表示できる (462ms)
+  ✓   8 [firefox] › e2e/intake-wizard.spec.ts:22:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (487ms)
+  ✓   9 [firefox] › e2e/intake-wizard.spec.ts:39:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (508ms)
+  ✓  10 [firefox] › e2e/intake-wizard.spec.ts:52:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (473ms)
+  ✓  11 [webkit] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (643ms)
+  ✓  12 [webkit] › e2e/intake-wizard.spec.ts:13:1 › テンプレートを選択して未適用failure stateを表示できる (374ms)
+  ✓  13 [webkit] › e2e/intake-wizard.spec.ts:22:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (400ms)
+  ✓  14 [webkit] › e2e/intake-wizard.spec.ts:39:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (431ms)
+  ✓  15 [webkit] › e2e/intake-wizard.spec.ts:52:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (431ms)
+
+  15 passed (9.8s)
