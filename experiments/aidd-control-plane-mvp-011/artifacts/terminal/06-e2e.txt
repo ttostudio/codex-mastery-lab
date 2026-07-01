@@ -1,0 +1,33 @@
+$ playwright test
+[WebServer] $ next dev
+
+Running 24 tests using 1 worker
+
+[WebServer]  ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+  ✓   1 [chromium] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (726ms)
+  ✓   2 [chromium] › e2e/intake-wizard.spec.ts:27:1 › テンプレートを選択して未適用failure stateを表示できる (427ms)
+  ✓   3 [chromium] › e2e/intake-wizard.spec.ts:36:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (630ms)
+  ✓   4 [chromium] › e2e/intake-wizard.spec.ts:53:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (784ms)
+  ✓   5 [chromium] › e2e/intake-wizard.spec.ts:67:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (713ms)
+  ✓   6 [chromium] › e2e/intake-wizard.spec.ts:77:1 › validサンプルを適用すると全ゲート成功と3ブラウザE2E成功と証跡が表示される (499ms)
+  ✓   7 [chromium] › e2e/intake-wizard.spec.ts:107:1 › failureサンプルを適用すると壊れたURLと古いログをReview Findingへ戻す (475ms)
+  ✓   8 [chromium] › e2e/intake-wizard.spec.ts:136:1 › 証跡不足サンプルを適用するとコマンド成功後もreadyではない (380ms)
+  ✓   9 [firefox] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (1.0s)
+  ✓  10 [firefox] › e2e/intake-wizard.spec.ts:27:1 › テンプレートを選択して未適用failure stateを表示できる (770ms)
+  ✓  11 [firefox] › e2e/intake-wizard.spec.ts:36:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (1.1s)
+  ✓  12 [firefox] › e2e/intake-wizard.spec.ts:53:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (1.3s)
+  ✓  13 [firefox] › e2e/intake-wizard.spec.ts:67:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (1.1s)
+  ✓  14 [firefox] › e2e/intake-wizard.spec.ts:77:1 › validサンプルを適用すると全ゲート成功と3ブラウザE2E成功と証跡が表示される (1.1s)
+  ✓  15 [firefox] › e2e/intake-wizard.spec.ts:107:1 › failureサンプルを適用すると壊れたURLと古いログをReview Findingへ戻す (763ms)
+  ✓  16 [firefox] › e2e/intake-wizard.spec.ts:136:1 › 証跡不足サンプルを適用するとコマンド成功後もreadyではない (878ms)
+  ✓  17 [webkit] › e2e/intake-wizard.spec.ts:3:1 › 初期empty stateが表示される (971ms)
+  ✓  18 [webkit] › e2e/intake-wizard.spec.ts:27:1 › テンプレートを選択して未適用failure stateを表示できる (443ms)
+  ✓  19 [webkit] › e2e/intake-wizard.spec.ts:36:1 › テンプレートを適用すると初期値と生成結果にリスクと証跡要件が入る (521ms)
+  ✓  20 [webkit] › e2e/intake-wizard.spec.ts:53:1 › サンプルアプリを入力するとready stateになり生成結果が表示される (571ms)
+  ✓  21 [webkit] › e2e/intake-wizard.spec.ts:67:1 › 主要機能を削除するとinsufficient stateとmissing fieldsが表示される (554ms)
+  ✓  22 [webkit] › e2e/intake-wizard.spec.ts:77:1 › validサンプルを適用すると全ゲート成功と3ブラウザE2E成功と証跡が表示される (478ms)
+  ✓  23 [webkit] › e2e/intake-wizard.spec.ts:107:1 › failureサンプルを適用すると壊れたURLと古いログをReview Findingへ戻す (480ms)
+  ✓  24 [webkit] › e2e/intake-wizard.spec.ts:136:1 › 証跡不足サンプルを適用するとコマンド成功後もreadyではない (460ms)
+
+  24 passed (21.5s)
