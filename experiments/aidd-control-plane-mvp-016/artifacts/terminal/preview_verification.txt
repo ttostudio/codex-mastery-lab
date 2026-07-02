@@ -1,5 +1,5 @@
 # preview file verification
-193:<p>push後の初回GitHub Actionsでは、<code>actions/setup-node</code>の<code>cache: pnpm</code>がpnpm有効化前に走り、<code>Unable to locate executable file: pnpm</code>で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、<code>cache: pnpm</code>を外して<code>corepack enable</code>後に通常の<code>pnpm install --frozen-lockfile</code>を実行する形へ修正しました。</p>
+193:<p>push後の初回GitHub Actionsでは、<code>actions/setup-node</code>の<code>cache: pnpm</code>がpnpm有効化前に走り、<code>Unable to locate executable file: pnpm</code>で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、<code>cache: pnpm</code>を外して<code>corepack enable</code>後に通常の<code>pnpm install --frozen-lockfile</code>を実行する形へ修正しました。さらに、成功時に<code>test-results</code>や<code>coverage</code>が空でartifact upload warningになる問題も見つかったため、次回の本格coverage導入までの暫定証跡READMEを生成し、artifact保存自体は常に残るようにしました。</p>
 asset aidd-control-plane-mvp016-empty.png bytes= 2257924
 asset aidd-control-plane-mvp016-valid.png bytes= 2126791
 asset aidd-control-plane-mvp016-failure.png bytes= 2191049

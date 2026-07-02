@@ -109,7 +109,7 @@ getByText('AIDD-Spec更新候補') resolved to 2 elements
 
 もう1つの運用上のメモとして、CodexがE2E修正ループに入りそうだったため、十分な差分が出た時点で停止し、独立検証へ切り替えました。AIの自己申告ではなく、こちらで個別コマンドを実行して確認しています。
 
-push後の初回GitHub Actionsでは、`actions/setup-node`の`cache: pnpm`がpnpm有効化前に走り、`Unable to locate executable file: pnpm`で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、`cache: pnpm`を外して`corepack enable`後に通常の`pnpm install --frozen-lockfile`を実行する形へ修正しました。
+push後の初回GitHub Actionsでは、`actions/setup-node`の`cache: pnpm`がpnpm有効化前に走り、`Unable to locate executable file: pnpm`で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、`cache: pnpm`を外して`corepack enable`後に通常の`pnpm install --frozen-lockfile`を実行する形へ修正しました。さらに、成功時に`test-results`や`coverage`が空でartifact upload warningになる問題も見つかったため、次回の本格coverage導入までの暫定証跡READMEを生成し、artifact保存自体は常に残るようにしました。
 
 ## 検証ログ
 

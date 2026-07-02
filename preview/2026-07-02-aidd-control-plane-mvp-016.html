@@ -190,7 +190,7 @@ getByText(&#x27;AIDD-Spec更新候補&#x27;) resolved to 2 elements</code></pre>
 <p>これはUIの失敗というより、テストの指定が曖昧だった問題です。Playwrightのstrict modeは、曖昧なlocatorを見つけると止めてくれます。AIDD-Spec的には良い失敗です。人間が読む文言と、テストが狙う要素を分ける必要があるからです。</p>
 <p>修正では、見出しは<code>getByRole(&quot;heading&quot;, { name: &quot;AIDD-Spec更新候補&quot; })</code>で確認し、リスト内に複数出る文言は<code>.first()</code>で意図を明確にしました。</p>
 <p>もう1つの運用上のメモとして、CodexがE2E修正ループに入りそうだったため、十分な差分が出た時点で停止し、独立検証へ切り替えました。AIの自己申告ではなく、こちらで個別コマンドを実行して確認しています。</p>
-<p>push後の初回GitHub Actionsでは、<code>actions/setup-node</code>の<code>cache: pnpm</code>がpnpm有効化前に走り、<code>Unable to locate executable file: pnpm</code>で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、<code>cache: pnpm</code>を外して<code>corepack enable</code>後に通常の<code>pnpm install --frozen-lockfile</code>を実行する形へ修正しました。</p>
+<p>push後の初回GitHub Actionsでは、<code>actions/setup-node</code>の<code>cache: pnpm</code>がpnpm有効化前に走り、<code>Unable to locate executable file: pnpm</code>で失敗しました。これはアプリ品質ではなくCI定義の順序問題です。MVP 016の狙い通り、workflow自体も検査対象として扱い、<code>cache: pnpm</code>を外して<code>corepack enable</code>後に通常の<code>pnpm install --frozen-lockfile</code>を実行する形へ修正しました。さらに、成功時に<code>test-results</code>や<code>coverage</code>が空でartifact upload warningになる問題も見つかったため、次回の本格coverage導入までの暫定証跡READMEを生成し、artifact保存自体は常に残るようにしました。</p>
 <h2>検証ログ</h2>
 <p>最終確認は次の通りです。</p>
 <pre><code>pnpm install --frozen-lockfile: pass

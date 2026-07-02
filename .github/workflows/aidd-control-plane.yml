@@ -78,6 +78,7 @@ jobs:
       - name: Summarize terminal evidence
         if: always()
         run: |
+          mkdir -p ../artifacts/terminal coverage test-results playwright-report
           {
             echo "AIDD Control Plane MVP 016 terminal evidence"
             echo "pnpm install --frozen-lockfile"
@@ -89,6 +90,9 @@ jobs:
             echo "pnpm run mock:doctor"
             echo "pnpm run test:e2e"
           } > ../artifacts/terminal/verification-summary.txt
+          test -e coverage/README.md || echo "coverage artifact placeholder: unit coverage command will replace this in the next increment." > coverage/README.md
+          test -e test-results/README.md || echo "test-results artifact placeholder: Playwright writes detailed files here on failure or trace capture." > test-results/README.md
+          test -e playwright-report/README.md || echo "playwright-report artifact placeholder: Playwright HTML report is generated when available." > playwright-report/README.md
 
       - name: Upload coverage
         if: always()
