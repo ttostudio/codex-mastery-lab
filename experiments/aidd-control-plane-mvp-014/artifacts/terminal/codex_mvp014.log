@@ -1,0 +1,25 @@
+MVP 014対応を `experiments/aidd-control-plane-mvp-014/generated-repo` 内で完了しました。
+
+主な変更:
+- `package.json` nameと画面表記を `aidd-control-plane-mvp-014` / `MVP 014` に更新
+- `mocks/ci-service/server.mjs` を追加し、`/health`、`/state`、`/__control/state`、CORS、5 scenario対応を実装
+- `mock:start` / `mock:stop` / `mock:doctor` を追加
+- UIをmock CI service取得対応にし、取得失敗時の手動Evidence Binder fallbackと `rate_limit`詳細を追加
+- Playwrightに `/__control/state` 経由のUI反映テストを追加し、3ブラウザ設定を維持
+- `doctor:aidd` をMVP 014契約検査へ更新
+- `capture:mvp014` を追加
+- `docs/product-brief.md` と `docs/learning-log.md` をMVP 014内容へ更新
+
+検証結果:
+- `pnpm install --prefer-offline`: 未実行。`node_modules` が既に存在し、追加依存なし
+- `pnpm run lint`: passed
+- `pnpm run typecheck`: passed
+- `pnpm run test`: 22 passed
+- `pnpm run build`: passed
+- `pnpm run doctor:aidd`: passed
+- `pnpm run mock:doctor`: passed
+- `pnpm run test:e2e`: 30 passed, Chromium / Firefox / WebKit
+
+補足:
+- 既存の別MVP dev serverが`:3000`を使っていたため、MVP 014のPlaywright webServerは`:3014`へ分離しました。
+- 検証で生成された `.next`、`playwright-report`、`test-results` は削除済みです。未達はありません。

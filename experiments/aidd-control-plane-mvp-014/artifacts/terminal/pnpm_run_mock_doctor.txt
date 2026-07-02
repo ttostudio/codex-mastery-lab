@@ -1,0 +1,2 @@
+$ node scripts/mock-doctor.mjs
+mock:doctor passed

@@ -1,0 +1,5 @@
+$ node scripts/doctor-aidd.mjs
+doctor:aidd passed
+checked files: 16
+checked scripts: lint, typecheck, test, build, test:e2e, doctor:aidd, mock:start, mock:stop, mock:doctor, capture:mvp014
+checked mock scenarios: empty, valid, failure, timeout, rate_limit

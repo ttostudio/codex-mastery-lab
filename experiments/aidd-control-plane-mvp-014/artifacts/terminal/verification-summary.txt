@@ -1,0 +1,14 @@
+AIDD Control Plane MVP 014 verification summary
+
+pnpm run lint: pass
+pnpm run typecheck: pass
+pnpm run test: pass (22 tests)
+pnpm run build: pass (Next.js production build)
+pnpm run doctor:aidd: pass
+pnpm run mock:doctor: pass
+pnpm run test:e2e: pass (30 tests, Chromium / Firefox / WebKit)
+
+Evidence focus:
+- Independent Mock CI Service exposes /health, /state, /__control/state.
+- E2E controls empty / valid / failure / timeout / rate_limit through /__control/state.
+- Screenshots captured for empty, valid, failure, timeout, rate_limit, and terminal evidence.
