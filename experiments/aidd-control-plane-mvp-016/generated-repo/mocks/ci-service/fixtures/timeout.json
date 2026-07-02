@@ -1,0 +1,14 @@
+{
+  "label": "timeout: CI取得タイムアウト",
+  "runUrl": "github.local/aidd-lab/aidd-control-plane/actions/runs/15015",
+  "owner": "aidd-lab",
+  "repo": "aidd-control-plane",
+  "runId": "15015",
+  "commitSha": "9f4c2d1a8b7e6c5d4a3b2c1d0e9f8a7b6c5d4e3f",
+  "workflow": "aidd-control-plane-mvp-015-ci",
+  "jobs": ["jobs API: timeout", "artifacts API: timeout"],
+  "artifacts": ["取得未完了"],
+  "issue": "mock CI serviceがタイムアウト状態を返しました。",
+  "repair": "再試行し、fallbackとして手動Artifact Evidence Binderへterminal evidenceを保存する。",
+  "promptDelta": "CI取得タイムアウト時の再試行と手動Evidence Binder fallbackを完了条件へ追加する。"
+}

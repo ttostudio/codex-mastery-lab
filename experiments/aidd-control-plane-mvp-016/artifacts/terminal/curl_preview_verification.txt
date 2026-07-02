@@ -1,0 +1,12 @@
+# curl preview verification
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIDD Control Plane MVP 016：CI workflowの「artifact保存漏れ」を先に見つける</title><style>
+<a href="2026-07-02-aidd-control-plane-mvp-016.html">MVP16｜AIDD Control Plane MVP 016：CI workflowの「artifact保存漏れ」を先に見つける</a><div class="nav-section-title">過去記事</div><a href="2026-06-27-accessibility-contract-vibe-faq.html">過去記事01｜雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link current" href="2026-07-02-aidd-control-plane-mvp-016.html"><span class="chapter-num">MVP 16</span>AIDD Control Plane MVP 016：CI workflowの「artifact保存漏れ」を先に見つける</a><div class="nav-section-title">過去記事</div><a class="chapter-link past " href="2026-06-27-accessibility-contract-vibe-faq.html"><span class="chapter-num">過去記事 01</span>雑なFAQ検索アプリを監査して分かった、AI Task Packetに「アクセシビリティ契約」を入れるべき理由</a>
+<a class="chapter-link past " href="2026-06-30-playwright-api-state.html"><span class="chapter-num">過去記事 10</span>Playwrightで失敗状態を本当に触る：API状態E2E契約をAI Task Packetへ逆算する</a></aside><main><nav class="chapter-nav" aria-label="前後の記事"><a class="prev" href="2026-07-02-aidd-control-plane-mvp-015.html"><span>前の記事</span>AIDD Control Plane MVP 015：Mock CI ServiceをfixtureとDocker Compose経路へ進める</a><span></span></nav><article><h1>AIDD Control Plane MVP 016：CI workflowの「artifact保存漏れ」を先に見つける</h1>
+<p>今回はAIDD Control Plane MVP 016として、GitHub Actions workflowを静的監査し、品質gateとartifact保存の不足をReview Finding、AI Task Packet Delta、AIDD-Spec更新候補へ戻す「CI Workflow Artifact Auditor」を追加しました。</p>
+<li>UIの「CI Workflow Artifact Auditor」セクション</li>
+<p><img src="assets/aidd-control-plane-mvp016-empty.png" alt="MVP016 empty state" loading="lazy"></p>
+curl asset aidd-control-plane-mvp016-empty.png bytes=10531297
+curl asset aidd-control-plane-mvp016-valid.png bytes=9874462
+curl asset aidd-control-plane-mvp016-failure.png bytes=10178279
+curl asset aidd-control-plane-mvp016-terminal-evidence.png bytes=101368

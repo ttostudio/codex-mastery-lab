@@ -1,0 +1,12 @@
+AIDD Control Plane MVP 016 verification summary
+pnpm install --frozen-lockfile: pass
+pnpm run lint: pass
+pnpm run typecheck: pass
+pnpm run test: pass
+pnpm run build: pass
+pnpm run doctor:aidd: pass
+pnpm run mock:doctor: pass
+pnpm run test:e2e: pass (33 passed / Chromium, Firefox, WebKit)
+pnpm run capture:mvp016: pass
+preview verification: pass
+curl preview verification: pass

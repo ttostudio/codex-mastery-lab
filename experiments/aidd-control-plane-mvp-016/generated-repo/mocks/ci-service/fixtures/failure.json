@@ -1,0 +1,14 @@
+{
+  "label": "failure: CI証跡不足",
+  "runUrl": "github.local/aidd-lab/aidd-control-plane/actions/runs/broken",
+  "owner": "aidd-lab",
+  "repo": "aidd-control-plane",
+  "runId": "未抽出",
+  "commitSha": "abc12",
+  "workflow": "aidd-control-plane-mvp-015-ci",
+  "jobs": ["lint: 成功", "test: 失敗", "e2e: 失敗"],
+  "artifacts": ["coverage", "terminal-evidence"],
+  "issue": "playwright-report / test-results / screenshot artifactsが不足し、commit SHAも短すぎます。",
+  "repair": "失敗job、短いcommit SHA、token scope不足をEvidence Gap Repair Plannerへ渡す。",
+  "promptDelta": "不足artifact、失敗job、短いcommit SHAを次回AI Task Packet Deltaへ戻す。"
+}

@@ -1,0 +1,18 @@
+{
+  "label": "rate_limit: CI API制限中",
+  "runUrl": "github.local/aidd-lab/aidd-control-plane/actions/runs/15015",
+  "owner": "aidd-lab",
+  "repo": "aidd-control-plane",
+  "runId": "15015",
+  "commitSha": "9f4c2d1a8b7e6c5d4a3b2c1d0e9f8a7b6c5d4e3f",
+  "workflow": "aidd-control-plane-mvp-015-ci",
+  "jobs": ["jobs API: rate_limit", "artifacts API: rate_limit"],
+  "artifacts": ["取得保留"],
+  "issue": "CI APIのrate limitによりartifact取得を待機しています。",
+  "repair": "待機時間を確認し、token scopeを見直し、手動証跡添付で完了条件を維持する。",
+  "promptDelta": "次回AI Task Packet Deltaへrate_limit時の待機時間、token scope見直し、手動証跡添付を追加する。",
+  "retryAfterSeconds": 60,
+  "tokenScopeReview": ["actions:read", "contents:read"],
+  "manualEvidence": ["terminal-evidence", "playwright-report URL", "test-results"],
+  "nextTaskPacketDelta": "rate_limit時は60秒待機、actions:read / contents:readを確認し、手動証跡添付を許可する。"
+}

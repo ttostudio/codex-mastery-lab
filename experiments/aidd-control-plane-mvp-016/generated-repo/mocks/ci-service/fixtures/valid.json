@@ -1,0 +1,14 @@
+{
+  "label": "valid: 必須CI証跡が揃っています",
+  "runUrl": "github.local/aidd-lab/aidd-control-plane/actions/runs/15015",
+  "owner": "aidd-lab",
+  "repo": "aidd-control-plane",
+  "runId": "15015",
+  "commitSha": "9f4c2d1a8b7e6c5d4a3b2c1d0e9f8a7b6c5d4e3f",
+  "workflow": "aidd-control-plane-mvp-015-ci",
+  "jobs": ["lint: 成功", "typecheck: 成功", "test: 成功", "e2e: 成功", "mock:doctor: 成功", "doctor:aidd: 成功"],
+  "artifacts": ["coverage", "playwright-report", "test-results", "terminal-evidence", "empty-screenshot", "valid-screenshot", "failure-screenshot", "timeout-screenshot", "rate-limit-screenshot"],
+  "issue": "不足artifactはありません。",
+  "repair": "Verification EvidenceへCI run URL、artifact一覧、terminal evidence、mock service stateを保存する。",
+  "promptDelta": "fixture駆動のMock CI Service valid状態をReview Recordでpassとして扱う。"
+}

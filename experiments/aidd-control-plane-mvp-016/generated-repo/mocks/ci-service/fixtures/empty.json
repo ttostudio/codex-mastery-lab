@@ -1,0 +1,14 @@
+{
+  "label": "empty: CI run URL入力待ち",
+  "runUrl": "未入力",
+  "owner": "未抽出",
+  "repo": "未抽出",
+  "runId": "未抽出",
+  "commitSha": "未登録",
+  "workflow": "aidd-control-plane-mvp-015-ci",
+  "jobs": ["未取得"],
+  "artifacts": ["未取得"],
+  "issue": "CI証跡をまだ取得していません。",
+  "repair": "CI run URLを貼り、mock CI状態をvalid / failure / timeout / rate_limitに切り替えて証跡を確認する。",
+  "promptDelta": "Mock CI Serviceでempty stateを表示し、入力前に必要artifact一覧を見せる。"
+}
