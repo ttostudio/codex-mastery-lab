@@ -1,0 +1,3 @@
+===== pnpm run mock:doctor =====
+$ node scripts/mock-doctor.mjs
+mock:doctor passed

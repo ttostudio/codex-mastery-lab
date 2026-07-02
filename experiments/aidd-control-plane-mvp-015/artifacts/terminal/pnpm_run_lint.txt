@@ -1,0 +1,2 @@
+===== pnpm run lint =====
+$ eslint . --max-warnings=0

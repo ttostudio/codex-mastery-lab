@@ -1,0 +1,12 @@
+pnpm install --frozen-lockfile: pass
+pnpm run lint: pass
+pnpm run typecheck: pass
+pnpm run test: pass (22 tests)
+pnpm run build: pass (Next.js production build; ESLint plugin warning observed)
+pnpm run doctor:aidd: pass
+pnpm run mock:doctor: pass
+pnpm run test:e2e: pass (30 tests / Chromium, Firefox, WebKit)
+
+修正メモ:
+- 初回E2Eでtimeout文言の期待値が古い「手動Evidence Binder」のままで失敗したため、「手動Artifact Evidence Binder」へ修正。
+- timeoutで残ったmock service / Next devプロセスを停止してから、mock:doctorと3ブラウザE2Eを再実行した。

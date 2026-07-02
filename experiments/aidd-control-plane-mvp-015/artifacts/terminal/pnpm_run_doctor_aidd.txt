@@ -1,0 +1,6 @@
+===== pnpm run doctor:aidd =====
+$ node scripts/doctor-aidd.mjs
+doctor:aidd passed
+checked files: 22
+checked scripts: lint, typecheck, test, build, test:e2e, doctor:aidd, mock:start, mock:stop, mock:doctor, capture:mvp015
+checked mock scenarios: empty, valid, failure, timeout, rate_limit
