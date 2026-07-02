@@ -1,0 +1,12 @@
+services:
+  mock-ci-service:
+    image: node:22-alpine
+    working_dir: /app
+    command: node mocks/ci-service/server.mjs
+    environment:
+      MOCK_CI_SERVICE_HOST: 0.0.0.0
+      MOCK_CI_SERVICE_PORT: "4314"
+    ports:
+      - "4314:4314"
+    volumes:
+      - .:/app:ro
